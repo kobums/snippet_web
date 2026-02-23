@@ -1,26 +1,286 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─────────────────────────────────────
+   Liquid Glass 디자인 토큰
+   ───────────────────────────────────── */
+:root {
+  /* 배경 컬러 */
+  --lg-bg-1: #f0f0f5;
+  --lg-bg-2: #e8e0f0;
+  --lg-bg-3: #d8e8f8;
+  --lg-bg-4: #f5e8f0;
+
+  /* 글래스 서피스 */
+  --lg-glass-bg: rgba(255, 255, 255, 0.45);
+  --lg-glass-bg-hover: rgba(255, 255, 255, 0.55);
+  --lg-glass-border: rgba(255, 255, 255, 0.6);
+  --lg-glass-border-inner: rgba(255, 255, 255, 0.3);
+
+  /* 글래스 이펙트 */
+  --lg-blur: 40px;
+  --lg-saturate: 180%;
+
+  /* 셰도우 */
+  --lg-shadow-sm: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  --lg-shadow-md:
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 2px 6px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --lg-shadow-lg:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --lg-shadow-xl:
+    0 12px 48px rgba(0, 0, 0, 0.10),
+    0 6px 20px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  /* 텍스트 */
+  --lg-text-primary: rgba(0, 0, 0, 0.85);
+  --lg-text-secondary: rgba(0, 0, 0, 0.55);
+  --lg-text-tertiary: rgba(0, 0, 0, 0.35);
+
+  /* 액센트 */
+  --lg-accent: #7c5cbf;
+  --lg-accent-light: rgba(124, 92, 191, 0.15);
+  --lg-like: #34c759;
+  --lg-pass: #ff3b30;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', Arial, Helvetica, sans-serif;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─────────────────────────────────────
+   Liquid Glass 배경
+   ───────────────────────────────────── */
+.bg-liquid {
+  background-color: var(--lg-bg-1);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 10% 20%, var(--lg-bg-2) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, var(--lg-bg-3) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 10%, var(--lg-bg-4) 0%, transparent 50%);
+  position: relative;
+}
+
+/* 노이즈 텍스처 오버레이 */
+.bg-liquid::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─────────────────────────────────────
+   Liquid Glass 카드 (스와이프용 프리미엄)
+   ───────────────────────────────────── */
+.liquid-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-glass-border);
+  border-radius: 28px;
+  box-shadow: var(--lg-shadow-xl);
+  overflow: hidden;
+}
+
+/* 상단 스펙큘러 하이라이트 (빛이 유리 위에 반사되는 효과) */
+.liquid-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.2) 20%,
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 하단 엣지 라이트 (유리 하단 반사) */
+.liquid-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 30%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─────────────────────────────────────
+   Liquid Glass 패널 (Archive, Nav 등 범용)
+   ───────────────────────────────────── */
+.liquid-panel {
+  position: relative;
+  background: var(--lg-glass-bg);
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-glass-border);
+  border-radius: 20px;
+  box-shadow: var(--lg-shadow-md);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.liquid-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.liquid-panel:hover {
+  background: var(--lg-glass-bg-hover);
+  box-shadow: var(--lg-shadow-lg);
+}
+
+/* ─────────────────────────────────────
+   Liquid Glass 탭 바
+   ───────────────────────────────────── */
+.liquid-nav {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 -4px 24px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ─────────────────────────────────────
+   Liquid Glass 뱃지 / 태그
+   ───────────────────────────────────── */
+.liquid-badge {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 100px;
+  box-shadow: var(--lg-shadow-sm);
+}
+
+/* ─────────────────────────────────────
+   Liquid Glass 버튼
+   ───────────────────────────────────── */
+.liquid-button {
+  position: relative;
+  background: linear-gradient(135deg, rgba(124, 92, 191, 0.2), rgba(124, 92, 191, 0.1));
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(124, 92, 191, 0.25);
+  border-radius: 100px;
+  box-shadow:
+    0 2px 12px rgba(124, 92, 191, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: var(--lg-accent);
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.liquid-button:hover {
+  background: linear-gradient(135deg, rgba(124, 92, 191, 0.3), rgba(124, 92, 191, 0.15));
+  box-shadow:
+    0 4px 20px rgba(124, 92, 191, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ─────────────────────────────────────
+   마이크로 애니메이션
+   ───────────────────────────────────── */
+
+/* 유리 표면 위를 흐르는 빛 */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 6s ease-in-out infinite;
+}
+
+/* 떠다니는 효과 */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.float-effect {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* 배경 오브 애니메이션 */
+@keyframes drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* ─────────────────────────────────────
+   로딩 스피너 (Liquid Glass)
+   ───────────────────────────────────── */
+.liquid-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(0, 0, 0, 0.08);
+  border-top-color: var(--lg-accent);
+  animation: spin 0.8s linear infinite;
+  box-shadow: var(--lg-shadow-sm);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────
+   컨텐츠 z-index (배경 오버레이보다 위에)
+   ───────────────────────────────────── */
+.content-layer {
+  position: relative;
+  z-index: 1;
 }
