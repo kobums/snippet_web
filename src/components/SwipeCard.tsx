@@ -81,7 +81,7 @@ export default function SwipeCard({ snippet, onSwipe, isTop }: SwipeCardProps) {
       )}
 
       {/* Liquid Glass 카드 */}
-      <div className="liquid-card w-[350px] h-[380px] md:w-[400px] md:h-[420px] flex flex-col justify-center items-center px-10 py-8 select-none">
+      <div className="liquid-card w-[350px] min-h-[380px] h-auto md:w-[400px] md:min-h-[420px] flex flex-col justify-center items-center px-10 py-8 select-none">
         {/* 태그 뱃지 */}
         <span
           className="liquid-badge self-start mb-6 px-4 py-1.5 text-xs font-medium tracking-wide relative z-10"

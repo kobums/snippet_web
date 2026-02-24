@@ -95,11 +95,11 @@ export default function SwipeStack() {
           return (
             <div
               key={snippet.id}
-              className="absolute w-[350px] h-[380px] md:w-[400px] md:h-[420px]"
+              className="absolute w-[350px] min-h-[380px] h-auto md:w-[400px] md:min-h-[420px]"
               style={{
                 transform: `scale(${scale}) translateY(${translateY}px)`,
                 zIndex: index,
-                opacity: isTop ? 1 : 0.6 - (arr.length - 1 - index) * 0.15,
+                opacity: isTop ? 1 : 0,
               }}
             >
               <SwipeCard
