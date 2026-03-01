@@ -1,0 +1,137 @@
+"use client"
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { searchBooks, addBookToLibrary } from '@/lib/libraryApi';
+import { BookSearchDto } from '@/types/library';
+
+interface BookSearchModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
+}
+
+export default function BookSearchModal({ isOpen, onClose, onSuccess }: BookSearchModalProps) {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<BookSearchDto[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [savingIsbn, setSavingIsbn] = useState<string | null>(null);
+
+  // Debounce search
+  useEffect(() => {
+    if (query.trim().length < 2) {
+      setResults([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const data = await searchBooks(query);
+        setResults(data);
+      } catch (error) {
+        console.error("Failed to search books:", error);
+      } finally {
+        setLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const handleAddBook = async (book: BookSearchDto, status: 'wish' | 'reading' | 'waiting' = 'wish') => {
+    setSavingIsbn(book.isbn);
+    try {
+      await addBookToLibrary({ ...book, status });
+      if (onSuccess) onSuccess();
+      onClose();
+    } catch (e) {
+      console.error("Failed to add book", e);
+      alert("책 추가에 실패했습니다.");
+    } finally {
+      setSavingIsbn(null);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div 
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 50, opacity: 0 }}
+          className="w-full max-w-md bg-white/10 border border-white/20 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col max-h-[80vh]"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Header & Search Input */}
+          <div className="p-4 border-b border-white/10">
+            <div className="flex justify-between items-center mb-4 text-white">
+              <h2 className="text-xl font-bold">도서 검색 및 추가</h2>
+              <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                ✕
+              </button>
+            </div>
+            <input 
+              type="text" 
+              placeholder="책 제목이나 저자를 입력하세요" 
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all font-light"
+              autoFocus
+            />
+          </div>
+
+          {/* Search Results */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {loading && <div className="text-center text-white/50 py-4">검색 중...</div>}
+            
+            {!loading && query.length > 1 && results.length === 0 && (
+              <div className="text-center text-white/50 py-4">검색 결과가 없습니다.</div>
+            )}
+
+            {results.map((book) => (
+              <div key={book.isbn} className="flex gap-4 p-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                {book.coverUrl ? (
+                  <img src={book.coverUrl} alt={book.title} className="w-16 h-24 object-cover rounded-lg shadow-md" />
+                ) : (
+                  <div className="w-16 h-24 bg-white/10 rounded-lg flex items-center justify-center text-white/30 text-xs">No Image</div>
+                )}
+                
+                <div className="flex-1 flex flex-col">
+                  <h3 className="text-white font-medium line-clamp-2 leading-tight">{book.title}</h3>
+                  <p className="text-white/60 text-sm mt-1">{book.author}</p>
+                  <p className="text-white/40 text-xs">{book.publisher} · {book.pubDate}</p>
+                  
+                  <div className="mt-auto pt-2 flex gap-2">
+                    <button 
+                      onClick={() => handleAddBook(book, 'wish')}
+                      disabled={savingIsbn === book.isbn}
+                      className="flex-1 py-1.5 px-2 bg-pink-500/20 hover:bg-pink-500/40 text-pink-200 text-xs rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {savingIsbn === book.isbn ? '저장 중...' : '위시리스트 추가'}
+                    </button>
+                    <button 
+                      onClick={() => handleAddBook(book, 'reading')}
+                      disabled={savingIsbn === book.isbn}
+                      className="flex-1 py-1.5 px-2 bg-blue-500/20 hover:bg-blue-500/40 text-blue-200 text-xs rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {savingIsbn === book.isbn ? '저장 중...' : '읽는 중 추가'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
