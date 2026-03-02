@@ -58,7 +58,7 @@ export default function DashboardLayout() {
   const completedBooks = books.filter(b => b.status === 'completed');
 
   return (
-    <div className="w-full h-full p-4 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-[1600px] mx-auto overflow-hidden">
+    <div className="w-full h-full p-4 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-[1600px] mx-auto overflow-y-auto lg:overflow-hidden hide-scrollbar">
       
       {/* 1. Left Column: Stats & Read Books */}
       <div className="w-full lg:w-1/4 flex flex-col gap-6 shrink-0 lg:overflow-y-auto hide-scrollbar">
