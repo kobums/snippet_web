@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import SwipeStack from "@/components/SwipeStack";
-import BookSearchModal from "@/components/BookSearchModal";
-import Sidebar from "@/components/Sidebar";
-import DashboardLayout from "@/components/DashboardLayout";
+import SwipeStack from "@/components/swipe/SwipeStack";
+import BookSearchModal from "@/components/modal/BookSearchModal";
+import Sidebar from "@/components/layout/Sidebar";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 
 export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);

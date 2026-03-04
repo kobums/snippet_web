@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import BottomNav from "@/components/BottomNav";
+import BottomNav from "@/components/layout/BottomNav";
+import AuthProvider from "@/components/auth/AuthProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,8 +30,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${geistSans.variable} antialiased bg-liquid`}>
-        {children}
-        <BottomNav />
+        <AuthProvider>
+          {children}
+          {/* <BottomNav /> */}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -35,7 +35,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     setLoading(true);
     try {
       const typeParam = activeTab === 'all' ? undefined : activeTab;
-      const data = await getRecordsByBook(book.id, typeParam);
+      const data = await getRecordsByBook(book.bookId, typeParam);
       setRecords(data);
     } catch (e) {
       console.error("Failed to load records", e);
@@ -48,7 +48,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     if (!book || !newText.trim()) return;
     
     try {
-      await addRecordToBook(book.id, {
+      await addRecordToBook(book.bookId, {
         type: newType,
         text: newText,
         tag: newTag || undefined,

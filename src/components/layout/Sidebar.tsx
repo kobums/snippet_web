@@ -1,19 +1,27 @@
 "use client"
 
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Sidebar({ 
-  isOpen, 
+export default function Sidebar({
+  isOpen,
   onClose,
   onNavigate,
   currentView
-}: { 
-  isOpen: boolean, 
+}: {
+  isOpen: boolean,
   onClose: () => void,
   onNavigate: (view: 'swipe' | 'dashboard') => void,
   currentView: string
 }) {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    onClose();
+    router.push('/login');
+  };
   return (
     <AnimatePresence>
       {isOpen && (
@@ -54,9 +62,21 @@ export default function Sidebar({
               <button className="py-2 px-4 hover:bg-white/5 rounded-xl transition text-left opacity-50 cursor-not-allowed">통계 (준비중)</button>
               <button className="py-2 px-4 hover:bg-white/5 rounded-xl transition text-left opacity-50 cursor-not-allowed">리뷰 (준비중)</button>
             </nav>
-            
-            <div className="mt-auto pt-8 border-t border-white/10 text-xs text-white/40">
-              <p>v2.0 MVP</p>
+
+            <div className="mt-auto pt-8 border-t border-white/10 flex flex-col gap-3">
+              <button
+                onClick={() => { onClose(); router.push('/mypage'); }}
+                className="py-2 px-4 hover:bg-white/10 rounded-xl transition text-left text-white/80 font-medium"
+              >
+                내 정보
+              </button>
+              <button
+                onClick={handleLogout}
+                className="py-2 px-4 hover:bg-red-500/10 rounded-xl transition text-left text-red-400 font-medium"
+              >
+                로그아웃
+              </button>
+              <p className="text-xs text-white/40 px-4 pt-2">v2.0 MVP</p>
             </div>
           </motion.div>
         </>
