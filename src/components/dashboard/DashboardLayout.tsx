@@ -5,11 +5,11 @@ import { getUserBooks, updateBookStatus, updateBookProgress } from '@/lib/librar
 import { getUserStats } from '@/lib/statsApi';
 import { UserBookDto } from '@/types/library';
 import { StatsDto } from '@/types/stats';
-import BookRecordModal from './modal/BookRecordModal';
-import BookSearchModal from './modal/BookSearchModal';
-import DashboardStats from './dashboard/DashboardStats';
-import ReadingProgress from './dashboard/ReadingProgress';
-import BookLibrary from './library/BookLibrary';
+import BookRecordModal from '../modal/BookRecordModal';
+import BookSearchModal from '../modal/BookSearchModal';
+import DashboardStats from './DashboardStats';
+import ReadingProgress from './ReadingProgress';
+import BookLibrary from '../library/BookLibrary';
 
 export default function DashboardLayout() {
   const [books, setBooks] = useState<UserBookDto[]>([]);
