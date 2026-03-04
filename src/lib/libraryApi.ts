@@ -1,33 +1,27 @@
-import { BookSearchDto, LibraryAddRequestDto } from '../types/library';
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8008/api';
-
-const libraryApi = axios.create({
-  baseURL: `${API_URL}/library`,
-});
+import { BookSearchDto, LibraryAddRequestDto, UserBookDto } from '../types/library';
+import api from './api';
 
 export const searchBooks = async (query: string): Promise<BookSearchDto[]> => {
-  const response = await libraryApi.get<BookSearchDto[]>('/search', {
+  const response = await api.get<BookSearchDto[]>('/library/search', {
     params: { query },
   });
   return response.data;
 };
 
 export const addBookToLibrary = async (data: LibraryAddRequestDto): Promise<number> => {
-  const response = await libraryApi.post<number>('/add', data);
+  const response = await api.post<number>('/library/add', data);
   return response.data;
 };
 
-export const getUserBooks = async (): Promise<import('../types/library').UserBookDto[]> => {
-  const response = await libraryApi.get<import('../types/library').UserBookDto[]>('');
+export const getUserBooks = async (): Promise<UserBookDto[]> => {
+  const response = await api.get<UserBookDto[]>('/library');
   return response.data;
 };
 
 export const updateBookStatus = async (userBookId: number, status: string): Promise<void> => {
-  await libraryApi.patch(`/${userBookId}/status`, { status });
+  await api.patch(`/library/${userBookId}/status`, { status });
 };
 
 export const updateBookProgress = async (userBookId: number, readPage: number): Promise<void> => {
-  await libraryApi.patch(`/${userBookId}/progress`, { readPage });
+  await api.patch(`/library/${userBookId}/progress`, { readPage });
 };

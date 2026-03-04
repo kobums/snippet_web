@@ -1,13 +1,7 @@
 import { StatsDto } from '../types/stats';
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8008/api';
-
-const statsApi = axios.create({
-  baseURL: `${API_URL}/library/stats`,
-});
+import api from './api';
 
 export const getUserStats = async (): Promise<StatsDto> => {
-  const response = await statsApi.get<StatsDto>('');
+  const response = await api.get<StatsDto>('/library/stats');
   return response.data;
 };

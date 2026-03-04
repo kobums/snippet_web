@@ -2,8 +2,38 @@ import axios from "axios";
 import { SnippetCard, SnippetArchive } from "@/types/snippet";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8008/api",
 });
+
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const requestUrl = error.config?.url || "";
+      // 인증 관련 API(로그인/회원가입)에서는 리다이렉트하지 않음
+      if (!requestUrl.startsWith("/auth/") && typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export async function fetchCards(
   count: number = 10,
@@ -13,15 +43,17 @@ export async function fetchCards(
   if (excludeIds && excludeIds.length > 0) {
     params.excludeIds = excludeIds.join(",");
   }
-  const { data } = await api.get<SnippetCard[]>("/api/snippets/cards", {
+  const { data } = await api.get<SnippetCard[]>("/snippets/cards", {
     params,
   });
   return data;
 }
 
 export async function fetchArchive(ids: number[]): Promise<SnippetArchive[]> {
-  const { data } = await api.get<SnippetArchive[]>("/api/snippets/archive", {
+  const { data } = await api.get<SnippetArchive[]>("/snippets/archive", {
     params: { ids: ids.join(",") },
   });
   return data;
 }
+
+export default api;
