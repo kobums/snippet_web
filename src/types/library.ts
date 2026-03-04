@@ -5,6 +5,7 @@ export interface BookSearchDto {
   pubDate: string;
   isbn: string;
   coverUrl: string;
+  totalPage: number | null;
 }
 
 export interface LibraryAddRequestDto {
@@ -14,15 +15,18 @@ export interface LibraryAddRequestDto {
   pubDate: string;
   isbn: string;
   coverUrl: string;
+  totalPage: number | null;
   status: 'wish' | 'reading' | 'waiting';
 }
 
 export interface UserBookDto {
   id: number;
+  bookId: number;
   title: string;
   author: string;
   coverUrl: string;
   status: 'wish' | 'reading' | 'waiting' | 'completed' | 'dropped';
   readPage: number;
   totalPage: number;
+  createDate: string;
 }
