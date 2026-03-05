@@ -12,23 +12,23 @@ interface WishlistBooksProps {
 
 export default function WishlistBooks({ books, onBookClick, onStatusChange, onNewClick }: WishlistBooksProps) {
   return (
-    <div className="bg-white/5 border border-white/10 p-5 rounded-3xl backdrop-blur-md">
-      <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+    <div className="liquid-panel p-5">
+      <h3 className="text-gray-900 font-medium mb-4 flex items-center gap-2">
         <span className="text-lg">갖고 싶은 책</span>
       </h3>
 
       {/* Toolbar */}
       <div className="flex items-center justify-between mb-4 gap-2">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-medium">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg liquid-badge text-gray-900 text-xs font-medium border border-gray-200">
           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           위시리스트
         </div>
 
         <div className="flex items-center gap-1.5">
-          <button className="p-2 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-all" title="확장">
+          <button className="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-white/50 transition-all" title="확장">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
           </button>
-          <button className="p-2 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-all" title="설정">
+          <button className="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-white/50 transition-all" title="설정">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
           </button>
           <button
@@ -44,17 +44,17 @@ export default function WishlistBooks({ books, onBookClick, onStatusChange, onNe
       {/* Book Cards */}
       <div className="space-y-3">
         {books.length === 0 ? (
-          <div className="text-xs text-white/30 py-4 text-center">갖고 싶은 책이 없습니다.</div>
+          <div className="text-xs text-gray-400 py-4 text-center">갖고 싶은 책이 없습니다.</div>
         ) : (
           books.map(book => (
             <div
               key={book.id}
               onClick={() => onBookClick(book)}
-              className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden cursor-pointer hover:bg-white/[0.07] transition-colors group"
+              className="bg-white/60 border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:bg-white transition-colors group shadow-sm"
             >
               {/* Cover Image */}
               {book.coverUrl && (
-                <div className="w-full flex justify-center py-4 px-6 bg-white/[0.02]">
+                <div className="w-full flex justify-center py-4 px-6 bg-gray-50/50">
                   <img
                     src={book.coverUrl}
                     alt={book.title}
@@ -65,7 +65,7 @@ export default function WishlistBooks({ books, onBookClick, onStatusChange, onNe
 
               {/* Book Info + Actions */}
               <div className="px-4 py-3 space-y-2">
-                <p className="text-sm text-white/90 font-medium leading-snug group-hover:text-blue-300 transition-colors">
+                <p className="text-sm text-gray-900 font-medium leading-snug group-hover:text-purple-600 transition-colors">
                   {book.title}
                 </p>
                 <div className="flex flex-col gap-1.5">
@@ -93,7 +93,7 @@ export default function WishlistBooks({ books, onBookClick, onStatusChange, onNe
       {/* Add New Page */}
       <button
         onClick={onNewClick}
-        className="mt-3 flex items-center justify-center gap-2 text-xs text-white/30 hover:text-white/50 transition-colors px-3 py-2 w-full"
+        className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         새 페이지
