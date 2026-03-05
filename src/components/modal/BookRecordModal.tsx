@@ -30,6 +30,28 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     }
   }, [isOpen, book, activeTab]);
 
+  // Close with Esc key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // isAdding (새 기록 작성 중)일 때는 바로 닫히지 않고 취소되게 할 수도 있지만,
+      // 일단 모달 자체를 닫는 기본 동작을 수행하도록 합니다.
+      if (e.key === 'Escape' && isOpen) {
+        if (isAdding) {
+           setIsAdding(false);
+        } else {
+           onClose();
+        }
+      }
+    };
+    
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose, isAdding]);
+
   const loadRecords = async () => {
     if (!book) return;
     setLoading(true);
@@ -80,21 +102,21 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
           initial={{ y: 50, opacity: 0, scale: 0.95 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 50, opacity: 0, scale: 0.95 }}
-          className="w-full max-w-2xl bg-white/10 border border-white/20 backdrop-blur-2xl rounded-3xl flex flex-col h-[85vh] overflow-hidden"
+          className="w-full max-w-2xl bg-white/95 border border-gray-200 backdrop-blur-2xl rounded-3xl flex flex-col h-[85vh] overflow-hidden shadow-2xl"
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="p-6 border-b border-white/10 flex flex-col gap-4 relative shrink-0">
-            <button onClick={onClose} className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors">✕</button>
+          <div className="p-6 border-b border-gray-200 flex flex-col gap-4 relative shrink-0">
+            <button onClick={onClose} className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">✕</button>
             <div className="flex gap-4 pr-8">
               {book.coverUrl ? (
                 <img src={book.coverUrl} alt={book.title} className="w-16 h-24 object-cover rounded-lg shadow-md" />
               ) : (
-                <div className="w-16 h-24 bg-white/10 rounded-lg flex-shrink-0"></div>
+                <div className="w-16 h-24 bg-gray-100 rounded-lg flex-shrink-0"></div>
               )}
               <div className="flex flex-col justify-center">
-                <h2 className="text-xl font-bold text-white line-clamp-1">{book.title}</h2>
-                <p className="text-white/60 text-sm mt-1">{book.author}</p>
+                <h2 className="text-xl font-bold text-gray-900 line-clamp-1">{book.title}</h2>
+                <p className="text-gray-500 text-sm mt-1">{book.author}</p>
               </div>
             </div>
 
@@ -109,7 +131,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-white/20 text-white' : 'text-white/50 hover:bg-white/10 hover:text-white/80'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-purple-100 text-purple-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
                 >
                   {tab.label}
                 </button>
@@ -118,74 +140,73 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
           </div>
 
           {/* Timeline View */}
-          <div className="flex-1 overflow-y-auto p-6 bg-black/20 hide-scrollbar relative">
-            <div className="absolute left-10 top-0 bottom-0 w-px bg-white/10"></div>
+          <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50 hide-scrollbar relative">
+            <div className="absolute left-10 top-0 bottom-0 w-px bg-gray-200"></div>
             
             <div className="space-y-6">
               {isAdding && (
                 <div className="relative pl-12 pr-4">
-                  <div className="absolute left-[-1.1rem] top-4 w-4 h-4 rounded-full bg-blue-400 border-4 border-black/80 z-10"></div>
-                  <div className="bg-white/10 border border-white/20 rounded-2xl p-4">
+                  <div className="absolute left-[-1.1rem] top-4 w-4 h-4 rounded-full bg-blue-400 border-4 border-white z-10"></div>
+                  <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-4">
                     <div className="flex gap-2 mb-3">
-                      <select value={newType} onChange={e => setNewType(e.target.value as any)} className="bg-white/5 border border-white/10 text-white text-xs rounded-lg px-2 py-1 outline-none">
-                        <option value="snippet" className="bg-gray-800">밑줄</option>
-                        <option value="diary" className="bg-gray-800">일기</option>
-                        <option value="review" className="bg-gray-800">리뷰</option>
+                      <select value={newType} onChange={e => setNewType(e.target.value as any)} className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-2 py-1 outline-none">
+                        <option value="snippet">밑줄</option>
+                        <option value="diary">일기</option>
+                        <option value="review">리뷰</option>
                       </select>
-                      <input type="number" placeholder="관련 페이지" value={newRelatedPage} onChange={e => setNewRelatedPage(e.target.value ? Number(e.target.value) : '')} className="bg-white/5 border border-white/10 text-white text-xs rounded-lg px-3 py-1 outline-none w-24 placeholder-white/30" />
-                      <input type="text" placeholder="태그 (e.g. #인상깊은)" value={newTag} onChange={e => setNewTag(e.target.value)} className="bg-white/5 border border-white/10 text-white text-xs rounded-lg px-3 py-1 outline-none flex-1 placeholder-white/30" />
+                      <input type="number" placeholder="관련 페이지" value={newRelatedPage} onChange={e => setNewRelatedPage(e.target.value ? Number(e.target.value) : '')} className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-3 py-1 outline-none w-24 placeholder-gray-400" />
+                      <input type="text" placeholder="태그 (e.g. #인상깊은)" value={newTag} onChange={e => setNewTag(e.target.value)} className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-3 py-1 outline-none flex-1 placeholder-gray-400" />
                     </div>
                     <textarea 
                       autoFocus
                       placeholder="내용을 입력하세요..." 
                       value={newText}
                       onChange={e => setNewText(e.target.value)}
-                      className="w-full bg-transparent border-none text-white text-sm resize-none outline-none min-h-[100px] placeholder-white/30"
+                      className="w-full bg-transparent border-none text-gray-900 text-sm resize-none outline-none min-h-[100px] placeholder-gray-400"
                     />
                     <div className="flex justify-end gap-2 mt-2">
-                       <button onClick={() => setIsAdding(false)} className="px-4 py-2 rounded-xl text-xs text-white/50 hover:bg-white/10">취소</button>
+                       <button onClick={() => setIsAdding(false)} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:bg-gray-100">취소</button>
                        <button onClick={handleAddRecord} disabled={!newText.trim()} className="px-4 py-2 rounded-xl text-xs bg-blue-500/80 hover:bg-blue-500 text-white disabled:opacity-50">저장</button>
                     </div>
                   </div>
                 </div>
               )}
 
-              {loading && !isAdding && <div className="pl-12 text-white/50 text-sm">기록을 불러오는 중...</div>}
+              {loading && !isAdding && <div className="pl-12 text-gray-500 text-sm">기록을 불러오는 중...</div>}
               
               {!loading && records.length === 0 && !isAdding && (
-                 <div className="pl-12 text-white/40 text-sm py-8">아직 작성된 기록이 없습니다. 우측 하단의 + 버튼을 눌러 기록을 남겨보세요.</div>
+                 <div className="pl-12 text-gray-400 text-sm py-8">아직 작성된 기록이 없습니다. 우측 하단의 + 버튼을 눌러 기록을 남겨보세요.</div>
               )}
 
               {!loading && records.map(record => (
                 <div key={record.id} className="relative pl-12 pr-4 group">
-                  <div className="absolute left-[-1.1rem] top-4 w-4 h-4 rounded-full border-4 border-black/80 z-10
-                    ${record.type === 'snippet' ? 'bg-pink-400' : record.type === 'diary' ? 'bg-purple-400' : 'bg-emerald-400'}"
+                  <div className="absolute left-[-1.1rem] top-4 w-4 h-4 rounded-full border-4 border-white z-10"
                     style={{ backgroundColor: record.type === 'snippet' ? '#f472b6' : record.type === 'diary' ? '#c084fc' : '#34d399' }}
                   ></div>
                   
-                  <div className="bg-white/5 border border-white/5 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:bg-gray-50 transition-colors shadow-sm">
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-white/10"
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-gray-100"
                           style={{ 
-                            color: record.type === 'snippet' ? '#f472b6' : record.type === 'diary' ? '#c084fc' : '#34d399',
+                            color: record.type === 'snippet' ? '#db2777' : record.type === 'diary' ? '#9333ea' : '#059669',
                             backgroundColor: record.type === 'snippet' ? 'rgba(244, 114, 182, 0.1)' : record.type === 'diary' ? 'rgba(192, 132, 252, 0.1)' : 'rgba(52, 211, 153, 0.1)' 
                           }}
                         >
                           {record.type}
                         </span>
-                        {record.relatedPage && <span className="text-xs text-white/40">p.{record.relatedPage}</span>}
+                        {record.relatedPage && <span className="text-xs text-gray-400">p.{record.relatedPage}</span>}
                       </div>
-                      <span className="text-xs text-white/30">{new Date(record.createDate).toLocaleDateString()}</span>
+                      <span className="text-xs text-gray-400">{new Date(record.createDate).toLocaleDateString()}</span>
                     </div>
                     
-                    <p className={`text-white text-sm leading-relaxed whitespace-pre-wrap ${record.type === 'snippet' && 'italic text-white/90 border-l-2 border-white/20 pl-3'}`}>
+                    <p className={`text-gray-800 text-sm leading-relaxed whitespace-pre-wrap ${record.type === 'snippet' && 'italic text-gray-700 border-l-2 border-gray-300 pl-3'}`}>
                       {record.type === 'snippet' ? `"${record.text}"` : record.text}
                     </p>
                     
                     {record.tag && (
-                      <div className="mt-4 pt-3 border-t border-white/5">
-                        <span className="text-xs text-blue-200/70 bg-blue-500/10 px-2 py-1 rounded-md">{record.tag}</span>
+                      <div className="mt-4 pt-3 border-t border-gray-100">
+                        <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-md">{record.tag}</span>
                       </div>
                     )}
                   </div>
