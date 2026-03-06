@@ -136,13 +136,11 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
     );
 
   return (
-    <div className={`liquid-panel p-6 flex-1 relative z-10 flex flex-col overflow-hidden transition-all duration-300 ${
-      isExpanded ? 'fixed inset-4 z-50 shadow-2xl' : ''
-    }`}>
+    <div className={`liquid-panel p-6 relative z-10 flex flex-col shrink-0 overflow-hidden transition-all duration-300 ${isExpanded ? 'fixed inset-4 z-50 shadow-2xl' : 'h-[460px]'}`}>
 
       {/* 헤더 */}
       <h3 className="text-gray-900 font-semibold text-lg flex items-center gap-2 mb-5 shrink-0">
-        <span>✍</span> 독서 기록
+        독서 기록
       </h3>
 
       {/* 툴바 */}

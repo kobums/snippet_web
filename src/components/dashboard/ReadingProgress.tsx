@@ -16,7 +16,7 @@ interface ReadingProgressProps {
   onStatusChange: (id: number, status: string, e?: React.MouseEvent) => void;
   onTypeChange?: (id: number, type: string, e?: React.MouseEvent) => void;
   onProgressChange: (id: number, current: number, max: number, e?: React.MouseEvent) => void;
-  onNewClick: () => void;
+  onNewClick: (allowedActions?: ('wish'|'have'|'borrow')[], defaultStatus?: 'waiting'|'reading'|'completed'|'dropped') => void;
 }
 
 const tabConfig: { key: FilterTab; label: string; icon: React.ReactNode }[] = [
@@ -122,7 +122,15 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
 
             {/* New Button */}
             <button
-              onClick={onNewClick}
+              onClick={() => {
+                if (activeTab === 'waiting') {
+                  onNewClick(['wish', 'have', 'borrow'], 'waiting');
+                } else if (activeTab === 'reading') {
+                  onNewClick(['have', 'borrow'], 'reading');
+                } else {
+                  onNewClick(['have', 'borrow'], 'completed');
+                }
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 text-xs font-medium transition-all border border-blue-500/20"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -142,7 +150,20 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
               {activeTab === 'reading' && '현재 읽고 있는 책이 없습니다.'}
               {activeTab === 'done' && '완료하거나 중단한 책이 없습니다.'}
             </span>
-            <button onClick={onNewClick} className="text-xs liquid-button px-3 py-1.5 transition-colors mt-2">새로운 책 추가하기</button>
+            <button 
+              onClick={() => {
+                if (activeTab === 'waiting') {
+                  onNewClick(['wish', 'have', 'borrow'], 'waiting');
+                } else if (activeTab === 'reading') {
+                  onNewClick(['have', 'borrow'], 'reading');
+                } else {
+                  onNewClick(['have', 'borrow'], 'completed');
+                }
+              }} 
+              className="text-xs liquid-button px-3 py-1.5 transition-colors mt-2"
+            >
+              새로운 책 추가하기
+            </button>
           </div>
         ) : (
           <div className="space-y-2">

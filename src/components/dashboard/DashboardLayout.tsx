@@ -17,6 +17,14 @@ export default function DashboardLayout() {
   const [loading, setLoading] = useState(true);
   const [selectedBookForRecord, setSelectedBookForRecord] = useState<UserBookDto | null>(null);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [searchModalActions, setSearchModalActions] = useState<('wish' | 'have' | 'borrow')[] | undefined>(undefined);
+  const [searchModalStatus, setSearchModalStatus] = useState<'waiting' | 'reading' | 'completed' | 'dropped'>('reading');
+
+  const openSearchModal = (actions?: ('wish' | 'have' | 'borrow')[], status?: 'waiting' | 'reading' | 'completed' | 'dropped') => {
+    setSearchModalActions(actions);
+    setSearchModalStatus(status || 'reading');
+    setShowSearchModal(true);
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -39,8 +47,17 @@ export default function DashboardLayout() {
   const handleStatusChange = async (id: number, status: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
     try {
-      await updateBookStatus(id, status);
-      setBooks(prev => prev.map(b => b.id === id ? { ...b, status: status as any } : b));
+      if (status === 'completed') {
+        const todayStr = new Date().toISOString().split('T')[0];
+        await Promise.all([
+          updateBookStatus(id, status),
+          import('@/lib/libraryApi').then(({ updateBookEndDate }) => updateBookEndDate(id, todayStr))
+        ]);
+        setBooks(prev => prev.map(b => b.id === id ? { ...b, status: status as any, endDate: todayStr } : b));
+      } else {
+        await updateBookStatus(id, status);
+        setBooks(prev => prev.map(b => b.id === id ? { ...b, status: status as any } : b));
+      }
     } catch (e) {
       console.error("Failed to update status", e);
       alert("상태 변경에 실패했습니다.");
@@ -94,7 +111,7 @@ export default function DashboardLayout() {
         onStatusChange={handleStatusChange}
         onTypeChange={handleTypeChange}
         onProgressChange={handleProgressChange}
-        onNewClick={() => setShowSearchModal(true)}
+        onNewClick={(actions, status) => openSearchModal(actions, status)}
       />
 
       {/* 3. Right Column: Book Library */}
@@ -103,18 +120,26 @@ export default function DashboardLayout() {
         onBookClick={setSelectedBookForRecord}
         onStatusChange={handleStatusChange}
         onTypeChange={handleTypeChange}
-        onNewClick={() => setShowSearchModal(true)}
+        onNewClick={(actions, status) => openSearchModal(actions, status)}
       />
 
       <BookRecordModal
         isOpen={!!selectedBookForRecord}
         onClose={() => setSelectedBookForRecord(null)}
         book={selectedBookForRecord}
+        onUpdateProgress={(id, page) => {
+          setBooks(prev => prev.map(b => b.id === id ? { ...b, readPage: page } : b));
+          if (selectedBookForRecord?.id === id) {
+            setSelectedBookForRecord({ ...selectedBookForRecord, readPage: page });
+          }
+        }}
       />
 
       <BookSearchModal
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
+        allowedActions={searchModalActions}
+        defaultStatus={searchModalStatus}
         onSuccess={() => {
           setShowSearchModal(false);
           getUserBooks().then(setBooks).catch(console.error);
