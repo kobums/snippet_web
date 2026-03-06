@@ -31,9 +31,9 @@ export const updateBookType = async (userBookId: number, type: string): Promise<
 };
 
 export const updateBookStartDate = async (userBookId: number, startDate: string): Promise<void> => {
-  await api.patch(`/library/${userBookId}/start-date`, { startDate });
+  await api.patch(`/library/${userBookId}/startdate`, { startDate });
 };
 
 export const updateBookEndDate = async (userBookId: number, endDate: string): Promise<void> => {
-  await api.patch(`/library/${userBookId}/end-date`, { endDate });
+  await api.patch(`/library/${userBookId}/enddate`, { endDate });
 };
