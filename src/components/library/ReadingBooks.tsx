@@ -2,14 +2,15 @@
 
 import React from 'react';
 import { UserBookDto } from '@/types/library';
+import { useUIStore } from '@/stores/useUIStore';
 
 interface ReadingBooksProps {
   books: UserBookDto[];
-  onBookClick: (book: UserBookDto) => void;
-  onNewClick: (allowedActions?: ('wish'|'have'|'borrow')[]) => void;
 }
 
-export default function ReadingBooks({ books, onBookClick, onNewClick }: ReadingBooksProps) {
+export default function ReadingBooks({ books }: ReadingBooksProps) {
+  const { openBookRecord, openSearchModal } = useUIStore();
+
   return (
     <div className="liquid-panel p-5">
       <h3 className="text-gray-900 font-medium mb-4 flex items-center gap-2">
@@ -33,7 +34,7 @@ export default function ReadingBooks({ books, onBookClick, onNewClick }: Reading
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
           </button>
           <button
-            onClick={() => onNewClick()}
+            onClick={() => openSearchModal({ allowedActions: ['have'], defaultStatus: 'reading' })}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 text-xs font-medium transition-all border border-blue-500/20"
           >
             새로 만들기
@@ -46,7 +47,7 @@ export default function ReadingBooks({ books, onBookClick, onNewClick }: Reading
       <div className="space-y-1.5">
         {books.length === 0 ? (
           <button
-            onClick={() => onNewClick()}
+            onClick={() => openSearchModal({ allowedActions: ['have'], defaultStatus: 'reading' })}
             className="w-full py-4 border border-dashed border-gray-300 rounded-xl text-sm text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-center gap-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -59,7 +60,7 @@ export default function ReadingBooks({ books, onBookClick, onNewClick }: Reading
               return (
                 <div
                   key={book.id}
-                  onClick={() => onBookClick(book)}
+                  onClick={() => openBookRecord(book)}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/60 border border-gray-200 hover:bg-white transition-colors cursor-pointer group shadow-sm"
                 >
                   {book.coverUrl ? (
@@ -80,7 +81,7 @@ export default function ReadingBooks({ books, onBookClick, onNewClick }: Reading
               );
             })}
             <button
-              onClick={() => onNewClick()}
+              onClick={() => openSearchModal({ allowedActions: ['have'], defaultStatus: 'reading' })}
               className="mt-1 flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

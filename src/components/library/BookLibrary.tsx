@@ -10,13 +10,9 @@ import BookSearchInput from './BookSearchInput';
 
 interface BookLibraryProps {
   books: UserBookDto[];
-  onBookClick: (book: UserBookDto) => void;
-  onStatusChange: (id: number, status: string, e?: React.MouseEvent) => void;
-  onTypeChange?: (id: number, type: string, e?: React.MouseEvent) => void;
-  onNewClick: (allowedActions?: ('wish' | 'have' | 'borrow')[], defaultStatus?: 'waiting' | 'reading' | 'completed' | 'dropped') => void;
 }
 
-export default function BookLibrary({ books, onBookClick, onStatusChange, onTypeChange, onNewClick }: BookLibraryProps) {
+export default function BookLibrary({ books }: BookLibraryProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredBooks = books.filter(b => {
@@ -36,34 +32,16 @@ export default function BookLibrary({ books, onBookClick, onStatusChange, onType
       <BookSearchInput value={searchQuery} onChange={setSearchQuery} />
 
       {/* 1. 최근 추가한 책 (모든 액션 허용) */}
-      <RecentlyAddedBooks
-        books={filteredBooks}
-        onBookClick={onBookClick}
-        onNewClick={() => onNewClick(undefined, 'reading')}
-      />
+      <RecentlyAddedBooks books={filteredBooks} />
 
       {/* 2. 읽고 있는 책 (소장만) */}
-      <ReadingBooks
-        books={readingBooks}
-        onBookClick={onBookClick}
-        onNewClick={() => onNewClick(['have'], 'reading')}
-      />
+      <ReadingBooks books={readingBooks} />
 
       {/* 3. 빌린 책 (대여만) */}
-      <BorrowedBooks
-        books={borrowedBooks}
-        onBookClick={onBookClick}
-        onNewClick={() => onNewClick(['borrow'], 'reading')}
-      />
+      <BorrowedBooks books={borrowedBooks} />
 
       {/* 4. 갖고 싶은 책 (위시만) */}
-      <WishlistBooks
-        books={wishBooks}
-        onBookClick={onBookClick}
-        onStatusChange={onStatusChange}
-        onTypeChange={onTypeChange}
-        onNewClick={() => onNewClick(['wish'], 'waiting')}
-      />
+      <WishlistBooks books={wishBooks} />
     </div>
   );
 }

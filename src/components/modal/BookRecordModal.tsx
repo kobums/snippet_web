@@ -3,19 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRecordsByBook, addRecordToBook } from '@/lib/recordApi';
-import { updateBookProgress, updateBookStatus, updateBookStartDate, updateBookEndDate } from '@/lib/libraryApi';
 import { RecordDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
+import { useBookStore } from '@/stores/useBookStore';
 
 interface BookRecordModalProps {
   isOpen: boolean;
   onClose: () => void;
   book: UserBookDto | null;
-  onUpdateProgress?: (id: number, page: number) => void;
-  onUpdateBook?: (id: number, updates: Partial<Pick<UserBookDto, 'status' | 'startDate' | 'endDate'>>) => void;
 }
 
-export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgress, onUpdateBook }: BookRecordModalProps) {
+export default function BookRecordModal({ isOpen, onClose, book }: BookRecordModalProps) {
+  const { updateStatus, updateProgress, updateStartDate, updateEndDate } = useBookStore();
   const [records, setRecords] = useState<RecordDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'snippet' | 'diary' | 'review'>('all');
@@ -48,72 +47,37 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
       setLocalReadPage(book?.readPage ?? '');
       return;
     }
-    
-    // Validate page range
+
     let newPage = Number(localReadPage);
     if (newPage < 0 || (book.totalPage && newPage > book.totalPage)) {
       alert(`페이지는 0에서 ${book.totalPage || '?'} 사이여야 합니다.`);
-      setLocalReadPage(book.readPage); // rollback
+      setLocalReadPage(book.readPage);
       return;
     }
-    
+
     setLocalReadPage(newPage);
-    
-    try {
-      await updateBookProgress(book.id, newPage);
-      if (onUpdateProgress) {
-        onUpdateProgress(book.id, newPage);
-      }
-    } catch (e) {
-      console.error("Failed to update progress", e);
-      alert("페이지 업데이트에 실패했습니다.");
-      setLocalReadPage(book.readPage); // rollback on error
-    }
+    await updateProgress(book.id, newPage);
   };
 
   const handleStatusChange = async (newStatus: UserBookDto['status']) => {
     if (!book || newStatus === localStatus) return;
     setLocalStatus(newStatus);
-    try {
-      if (newStatus === 'completed' && book.totalPage) {
-        await Promise.all([
-          updateBookStatus(book.id, newStatus),
-          updateBookProgress(book.id, book.totalPage),
-        ]);
-        setLocalReadPage(book.totalPage);
-        onUpdateProgress?.(book.id, book.totalPage);
-      } else {
-        await updateBookStatus(book.id, newStatus);
-      }
-      onUpdateBook?.(book.id, { status: newStatus });
-    } catch (e) {
-      console.error("Failed to update status", e);
-      setLocalStatus(book.status);
+    await updateStatus(book.id, newStatus);
+    if (newStatus === 'completed' && book.totalPage) {
+      setLocalReadPage(book.totalPage);
     }
   };
 
   const handleStartDateChange = async (date: string) => {
     if (!book) return;
     setLocalStartDate(date);
-    try {
-      await updateBookStartDate(book.id, date);
-      onUpdateBook?.(book.id, { startDate: date });
-    } catch (e) {
-      console.error("Failed to update start date", e);
-      setLocalStartDate(book.startDate || '');
-    }
+    await updateStartDate(book.id, date);
   };
 
   const handleEndDateChange = async (date: string) => {
     if (!book) return;
     setLocalEndDate(date);
-    try {
-      await updateBookEndDate(book.id, date);
-      onUpdateBook?.(book.id, { endDate: date });
-    } catch (e) {
-      console.error("Failed to update end date", e);
-      setLocalEndDate(book.endDate || '');
-    }
+    await updateEndDate(book.id, date);
   };
 
   // Close with Esc key

@@ -2,13 +2,12 @@
 
 import React, { useState } from 'react';
 import { UserBookDto } from '@/types/library';
+import { useUIStore } from '@/stores/useUIStore';
 
 type PeriodFilter = '1week' | '1month' | 'all';
 
 interface RecentlyAddedBooksProps {
   books: UserBookDto[];
-  onBookClick: (book: UserBookDto) => void;
-  onNewClick: () => void;
 }
 
 const STATUS_LABELS: Record<string, { text: string; color: string }> = {
@@ -25,9 +24,10 @@ const PERIOD_CONFIG: { key: PeriodFilter; label: string; days: number | null }[]
   { key: 'all', label: '전체', days: null },
 ];
 
-export default function RecentlyAddedBooks({ books, onBookClick, onNewClick }: RecentlyAddedBooksProps) {
+export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
   const [period, setPeriod] = useState<PeriodFilter>('1week');
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
+  const { openBookRecord, openSearchModal } = useUIStore();
 
   const currentPeriod = PERIOD_CONFIG.find(p => p.key === period)!;
 
@@ -83,7 +83,7 @@ export default function RecentlyAddedBooks({ books, onBookClick, onNewClick }: R
         {/* Actions */}
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => onNewClick()}
+            onClick={() => openSearchModal({ defaultStatus: 'reading' })}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 text-xs font-medium transition-all border border-blue-500/20"
           >
             새로 만들기
@@ -102,7 +102,7 @@ export default function RecentlyAddedBooks({ books, onBookClick, onNewClick }: R
             return (
               <div
                 key={book.id}
-                onClick={() => onBookClick(book)}
+                onClick={() => openBookRecord(book)}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/60 border border-gray-200 hover:bg-white transition-colors cursor-pointer group shadow-sm"
               >
                 <div className="w-7 h-7 rounded border border-gray-200 bg-gray-50 shrink-0 flex items-center justify-center text-gray-400 group-hover:bg-purple-50 group-hover:text-purple-500 group-hover:border-purple-200 transition-colors">
@@ -122,7 +122,7 @@ export default function RecentlyAddedBooks({ books, onBookClick, onNewClick }: R
 
       {/* Add New Page */}
       <button
-        onClick={() => onNewClick()}
+        onClick={() => openSearchModal({ defaultStatus: 'reading' })}
         className="mt-3 flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
