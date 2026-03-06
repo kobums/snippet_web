@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { UserBookDto } from '@/types/library';
+import { calcProgress } from '@/lib/util';
+import BookRecordPanel from './BookRecordPanel';
+import YearStatistics from './YearStatistics';
 
 type FilterTab = 'waiting' | 'reading' | 'done';
 type SortOption = 'newest' | 'title' | 'author';
@@ -11,6 +14,7 @@ interface ReadingProgressProps {
   loading: boolean;
   onBookClick: (book: UserBookDto) => void;
   onStatusChange: (id: number, status: string, e?: React.MouseEvent) => void;
+  onTypeChange?: (id: number, type: string, e?: React.MouseEvent) => void;
   onProgressChange: (id: number, current: number, max: number, e?: React.MouseEvent) => void;
   onNewClick: () => void;
 }
@@ -33,7 +37,7 @@ const tabConfig: { key: FilterTab; label: string; icon: React.ReactNode }[] = [
   },
 ];
 
-export default function ReadingProgress({ books, loading, onBookClick, onStatusChange, onProgressChange, onNewClick }: ReadingProgressProps) {
+export default function ReadingProgress({ books, loading, onBookClick, onStatusChange, onTypeChange, onProgressChange, onNewClick }: ReadingProgressProps) {
   const [activeTab, setActiveTab] = useState<FilterTab>('waiting');
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -42,7 +46,7 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
     let filtered: UserBookDto[];
     switch (activeTab) {
       case 'waiting':
-        filtered = books.filter(b => b.status === 'wish' || b.status === 'waiting');
+        filtered = books.filter(b => b.status === 'waiting');
         break;
       case 'reading':
         filtered = books.filter(b => b.status === 'reading');
@@ -144,7 +148,7 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
           <div className="space-y-2">
             <div className="text-xs text-gray-400 mb-3">할 일 {filteredBooks.length}</div>
             {filteredBooks.map(book => {
-              const progressPercent = book.totalPage > 0 ? Math.round((book.readPage / book.totalPage) * 100) : 0;
+              const progressPercent = calcProgress(book.readPage, book.totalPage);
               return (
                 <div key={book.id} onClick={() => onBookClick(book)} className="bg-white/60 border border-gray-200 p-4 rounded-2xl flex flex-col gap-3 group relative overflow-hidden cursor-pointer hover:bg-white transition-colors shadow-sm">
                   <div className="flex gap-3 relative z-10">
@@ -178,7 +182,13 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
                   )}
                   {activeTab === 'waiting' && (
                     <div className="flex gap-2 relative z-10 mt-1">
-                      <button onClick={(e) => onStatusChange(book.id, 'reading', e)} className="flex-1 py-1.5 liquid-button text-xs transition-colors">읽기 시작</button>
+                      <button onClick={(e) => {
+                        e.stopPropagation();
+                        if (book.type === 'wish' && onTypeChange) {
+                          onTypeChange(book.id, 'have', e);
+                        }
+                        onStatusChange(book.id, 'reading', e);
+                      }} className="flex-1 py-1.5 liquid-button text-xs transition-colors">읽기 시작</button>
                     </div>
                   )}
                   <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/20 blur-2xl rounded-full z-0 group-hover:bg-blue-400/30 transition-colors"></div>
@@ -189,31 +199,8 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
         )}
       </div>
 
-      <div className="liquid-panel p-6 flex-1 relative z-10 flex flex-col group overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity z-0"></div>
-        <div className="relative z-10 h-full flex flex-col">
-          <div className="flex justify-between items-center mb-4 shrink-0">
-            <h3 className="text-gray-900 font-medium text-lg flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-              나의 독서 기록 공간
-            </h3>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center text-center gap-4">
-            <div className="p-4 bg-purple-50/50 rounded-full border border-purple-100 mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-300"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-            </div>
-            <p className="text-gray-600 text-sm leading-relaxed max-w-sm">
-              진행 중이거나 다 읽은 책 카드를 클릭하면<br/>
-              해당 책에 대한 <span className="text-purple-600 font-medium">밑줄, 일기, 리뷰</span>를 남길 수 있는<br/>
-              타임라인이 열립니다.
-            </p>
-            <div className="flex gap-2 mt-4 text-[10px] text-gray-400 uppercase tracking-widest">
-              <span>Snippet</span> • <span>Diary</span> • <span>Review</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <BookRecordPanel books={books} />
+      <YearStatistics books={books} />
     </div>
   );
 }
