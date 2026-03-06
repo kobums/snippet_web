@@ -5,6 +5,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* number input 스피너 제거 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* ─────────────────────────────────────
    Liquid Glass 디자인 토큰
    ───────────────────────────────────── */
