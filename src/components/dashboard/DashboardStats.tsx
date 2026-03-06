@@ -5,17 +5,18 @@ import { PieChart, Pie, Cell } from 'recharts';
 import { UserBookDto } from '@/types/library';
 import { StatsDto } from '@/types/stats';
 import { formatDate } from '@/lib/util';
+import { useUIStore } from '@/stores/useUIStore';
 
 interface DashboardStatsProps {
   stats: StatsDto | null;
   books: UserBookDto[];
   completedBooks: UserBookDto[];
   loading: boolean;
-  onBookClick: (book: UserBookDto) => void;
 }
 
 
-export default function DashboardStats({ stats, books, completedBooks, loading, onBookClick }: DashboardStatsProps) {
+export default function DashboardStats({ stats, books, completedBooks, loading }: DashboardStatsProps) {
+  const openBookRecord = useUIStore(s => s.openBookRecord);
   // stats가 0이거나 없으면 books 목록에서 직접 계산 (|| 사용: 0도 falsy 처리)
   const reading  = stats?.currentlyReadingCount  || books.filter(b => b.status === 'reading').length;
   const completed = stats?.monthlyCompletedCount || books.filter(b => b.status === 'completed').length;
@@ -157,7 +158,7 @@ export default function DashboardStats({ stats, books, completedBooks, loading, 
               <div 
                 key={day} 
                 className={`aspect-[3/4] relative group rounded-md overflow-hidden border ${isToday ? 'border-purple-300 bg-purple-50/30' : 'border-gray-100 bg-gray-50/50'} flex items-center justify-center transition-all ${hasBooks ? 'cursor-pointer hover:border-purple-300 shadow-sm' : ''}`}
-                onClick={() => hasBooks && onBookClick(dayBooks[dayBooks.length - 1])}
+                onClick={() => hasBooks && openBookRecord(dayBooks[dayBooks.length - 1])}
               >
                 {hasBooks ? (
                   <>
@@ -206,7 +207,7 @@ export default function DashboardStats({ stats, books, completedBooks, loading, 
             completedBooks.map(book => (
               <div
                 key={book.id}
-                onClick={() => onBookClick(book)}
+                onClick={() => openBookRecord(book)}
                 className="bg-white/60 border border-white/60 rounded-2xl overflow-hidden cursor-pointer hover:bg-white transition-colors shadow-sm group"
               >
                 <div className="w-full h-[200px] bg-gray-50 flex items-center justify-center p-4">

@@ -5,6 +5,8 @@ import { UserBookDto } from '@/types/library';
 import { calcProgress } from '@/lib/util';
 import BookRecordPanel from './BookRecordPanel';
 import YearStatistics from './YearStatistics';
+import { useBookStore } from '@/stores/useBookStore';
+import { useUIStore } from '@/stores/useUIStore';
 
 type FilterTab = 'waiting' | 'reading' | 'done';
 type SortOption = 'newest' | 'title' | 'author';
@@ -12,11 +14,6 @@ type SortOption = 'newest' | 'title' | 'author';
 interface ReadingProgressProps {
   books: UserBookDto[];
   loading: boolean;
-  onBookClick: (book: UserBookDto) => void;
-  onStatusChange: (id: number, status: string, e?: React.MouseEvent) => void;
-  onTypeChange?: (id: number, type: string, e?: React.MouseEvent) => void;
-  onProgressChange: (id: number, current: number, max: number, e?: React.MouseEvent) => void;
-  onNewClick: (allowedActions?: ('wish'|'have'|'borrow')[], defaultStatus?: 'waiting'|'reading'|'completed'|'dropped') => void;
 }
 
 const tabConfig: { key: FilterTab; label: string; icon: React.ReactNode }[] = [
@@ -37,7 +34,9 @@ const tabConfig: { key: FilterTab; label: string; icon: React.ReactNode }[] = [
   },
 ];
 
-export default function ReadingProgress({ books, loading, onBookClick, onStatusChange, onTypeChange, onProgressChange, onNewClick }: ReadingProgressProps) {
+export default function ReadingProgress({ books, loading }: ReadingProgressProps) {
+  const { updateStatus, updateType } = useBookStore();
+  const { openBookRecord, openSearchModal } = useUIStore();
   const [activeTab, setActiveTab] = useState<FilterTab>('waiting');
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -124,11 +123,11 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
             <button
               onClick={() => {
                 if (activeTab === 'waiting') {
-                  onNewClick(['wish', 'have', 'borrow'], 'waiting');
+                  openSearchModal({ allowedActions: ['wish', 'have', 'borrow'], defaultStatus: 'waiting' });
                 } else if (activeTab === 'reading') {
-                  onNewClick(['have', 'borrow'], 'reading');
+                  openSearchModal({ allowedActions: ['have', 'borrow'], defaultStatus: 'reading' });
                 } else {
-                  onNewClick(['have', 'borrow'], 'completed');
+                  openSearchModal({ allowedActions: ['have', 'borrow'], defaultStatus: 'completed' });
                 }
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 text-xs font-medium transition-all border border-blue-500/20"
@@ -153,11 +152,11 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
             <button 
               onClick={() => {
                 if (activeTab === 'waiting') {
-                  onNewClick(['wish', 'have', 'borrow'], 'waiting');
+                  openSearchModal({ allowedActions: ['wish', 'have', 'borrow'], defaultStatus: 'waiting' });
                 } else if (activeTab === 'reading') {
-                  onNewClick(['have', 'borrow'], 'reading');
+                  openSearchModal({ allowedActions: ['have', 'borrow'], defaultStatus: 'reading' });
                 } else {
-                  onNewClick(['have', 'borrow'], 'completed');
+                  openSearchModal({ allowedActions: ['have', 'borrow'], defaultStatus: 'completed' });
                 }
               }} 
               className="text-xs liquid-button px-3 py-1.5 transition-colors mt-2"
@@ -171,7 +170,7 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
             {filteredBooks.map(book => {
               const progressPercent = calcProgress(book.readPage, book.totalPage);
               return (
-                <div key={book.id} onClick={() => onBookClick(book)} className="bg-white/60 border border-gray-200 p-4 rounded-2xl flex flex-col gap-3 group relative overflow-hidden cursor-pointer hover:bg-white transition-colors shadow-sm">
+                <div key={book.id} onClick={() => openBookRecord(book)} className="bg-white/60 border border-gray-200 p-4 rounded-2xl flex flex-col gap-3 group relative overflow-hidden cursor-pointer hover:bg-white transition-colors shadow-sm">
                   <div className="flex gap-3 relative z-10">
                     {book.coverUrl ? (
                       <img src={book.coverUrl} className="w-14 h-20 object-cover rounded-md shadow-md" alt="cover"/>
@@ -188,7 +187,7 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
                             <span>{progressPercent}%</span>
                             <span>{book.readPage} / {book.totalPage || '?'}p</span>
                           </div>
-                          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden cursor-pointer" onClick={(e) => onProgressChange(book.id, book.readPage, book.totalPage || 100, e)}>
+                          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); openBookRecord(book); }}>
                             <div className="h-full bg-blue-500 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
                           </div>
                         </>
@@ -197,18 +196,18 @@ export default function ReadingProgress({ books, loading, onBookClick, onStatusC
                   </div>
                   {activeTab === 'reading' && (
                     <div className="flex gap-2 relative z-10 mt-1">
-                      <button onClick={(e) => onStatusChange(book.id, 'completed', e)} className="flex-1 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs rounded-lg transition-colors">완독 처리</button>
-                      <button onClick={(e) => onStatusChange(book.id, 'dropped', e)} className="flex-1 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs rounded-lg transition-colors">중단</button>
+                      <button onClick={(e) => updateStatus(book.id, 'completed', e)} className="flex-1 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs rounded-lg transition-colors">완독 처리</button>
+                      <button onClick={(e) => updateStatus(book.id, 'dropped', e)} className="flex-1 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs rounded-lg transition-colors">중단</button>
                     </div>
                   )}
                   {activeTab === 'waiting' && (
                     <div className="flex gap-2 relative z-10 mt-1">
                       <button onClick={(e) => {
                         e.stopPropagation();
-                        if (book.type === 'wish' && onTypeChange) {
-                          onTypeChange(book.id, 'have', e);
+                        if (book.type === 'wish') {
+                          updateType(book.id, 'have', e);
                         }
-                        onStatusChange(book.id, 'reading', e);
+                        updateStatus(book.id, 'reading', e);
                       }} className="flex-1 py-1.5 liquid-button text-xs transition-colors">읽기 시작</button>
                     </div>
                   )}
