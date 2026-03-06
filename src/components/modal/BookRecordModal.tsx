@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRecordsByBook, addRecordToBook } from '@/lib/recordApi';
+import { updateBookProgress } from '@/lib/libraryApi';
 import { RecordDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
 
@@ -10,9 +11,10 @@ interface BookRecordModalProps {
   isOpen: boolean;
   onClose: () => void;
   book: UserBookDto | null;
+  onUpdateProgress?: (id: number, page: number) => void;
 }
 
-export default function BookRecordModal({ isOpen, onClose, book }: BookRecordModalProps) {
+export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgress }: BookRecordModalProps) {
   const [records, setRecords] = useState<RecordDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'snippet' | 'diary' | 'review'>('all');
@@ -24,11 +26,43 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
   const [newTag, setNewTag] = useState('');
   const [newRelatedPage, setNewRelatedPage] = useState<number | ''>('');
 
+  // Progress State
+  const [localReadPage, setLocalReadPage] = useState<number | ''>('');
+
   useEffect(() => {
     if (isOpen && book) {
       loadRecords();
+      setLocalReadPage(book.readPage);
     }
   }, [isOpen, book, activeTab]);
+
+  const handleProgressUpdate = async () => {
+    if (!book || localReadPage === '' || localReadPage === book.readPage) {
+      setLocalReadPage(book?.readPage ?? '');
+      return;
+    }
+    
+    // Validate page range
+    let newPage = Number(localReadPage);
+    if (newPage < 0 || (book.totalPage && newPage > book.totalPage)) {
+      alert(`페이지는 0에서 ${book.totalPage || '?'} 사이여야 합니다.`);
+      setLocalReadPage(book.readPage); // rollback
+      return;
+    }
+    
+    setLocalReadPage(newPage);
+    
+    try {
+      await updateBookProgress(book.id, newPage);
+      if (onUpdateProgress) {
+        onUpdateProgress(book.id, newPage);
+      }
+    } catch (e) {
+      console.error("Failed to update progress", e);
+      alert("페이지 업데이트에 실패했습니다.");
+      setLocalReadPage(book.readPage); // rollback on error
+    }
+  };
 
   // Close with Esc key
   useEffect(() => {
@@ -114,9 +148,27 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
               ) : (
                 <div className="w-16 h-24 bg-gray-100 rounded-lg flex-shrink-0"></div>
               )}
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center flex-1">
                 <h2 className="text-xl font-bold text-gray-900 line-clamp-1">{book.title}</h2>
-                <p className="text-gray-500 text-sm mt-1">{book.author}</p>
+                <p className="text-gray-500 text-sm mt-1 mb-3">{book.author}</p>
+                
+                {/* Reading Progress Updater */}
+                {book.status === 'reading' && (
+                  <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-100 w-fit">
+                    <span className="text-xs text-gray-500 font-medium">읽은 페이지</span>
+                    <div className="flex items-center gap-1.5">
+                      <input 
+                        type="number" 
+                        value={localReadPage} 
+                        onChange={(e) => setLocalReadPage(e.target.value === '' ? '' : Number(e.target.value))}
+                        onBlur={handleProgressUpdate}
+                        onKeyDown={(e) => e.key === 'Enter' && handleProgressUpdate()}
+                        className="w-14 px-2 py-1 text-xs text-center border border-gray-200 rounded-md focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white"
+                      />
+                      <span className="text-xs text-gray-400">/ {book.totalPage || '?'}p</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
