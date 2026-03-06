@@ -6,7 +6,7 @@ import { UserBookDto } from '@/types/library';
 interface BorrowedBooksProps {
   books: UserBookDto[];
   onBookClick: (book: UserBookDto) => void;
-  onNewClick: () => void;
+  onNewClick: (allowedActions?: ('wish'|'have'|'borrow')[]) => void;
 }
 
 export default function BorrowedBooks({ books, onBookClick, onNewClick }: BorrowedBooksProps) {
@@ -24,7 +24,7 @@ export default function BorrowedBooks({ books, onBookClick, onNewClick }: Borrow
         </div>
 
         <button
-          onClick={onNewClick}
+          onClick={() => onNewClick()}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 text-xs font-medium transition-all border border-blue-500/20"
         >
           새로 만들기
@@ -74,7 +74,7 @@ export default function BorrowedBooks({ books, onBookClick, onNewClick }: Borrow
       {/* Add New Page */}
       <>
         <button
-          onClick={onNewClick}
+          onClick={() => onNewClick()}
           className="mt-1 flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
