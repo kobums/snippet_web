@@ -25,3 +25,15 @@ export const updateBookStatus = async (userBookId: number, status: string): Prom
 export const updateBookProgress = async (userBookId: number, readPage: number): Promise<void> => {
   await api.patch(`/library/${userBookId}/progress`, { readPage });
 };
+
+export const updateBookType = async (userBookId: number, type: string): Promise<void> => {
+  await api.patch(`/library/${userBookId}/type`, { type });
+};
+
+export const updateBookStartDate = async (userBookId: number, startDate: string): Promise<void> => {
+  await api.patch(`/library/${userBookId}/start-date`, { startDate });
+};
+
+export const updateBookEndDate = async (userBookId: number, endDate: string): Promise<void> => {
+  await api.patch(`/library/${userBookId}/end-date`, { endDate });
+};

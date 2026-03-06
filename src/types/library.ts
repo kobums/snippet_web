@@ -16,7 +16,10 @@ export interface LibraryAddRequestDto {
   isbn: string;
   coverUrl: string;
   totalPage: number | null;
-  status: 'wish' | 'reading' | 'waiting';
+  type: 'wish' | 'borrow' | 'have';
+  status: 'waiting' | 'reading' | 'completed' | 'dropped';
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface UserBookDto {
@@ -25,8 +28,11 @@ export interface UserBookDto {
   title: string;
   author: string;
   coverUrl: string;
-  status: 'wish' | 'reading' | 'waiting' | 'completed' | 'dropped';
+  type: 'wish' | 'borrow' | 'have';
+  status: 'waiting' | 'reading' | 'completed' | 'dropped';
   readPage: number;
   totalPage: number;
   createDate: string;
+  startDate: string;
+  endDate: string;
 }
