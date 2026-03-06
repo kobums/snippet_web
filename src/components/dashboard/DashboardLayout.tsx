@@ -49,11 +49,16 @@ export default function DashboardLayout() {
     try {
       if (status === 'completed') {
         const todayStr = new Date().toISOString().split('T')[0];
-        await Promise.all([
+        const book = books.find(b => b.id === id);
+        const promises: Promise<any>[] = [
           updateBookStatus(id, status),
-          import('@/lib/libraryApi').then(({ updateBookEndDate }) => updateBookEndDate(id, todayStr))
-        ]);
-        setBooks(prev => prev.map(b => b.id === id ? { ...b, status: status as any, endDate: todayStr } : b));
+          import('@/lib/libraryApi').then(({ updateBookEndDate }) => updateBookEndDate(id, todayStr)),
+        ];
+        if (book?.totalPage) {
+          promises.push(updateBookProgress(id, book.totalPage));
+        }
+        await Promise.all(promises);
+        setBooks(prev => prev.map(b => b.id === id ? { ...b, status: status as any, endDate: todayStr, readPage: b.totalPage || b.readPage } : b));
       } else {
         await updateBookStatus(id, status);
         setBooks(prev => prev.map(b => b.id === id ? { ...b, status: status as any } : b));
@@ -131,6 +136,12 @@ export default function DashboardLayout() {
           setBooks(prev => prev.map(b => b.id === id ? { ...b, readPage: page } : b));
           if (selectedBookForRecord?.id === id) {
             setSelectedBookForRecord({ ...selectedBookForRecord, readPage: page });
+          }
+        }}
+        onUpdateBook={(id, updates) => {
+          setBooks(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b));
+          if (selectedBookForRecord?.id === id) {
+            setSelectedBookForRecord({ ...selectedBookForRecord, ...updates });
           }
         }}
       />

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRecordsByBook, addRecordToBook } from '@/lib/recordApi';
-import { updateBookProgress } from '@/lib/libraryApi';
+import { updateBookProgress, updateBookStatus, updateBookStartDate, updateBookEndDate } from '@/lib/libraryApi';
 import { RecordDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
 
@@ -12,9 +12,10 @@ interface BookRecordModalProps {
   onClose: () => void;
   book: UserBookDto | null;
   onUpdateProgress?: (id: number, page: number) => void;
+  onUpdateBook?: (id: number, updates: Partial<Pick<UserBookDto, 'status' | 'startDate' | 'endDate'>>) => void;
 }
 
-export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgress }: BookRecordModalProps) {
+export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgress, onUpdateBook }: BookRecordModalProps) {
   const [records, setRecords] = useState<RecordDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'snippet' | 'diary' | 'review'>('all');
@@ -28,11 +29,17 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
 
   // Progress State
   const [localReadPage, setLocalReadPage] = useState<number | ''>('');
+  const [localStatus, setLocalStatus] = useState<UserBookDto['status']>('waiting');
+  const [localStartDate, setLocalStartDate] = useState('');
+  const [localEndDate, setLocalEndDate] = useState('');
 
   useEffect(() => {
     if (isOpen && book) {
       loadRecords();
       setLocalReadPage(book.readPage);
+      setLocalStatus(book.status);
+      setLocalStartDate(book.startDate?.slice(0, 10) || '');
+      setLocalEndDate(book.endDate?.slice(0, 10) || '');
     }
   }, [isOpen, book, activeTab]);
 
@@ -61,6 +68,51 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
       console.error("Failed to update progress", e);
       alert("페이지 업데이트에 실패했습니다.");
       setLocalReadPage(book.readPage); // rollback on error
+    }
+  };
+
+  const handleStatusChange = async (newStatus: UserBookDto['status']) => {
+    if (!book || newStatus === localStatus) return;
+    setLocalStatus(newStatus);
+    try {
+      if (newStatus === 'completed' && book.totalPage) {
+        await Promise.all([
+          updateBookStatus(book.id, newStatus),
+          updateBookProgress(book.id, book.totalPage),
+        ]);
+        setLocalReadPage(book.totalPage);
+        onUpdateProgress?.(book.id, book.totalPage);
+      } else {
+        await updateBookStatus(book.id, newStatus);
+      }
+      onUpdateBook?.(book.id, { status: newStatus });
+    } catch (e) {
+      console.error("Failed to update status", e);
+      setLocalStatus(book.status);
+    }
+  };
+
+  const handleStartDateChange = async (date: string) => {
+    if (!book) return;
+    setLocalStartDate(date);
+    try {
+      await updateBookStartDate(book.id, date);
+      onUpdateBook?.(book.id, { startDate: date });
+    } catch (e) {
+      console.error("Failed to update start date", e);
+      setLocalStartDate(book.startDate || '');
+    }
+  };
+
+  const handleEndDateChange = async (date: string) => {
+    if (!book) return;
+    setLocalEndDate(date);
+    try {
+      await updateBookEndDate(book.id, date);
+      onUpdateBook?.(book.id, { endDate: date });
+    } catch (e) {
+      console.error("Failed to update end date", e);
+      setLocalEndDate(book.endDate || '');
     }
   };
 
@@ -102,6 +154,10 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
 
   const handleAddRecord = async () => {
     if (!book || !newText.trim()) return;
+    if (newRelatedPage !== '' && (newRelatedPage < 0 || (book.totalPage && newRelatedPage > book.totalPage))) {
+      alert(`0~${book.totalPage}p 사이로 입력해주세요`);
+      return;
+    }
     
     try {
       await addRecordToBook(book.bookId, {
@@ -152,23 +208,63 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
                 <h2 className="text-xl font-bold text-gray-900 line-clamp-1">{book.title}</h2>
                 <p className="text-gray-500 text-sm mt-1 mb-3">{book.author}</p>
                 
-                {/* Reading Progress Updater */}
-                {book.status === 'reading' && (
-                  <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-100 w-fit">
-                    <span className="text-xs text-gray-500 font-medium">읽은 페이지</span>
-                    <div className="flex items-center gap-1.5">
-                      <input 
-                        type="number" 
-                        value={localReadPage} 
-                        onChange={(e) => setLocalReadPage(e.target.value === '' ? '' : Number(e.target.value))}
-                        onBlur={handleProgressUpdate}
-                        onKeyDown={(e) => e.key === 'Enter' && handleProgressUpdate()}
-                        className="w-14 px-2 py-1 text-xs text-center border border-gray-200 rounded-md focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white"
-                      />
-                      <span className="text-xs text-gray-400">/ {book.totalPage || '?'}p</span>
+                {/* Book Info Editor */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Status */}
+                  <select
+                    value={localStatus}
+                    onChange={(e) => handleStatusChange(e.target.value as UserBookDto['status'])}
+                    className="appearance-none bg-white/60 hover:bg-white text-gray-700 font-medium text-xs px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-300 shadow-sm transition-all cursor-pointer"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', paddingRight: '1.75rem' }}
+                  >
+                    <option value="waiting">읽고 싶은</option>
+                    <option value="reading">읽는 중</option>
+                    <option value="completed">완독</option>
+                    <option value="dropped">중단</option>
+                  </select>
+
+                  {/* Reading Progress */}
+                  {localStatus === 'reading' && (
+                    <div className="flex items-center gap-2 bg-white/60 hover:bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                      <span className="text-xs text-gray-500 font-medium whitespace-nowrap">읽은 페이지</span>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          value={localReadPage}
+                          onChange={(e) => setLocalReadPage(e.target.value === '' ? '' : Number(e.target.value))}
+                          onBlur={handleProgressUpdate}
+                          onKeyDown={(e) => e.key === 'Enter' && handleProgressUpdate()}
+                          className="w-12 px-1 text-xs text-center border-b border-gray-300 hover:border-purple-400 focus:border-purple-500 bg-transparent outline-none transition-colors text-gray-900 font-medium"
+                        />
+                        <span className="text-[11px] text-gray-400 font-medium">/ {book.totalPage || '?'}p</span>
+                      </div>
                     </div>
+                  )}
+
+                  {/* Start Date */}
+                  <div className="flex items-center gap-2 bg-white/60 hover:bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                    <span className="text-xs text-gray-500 font-medium">시작</span>
+                    <input
+                      type="date"
+                      value={localStartDate}
+                      onChange={(e) => handleStartDateChange(e.target.value)}
+                      className="text-xs text-gray-700 bg-transparent outline-none font-medium cursor-pointer"
+                    />
                   </div>
-                )}
+
+                  {/* End Date */}
+                  {(localStatus === 'completed' || localStatus === 'dropped') && (
+                    <div className="flex items-center gap-2 bg-white/60 hover:bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                      <span className="text-xs text-gray-500 font-medium">종료</span>
+                      <input
+                        type="date"
+                        value={localEndDate}
+                        onChange={(e) => handleEndDateChange(e.target.value)}
+                        className="text-xs text-gray-700 bg-transparent outline-none font-medium cursor-pointer"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -182,7 +278,10 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
               ].map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => {
+                    setActiveTab(tab.id as any);
+                    if (isAdding) setIsAdding(false);
+                  }}
                   className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-purple-100 text-purple-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
                 >
                   {tab.label}
@@ -206,7 +305,20 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
                         <option value="diary">일기</option>
                         <option value="review">리뷰</option>
                       </select>
-                      <input type="number" placeholder="관련 페이지" value={newRelatedPage} onChange={e => setNewRelatedPage(e.target.value ? Number(e.target.value) : '')} className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-3 py-1 outline-none w-24 placeholder-gray-400" />
+                      <input
+                        type="number"
+                        placeholder="관련 페이지"
+                        value={newRelatedPage}
+                        onChange={e => {
+                          const val = e.target.value ? Number(e.target.value) : '';
+                          setNewRelatedPage(val);
+                          if (val !== '' && (val < 0 || (book.totalPage && val > book.totalPage))) {
+                            alert(`0~${book.totalPage}p 사이로 입력해주세요`);
+                            setNewRelatedPage('');
+                          }
+                        }}
+                        className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-3 py-1 outline-none w-24 placeholder-gray-400"
+                      />
                       <input type="text" placeholder="태그 (e.g. #인상깊은)" value={newTag} onChange={e => setNewTag(e.target.value)} className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-3 py-1 outline-none flex-1 placeholder-gray-400" />
                     </div>
                     <textarea 
@@ -270,7 +382,10 @@ export default function BookRecordModal({ isOpen, onClose, book, onUpdateProgres
           {/* Floating Action Button */}
           {!isAdding && (
             <button 
-              onClick={() => setIsAdding(true)}
+              onClick={() => {
+                if (activeTab !== 'all') setNewType(activeTab);
+                setIsAdding(true);
+              }}
               className="absolute bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg shadow-purple-500/20 flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-20"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
