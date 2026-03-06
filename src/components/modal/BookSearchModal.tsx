@@ -55,10 +55,21 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess }: BookSear
     return () => clearTimeout(timer);
   }, [query]);
 
-  const handleAddBook = async (book: BookSearchDto, status: 'wish' | 'reading' | 'waiting' = 'wish') => {
+  const handleAddBook = async (
+    book: BookSearchDto, 
+    type: 'wish' | 'borrow' | 'have', 
+    status: 'waiting' | 'reading' | 'completed' | 'dropped' = 'waiting'
+  ) => {
     setSavingIsbn(book.isbn);
     try {
-      await addBookToLibrary({ ...book, status });
+      const now = new Date().toISOString();
+      await addBookToLibrary({ 
+        ...book, 
+        type, 
+        status, 
+        startDate: now, 
+        endDate: now 
+      });
       if (onSuccess) onSuccess();
       onClose();
     } catch (e) {
@@ -128,18 +139,25 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess }: BookSear
                   
                   <div className="mt-auto pt-2 flex gap-2">
                     <button 
-                      onClick={() => handleAddBook(book, 'wish')}
+                      onClick={() => handleAddBook(book, 'wish', 'waiting')}
                       disabled={savingIsbn === book.isbn}
                       className="flex-1 py-1.5 px-2 bg-pink-50 hover:bg-pink-100 text-pink-600 text-xs rounded-lg transition-colors disabled:opacity-50"
                     >
-                      {savingIsbn === book.isbn ? '저장 중...' : '위시리스트 추가'}
+                      {savingIsbn === book.isbn ? '저장 중...' : '위시리스트'}
                     </button>
                     <button 
-                      onClick={() => handleAddBook(book, 'reading')}
+                      onClick={() => handleAddBook(book, 'have', 'reading')}
                       disabled={savingIsbn === book.isbn}
                       className="flex-1 py-1.5 px-2 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs rounded-lg transition-colors disabled:opacity-50"
                     >
-                      {savingIsbn === book.isbn ? '저장 중...' : '읽는 중 추가'}
+                      {savingIsbn === book.isbn ? '저장 중...' : '소장/읽기시작'}
+                    </button>
+                    <button 
+                      onClick={() => handleAddBook(book, 'borrow', 'reading')}
+                      disabled={savingIsbn === book.isbn}
+                      className="flex-1 py-1.5 px-2 bg-green-50 hover:bg-green-100 text-green-600 text-xs rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {savingIsbn === book.isbn ? '저장 중...' : '대여/읽기시작'}
                     </button>
                   </div>
                 </div>

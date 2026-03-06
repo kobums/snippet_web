@@ -7,10 +7,11 @@ interface WishlistBooksProps {
   books: UserBookDto[];
   onBookClick: (book: UserBookDto) => void;
   onStatusChange: (id: number, status: string, e?: React.MouseEvent) => void;
+  onTypeChange?: (id: number, type: string, e?: React.MouseEvent) => void;
   onNewClick: () => void;
 }
 
-export default function WishlistBooks({ books, onBookClick, onStatusChange, onNewClick }: WishlistBooksProps) {
+export default function WishlistBooks({ books, onBookClick, onStatusChange, onTypeChange, onNewClick }: WishlistBooksProps) {
   return (
     <div className="liquid-panel p-5">
       <h3 className="text-gray-900 font-medium mb-4 flex items-center gap-2">
@@ -70,18 +71,26 @@ export default function WishlistBooks({ books, onBookClick, onStatusChange, onNe
                 </p>
                 <div className="flex flex-col gap-1.5">
                   <button
-                    onClick={(e) => onStatusChange(book.id, 'reading', e)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onTypeChange) onTypeChange(book.id, 'have', e);
+                      onStatusChange(book.id, 'reading', e); 
+                    }}
                     className="flex items-center gap-1.5 text-[11px] text-blue-300 hover:text-blue-200 transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                    소장
+                    소장으로 변경
                   </button>
                   <button
-                    onClick={(e) => onStatusChange(book.id, 'waiting', e)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onTypeChange) onTypeChange(book.id, 'borrow', e);
+                      onStatusChange(book.id, 'reading', e); 
+                    }}
                     className="flex items-center gap-1.5 text-[11px] text-amber-300 hover:text-amber-200 transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                    대여
+                    대여로 변경
                   </button>
                 </div>
               </div>

@@ -10,13 +10,14 @@ interface BookLibraryProps {
   books: UserBookDto[];
   onBookClick: (book: UserBookDto) => void;
   onStatusChange: (id: number, status: string, e?: React.MouseEvent) => void;
+  onTypeChange?: (id: number, type: string, e?: React.MouseEvent) => void;
   onNewClick: () => void;
 }
 
-export default function BookLibrary({ books, onBookClick, onStatusChange, onNewClick }: BookLibraryProps) {
+export default function BookLibrary({ books, onBookClick, onStatusChange, onTypeChange, onNewClick }: BookLibraryProps) {
   const readingBooks = books.filter(b => b.status === 'reading');
-  const waitingBooks = books.filter(b => b.status === 'waiting');
-  const wishBooks = books.filter(b => b.status === 'wish');
+  const borrowedBooks = books.filter(b => b.type === 'borrow');
+  const wishBooks = books.filter(b => b.type === 'wish');
 
   return (
     <div className="w-full lg:w-1/4 flex flex-col gap-5 shrink-0 lg:overflow-y-auto hide-scrollbar">
@@ -37,7 +38,7 @@ export default function BookLibrary({ books, onBookClick, onStatusChange, onNewC
 
       {/* 3. 빌린 책 */}
       <BorrowedBooks
-        books={waitingBooks}
+        books={borrowedBooks}
         onBookClick={onBookClick}
         onNewClick={onNewClick}
       />
@@ -47,6 +48,7 @@ export default function BookLibrary({ books, onBookClick, onStatusChange, onNewC
         books={wishBooks}
         onBookClick={onBookClick}
         onStatusChange={onStatusChange}
+        onTypeChange={onTypeChange}
         onNewClick={onNewClick}
       />
     </div>

@@ -47,6 +47,20 @@ export default function DashboardLayout() {
     }
   };
 
+  const handleTypeChange = async (id: number, type: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    try {
+      import('@/lib/libraryApi').then(({ updateBookType }) => {
+        updateBookType(id, type).then(() => {
+          setBooks(prev => prev.map(b => b.id === id ? { ...b, type: type as any } : b));
+        });
+      });
+    } catch (e) {
+      console.error("Failed to update type", e);
+      alert("분류 변경에 실패했습니다.");
+    }
+  };
+
   const handleProgressChange = async (id: number, current: number, max: number, e?: React.MouseEvent) => {
     e?.stopPropagation();
     const nextProgress = Math.min(current + 10, max);
@@ -61,11 +75,12 @@ export default function DashboardLayout() {
   const completedBooks = books.filter(b => b.status === 'completed');
 
   return (
-    <div className="w-full h-full p-4 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-[1600px] mx-auto overflow-y-auto lg:overflow-hidden hide-scrollbar">
+    <div className="w-full h-full p-4 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-[2000px] mx-auto overflow-y-auto lg:overflow-hidden hide-scrollbar">
 
       {/* 1. Left Column: Stats & Read Books */}
       <DashboardStats
         stats={stats}
+        books={books}
         completedBooks={completedBooks}
         loading={loading}
         onBookClick={setSelectedBookForRecord}
@@ -77,6 +92,7 @@ export default function DashboardLayout() {
         loading={loading}
         onBookClick={setSelectedBookForRecord}
         onStatusChange={handleStatusChange}
+        onTypeChange={handleTypeChange}
         onProgressChange={handleProgressChange}
         onNewClick={() => setShowSearchModal(true)}
       />
@@ -86,6 +102,7 @@ export default function DashboardLayout() {
         books={books}
         onBookClick={setSelectedBookForRecord}
         onStatusChange={handleStatusChange}
+        onTypeChange={handleTypeChange}
         onNewClick={() => setShowSearchModal(true)}
       />
 

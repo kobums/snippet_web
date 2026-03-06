@@ -14,9 +14,9 @@ interface BookLibraryProps {
 }
 
 export default function BookLibrary({ books, onBookClick, onStatusChange, onNewClick }: BookLibraryProps) {
-  const readingBooks = books.filter(b => b.status === 'reading');
-  const waitingBooks = books.filter(b => b.status === 'waiting');
-  const wishBooks = books.filter(b => b.status === 'wish');
+  const readingBooks = books.filter(b => b.status === 'reading' && (b.type === 'have' || b.type === 'borrow'));
+  const borrowedBooks = books.filter(b => b.type === 'borrow');
+  const wishBooks = books.filter(b => b.type === 'wish');
 
   return (
     <div className="w-full lg:w-1/4 flex flex-col gap-5 shrink-0 lg:overflow-y-auto hide-scrollbar">
@@ -37,7 +37,7 @@ export default function BookLibrary({ books, onBookClick, onStatusChange, onNewC
 
       {/* 3. 빌린 책 */}
       <BorrowedBooks
-        books={waitingBooks}
+        books={borrowedBooks}
         onBookClick={onBookClick}
         onNewClick={onNewClick}
       />
