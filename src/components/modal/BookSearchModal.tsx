@@ -159,22 +159,40 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
                       </button>
                     )}
                     {showHave && (
-                      <button 
-                        onClick={() => handleAddBook(book, 'have', effectiveStatus)}
-                        disabled={savingIsbn === book.isbn}
-                        className="flex-1 py-1.5 px-2 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {savingIsbn === book.isbn ? '저장 중...' : effectiveStatus === 'waiting' ? '소장/대기중' : effectiveStatus === 'completed' ? '소장/완독' : '소장/읽기시작'}
-                      </button>
+                      <>
+                        <button 
+                          onClick={() => handleAddBook(book, 'have', 'waiting')}
+                          disabled={savingIsbn === book.isbn}
+                          className="flex-1 py-1.5 px-2 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {savingIsbn === book.isbn ? '저장 중...' : '소장/대기중'}
+                        </button>
+                        <button 
+                          onClick={() => handleAddBook(book, 'have', 'reading')}
+                          disabled={savingIsbn === book.isbn}
+                          className="flex-1 py-1.5 px-2 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {savingIsbn === book.isbn ? '저장 중...' : '소장/읽기시작'}
+                        </button>
+                      </>
                     )}
                     {showBorrow && (
-                      <button 
-                        onClick={() => handleAddBook(book, 'borrow', effectiveStatus)}
-                        disabled={savingIsbn === book.isbn}
-                        className="flex-1 py-1.5 px-2 bg-green-50 hover:bg-green-100 text-green-600 text-xs rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {savingIsbn === book.isbn ? '저장 중...' : effectiveStatus === 'waiting' ? '대여/대기중' : effectiveStatus === 'completed' ? '대여/완독' : '대여/읽기시작'}
-                      </button>
+                      <>
+                        <button 
+                          onClick={() => handleAddBook(book, 'borrow', 'waiting')}
+                          disabled={savingIsbn === book.isbn}
+                          className="flex-1 py-1.5 px-2 bg-green-50 hover:bg-green-100 text-green-600 text-xs rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {savingIsbn === book.isbn ? '저장 중...' : '대여/대기중'}
+                        </button>
+                        <button 
+                          onClick={() => handleAddBook(book, 'borrow', 'reading')}
+                          disabled={savingIsbn === book.isbn}
+                          className="flex-1 py-1.5 px-2 bg-green-100 hover:bg-green-200 text-green-700 text-xs rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {savingIsbn === book.isbn ? '저장 중...' : '대여/읽기시작'}
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
