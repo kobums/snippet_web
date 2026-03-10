@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRecordsByBook, addRecordToBook } from '@/lib/recordApi';
 import { RecordDto } from '@/types/record';
@@ -143,7 +144,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
   if (!isOpen || !book) return null;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       <motion.div 
         initial={{ opacity: 0 }}
@@ -361,6 +362,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

@@ -8,6 +8,7 @@ import { handleApiError } from '@/lib/errorHandler';
 import RecordToolbar, { type RecordTab, type SortOption } from './record/RecordToolbar';
 import RecordForm from './record/RecordForm';
 import RecordList from './record/RecordList';
+import BookRecordModal from '@/components/modal/BookRecordModal';
 
 /* 탭 → API type 매핑 */
 const tabToApiType: Record<RecordTab, RecordAddRequestDto['type']> = {
@@ -39,6 +40,9 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   /* 기록 목록 상태 */
   const [records, setRecords] = useState<RecordDto[]>([]);
   const [recordLoading, setRecordLoading] = useState(false);
+
+  /* 모달 상태 */
+  const [modalBook, setModalBook] = useState<UserBookDto | null>(null);
 
   /* 탭 변경 시 이번 달 기록 불러오기 */
   useEffect(() => {
@@ -84,10 +88,10 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
     .sort((a, b) => sortOption === 'newest'
       ? new Date(b.createDate).getTime() - new Date(a.createDate).getTime()
       : new Date(a.createDate).getTime() - new Date(b.createDate).getTime()
-    );
+  );
 
   return (
-    <div className={`liquid-panel p-6 relative z-10 flex flex-col shrink-0 overflow-hidden transition-all duration-300 ${isExpanded ? 'fixed inset-4 z-50 shadow-2xl' : 'h-[460px]'}`}>
+    <div className={`liquid-panel p-6 relative z-10 flex flex-col transition-all duration-300 ${isExpanded ? 'fixed inset-4 z-50 shadow-2xl overflow-y-auto' : ''}`}>
       <h3 className="text-gray-900 font-semibold text-lg flex items-center gap-2 mb-5 shrink-0">독서 기록</h3>
 
       <RecordToolbar
@@ -113,9 +117,18 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
         />
       )}
 
-      <div className="flex-1 flex flex-col gap-3 overflow-y-auto hide-scrollbar">
-        <RecordList records={displayRecords} loading={recordLoading} onOpenForm={() => openForm()} />
+      <div>
+        <RecordList records={displayRecords} loading={recordLoading} onOpenForm={() => openForm()} onRecordClick={(bookId) => {
+          const found = books.find(b => b.bookId === bookId);
+          if (found) setModalBook(found);
+        }} />
       </div>
+
+      <BookRecordModal
+        isOpen={!!modalBook}
+        onClose={() => setModalBook(null)}
+        book={modalBook}
+      />
 
       {!showForm && displayRecords.length > 0 && (
         <button onClick={() => openForm()}
