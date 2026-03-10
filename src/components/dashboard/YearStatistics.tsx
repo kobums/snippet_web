@@ -85,7 +85,7 @@ export default function YearStatistics({ books }: YearStatisticsProps) {
       )}
 
       {activeTab === 'read' && (
-        <div className="flex flex-col gap-1.5 overflow-y-auto hide-scrollbar max-h-[420px]">
+        <div className="flex flex-col gap-1.5">
           {completedBooks.length === 0 ? (
             <p className="text-xs text-gray-400 py-4">올해 읽은 책이 없습니다.</p>
           ) : (

@@ -14,7 +14,7 @@ export default function YearlyReadingTab({ readingBooks, completedBooks }: Yearl
   const [completedExpanded, setCompletedExpanded] = useState(true);
 
   return (
-    <div className="flex flex-col gap-6 overflow-y-auto hide-scrollbar max-h-[420px]">
+    <div className="flex flex-col gap-6">
 
       {/* 진행중 섹션 */}
       <div>
