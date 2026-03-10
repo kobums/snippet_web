@@ -49,7 +49,7 @@ export default function RecordForm({
         className="text-xs bg-white/80 border border-gray-200 rounded-lg px-3 py-2 text-gray-700 outline-none focus:border-blue-400 transition-colors cursor-pointer">
         <option value="">책 선택...</option>
         {recordableBooks.map(b => (
-          <option key={b.id} value={b.id}>{b.title}</option>
+          <option key={b.id} value={b.bookId}>{b.title}</option>
         ))}
       </select>
 

@@ -8,9 +8,10 @@ interface RecordListProps {
   records: RecordDto[];
   loading: boolean;
   onOpenForm: () => void;
+  onRecordClick?: (bookId: number) => void;
 }
 
-export default function RecordList({ records, loading, onOpenForm }: RecordListProps) {
+export default function RecordList({ records, loading, onOpenForm, onRecordClick }: RecordListProps) {
   if (loading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-3">
@@ -41,25 +42,33 @@ export default function RecordList({ records, loading, onOpenForm }: RecordListP
   }
 
   return (
-    <>
+    <div className="grid grid-cols-3 gap-2.5">
       {records.map(record => (
-        <div key={record.id} className="bg-white/60 border border-gray-100 rounded-2xl p-4 flex flex-col gap-2.5 shadow-sm hover:bg-white transition-all cursor-default group">
-          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{record.text}</p>
-          <div className="flex items-center gap-2 mt-1">
-            {record.tag && (
-              <span className="flex items-center gap-1 text-[10px] bg-purple-50 text-purple-600 border border-purple-100 px-2.5 py-0.5 rounded-full font-medium">
-                <span className="opacity-50">#</span>{record.tag}
-              </span>
-            )}
-            {record.relatedPage && (
-              <span className="text-[10px] bg-gray-50 text-gray-500 px-2 py-0.5 rounded-md border border-gray-100">
-                p.{record.relatedPage}
-              </span>
-            )}
-            <span className="text-[10px] text-gray-400 ml-auto tabular-nums">{formatDate(record.createDate)}</span>
+        <div key={record.id} onClick={() => onRecordClick?.(record.bookId)} className="bg-white/60 border border-gray-200 rounded-2xl px-3 py-2.5 flex flex-col shadow-sm hover:bg-white transition-colors cursor-pointer group">
+          {/* 헤더: 태그 (제목) + 날짜 */}
+          <div className="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14.5 2 14.5 8 20 8"/></svg>
+            <span className="text-xs font-semibold text-gray-900 truncate">
+              {record.tag ? `@${record.tag}` : record.type === 'diary' ? '일기' : record.type === 'review' ? '리뷰' : '밑줄'}
+            </span>
+            <span className="text-[10px] text-gray-400 ml-auto tabular-nums shrink-0">{formatDate(record.createDate)}</span>
+          </div>
+
+          <div className="border-t border-gray-100 pt-2 flex flex-col gap-1.5">
+            {/* 책 제목 */}
+            <div className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <span className="text-xs text-gray-500 truncate">{record.bookTitle}</span>
+            </div>
+
+            {/* 읽은 부분 */}
+            <p className="text-xs text-gray-500">p.{record.relatedPage}</p>
+
+            {/* 본문 */}
+            <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap line-clamp-2">{record.text}</p>
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 }
