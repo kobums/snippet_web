@@ -47,18 +47,25 @@ export const useBookStore = create<BookStore>((set, get) => ({
   updateStatus: async (id, status, e?) => {
     e?.stopPropagation();
     try {
-      if (status === 'completed') {
+      if (status === 'completed' || status === 'dropped') {
         const book = get().books.find(b => b.id === id);
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = new Date().toISOString();
+        
         const promises: Promise<void>[] = [
           updateBookStatus(id, status),
-          updateBookEndDate(id, todayStr),
         ];
-        if (book?.totalPage) promises.push(updateBookProgress(id, book.totalPage));
+        
+        // 완독 시 진도율 업데이트는 백엔드 LibraryService.java 에서 일괄 처리되므로 호출 생략
         await Promise.all(promises);
+        
         set(s => ({
           books: s.books.map(b => b.id === id
-            ? { ...b, status, endDate: todayStr, readPage: b.totalPage || b.readPage }
+            ? { 
+                ...b, 
+                status, 
+                endDate: todayStr, 
+                ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {})
+              }
             : b),
         }));
       } else {

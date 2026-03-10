@@ -11,13 +11,15 @@ interface ReadingStatusProps {
 }
 
 export default function ReadingStatus({ stats, books }: ReadingStatusProps) {
-  const reading  = stats?.currentlyReadingCount  || books.filter(b => b.status === 'reading').length;
-  const completed = stats?.monthlyCompletedCount || books.filter(b => b.status === 'completed').length;
-  const totalDisplay = reading + completed;
+  const reading = books.filter(b => b.status === 'reading').length;
+  const completed = books.filter(b => b.status === 'completed').length;
+  const dropped = books.filter(b => b.status === 'dropped').length;
+  const totalDisplay = reading + completed + dropped;
 
   const COLORS = {
-    completed: '#5ebd8a',
-    reading:   '#9b7ee8',
+    completed: '#5ebd8a', // green
+    reading:   '#9b7ee8', // purple
+    dropped:   '#f87171', // red
     empty:     'rgba(0,0,0,0.05)',
   };
 
@@ -27,11 +29,12 @@ export default function ReadingStatus({ stats, books }: ReadingStatusProps) {
       : [
           ...(completed > 0 ? [{ name: '완료',  value: completed, color: COLORS.completed }] : []),
           ...(reading   > 0 ? [{ name: '진행중', value: reading,   color: COLORS.reading   }] : []),
+          ...(dropped   > 0 ? [{ name: '중단',  value: dropped,   color: COLORS.dropped   }] : []),
         ];
 
   return (
     <div className="liquid-panel p-6">
-      <h3 className="text-gray-900 font-medium mb-4 text-lg">이번 달은</h3>
+      <h3 className="text-gray-900 font-medium mb-4 text-lg">전체 현황</h3>
 
       <div className="flex items-center mb-5">
         <div className="flex items-center gap-2 liquid-badge px-3 py-1.5 text-xs font-medium text-gray-700">
@@ -54,6 +57,7 @@ export default function ReadingStatus({ stats, books }: ReadingStatusProps) {
               startAngle={90} endAngle={-270}
               dataKey="value"
               stroke="none"
+              isAnimationActive={false}
             >
               <Cell fill="rgba(0,0,0,0.05)" />
             </Pie>
@@ -66,10 +70,10 @@ export default function ReadingStatus({ stats, books }: ReadingStatusProps) {
               dataKey="value"
               stroke="none"
               cornerRadius={6}
-              paddingAngle={completed > 0 && reading > 0 ? 4 : 0}
+              paddingAngle={chartData.length > 1 ? 4 : 0}
             >
               {chartData.map((entry, idx) => (
-                <Cell key={idx} fill={entry.color} />
+                <Cell key={`cell-${idx}`} fill={entry.color} />
               ))}
             </Pie>
           </PieChart>
@@ -82,14 +86,18 @@ export default function ReadingStatus({ stats, books }: ReadingStatusProps) {
         </div>
 
         {/* 범례 */}
-        <div className="flex gap-6 mt-4 text-xs text-gray-500">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-sm bg-[#34c759]"></div>
+        <div className="flex gap-4 mt-4 text-xs text-gray-500 justify-center w-full flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: COLORS.completed }}></div>
             <span>완료 {completed}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-sm bg-[#7c5cbf]"></div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: COLORS.reading }}></div>
             <span>진행중 {reading}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: COLORS.dropped }}></div>
+            <span>중단 {dropped}</span>
           </div>
         </div>
       </div>
