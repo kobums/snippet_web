@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { searchBooks, addBookToLibrary } from '@/lib/libraryApi';
+import { searchBooks } from '@/lib/bookApi';
+import { addUserBook } from '@/lib/userBookApi';
 import { BookSearchDto } from '@/types/library';
 
 interface BookSearchModalProps {
@@ -10,7 +11,7 @@ interface BookSearchModalProps {
   onClose: () => void;
   onSuccess?: () => void;
   allowedActions?: ('wish' | 'have' | 'borrow')[];
-  defaultStatus?: 'waiting' | 'reading' | 'completed' | 'dropped';
+  defaultStatus?: 'none' | 'waiting' | 'reading' | 'completed' | 'dropped';
 }
 
 export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedActions, defaultStatus }: BookSearchModalProps) {
@@ -64,12 +65,12 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
   const handleAddBook = async (
     book: BookSearchDto, 
     type: 'wish' | 'borrow' | 'have', 
-    status: 'waiting' | 'reading' | 'completed' | 'dropped' = 'waiting'
+    status: 'none' | 'waiting' | 'reading' | 'completed' | 'dropped' = 'waiting'
   ) => {
     setSavingIsbn(book.isbn);
     try {
       const now = new Date().toISOString();
-      await addBookToLibrary({ 
+      await addUserBook({ 
         ...book, 
         type, 
         status, 
@@ -151,7 +152,7 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
                   <div className="mt-auto pt-2 flex gap-2">
                     {showWish && (
                       <button 
-                        onClick={() => handleAddBook(book, 'wish', 'waiting')}
+                        onClick={() => handleAddBook(book, 'wish', 'none')}
                         disabled={savingIsbn === book.isbn}
                         className="flex-1 py-1.5 px-2 bg-pink-50 hover:bg-pink-100 text-pink-600 text-xs rounded-lg transition-colors disabled:opacity-50"
                       >

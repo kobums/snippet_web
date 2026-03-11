@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getRecordsByBook, addRecordToBook } from '@/lib/recordApi';
+import { getRecordsByBook, createRecord } from '@/lib/recordApi';
 import { RecordDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
@@ -125,7 +125,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     }
     
     try {
-      await addRecordToBook(book.bookId, {
+      await createRecord(book.bookId, {
         type: newType,
         text: newText,
         tag: newTag || undefined,

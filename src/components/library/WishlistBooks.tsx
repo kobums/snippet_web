@@ -4,13 +4,14 @@ import React from 'react';
 import { UserBookDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
 import { useUIStore } from '@/stores/useUIStore';
+import { patchUserBook } from '@/lib/userBookApi';
 
 interface WishlistBooksProps {
   books: UserBookDto[];
 }
 
 export default function WishlistBooks({ books }: WishlistBooksProps) {
-  const { updateStatus, updateType } = useBookStore();
+  const { updateBookLocally, refreshBooks } = useBookStore();
   const { openBookRecord, openSearchModal } = useUIStore();
 
   return (
@@ -72,10 +73,11 @@ export default function WishlistBooks({ books }: WishlistBooksProps) {
                 </p>
                 <div className="flex flex-col gap-1.5">
                   <button
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
-                      updateType(book.id, 'have', e);
-                      updateStatus(book.id, 'reading', e);
+                      // wish → have/읽기시작: type과 status를 단일 API 호출로 변경
+                      await patchUserBook(book.id, { type: 'have', status: 'reading' });
+                      updateBookLocally(book.id, { type: 'have', status: 'reading' });
                     }}
                     className="flex items-center gap-1.5 text-[11px] text-blue-300 hover:text-blue-200 transition-colors"
                   >
@@ -83,10 +85,11 @@ export default function WishlistBooks({ books }: WishlistBooksProps) {
                     소장/읽기시작
                   </button>
                   <button
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
-                      updateType(book.id, 'borrow', e);
-                      updateStatus(book.id, 'reading', e);
+                      // wish → borrow/읽기시작: type과 status를 단일 API 호출로 변경
+                      await patchUserBook(book.id, { type: 'borrow', status: 'reading' });
+                      updateBookLocally(book.id, { type: 'borrow', status: 'reading' });
                     }}
                     className="flex items-center gap-1.5 text-[11px] text-amber-300 hover:text-amber-200 transition-colors"
                   >

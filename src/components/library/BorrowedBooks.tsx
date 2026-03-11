@@ -3,6 +3,8 @@
 import React from 'react';
 import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
+import { useBookStore } from '@/stores/useBookStore';
+import { patchUserBook } from '@/lib/userBookApi';
 
 interface BorrowedBooksProps {
   books: UserBookDto[];
@@ -10,6 +12,14 @@ interface BorrowedBooksProps {
 
 export default function BorrowedBooks({ books }: BorrowedBooksProps) {
   const { openBookRecord, openSearchModal } = useUIStore();
+  const { updateBookLocally } = useBookStore();
+
+  const handleReturn = async (e: React.MouseEvent, book: UserBookDto) => {
+    e.stopPropagation();
+    await patchUserBook(book.id, { type: 'return' });
+    // type=return으로 변경 시 백엔드가 status=completed, endDate=now를 자동 설정
+    updateBookLocally(book.id, { type: 'return', status: 'completed' });
+  };
 
   return (
     <div className="liquid-panel p-5">
@@ -62,9 +72,21 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
                 </p>
                 <p className="text-[11px] text-gray-500">{book.author}</p>
                 <div className="flex items-center gap-1.5 pt-1">
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-green-500/20 text-green-300">
-                    반납완료
+                  {/* 상태 배지 */}
+                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${
+                    book.status === 'reading' ? 'bg-blue-500/20 text-blue-300' :
+                    book.status === 'waiting' ? 'bg-yellow-500/20 text-yellow-300' :
+                    'bg-gray-500/20 text-gray-400'
+                  }`}>
+                    {book.status === 'reading' ? '읽는 중' : book.status === 'waiting' ? '대기 중' : book.status}
                   </span>
+                  {/* 반납 완료 버튼 */}
+                  <button
+                    onClick={(e) => handleReturn(e, book)}
+                    className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-md bg-orange-500/20 text-orange-300 hover:bg-orange-500/30 transition-colors"
+                  >
+                    반납 완료
+                  </button>
                 </div>
               </div>
             </div>

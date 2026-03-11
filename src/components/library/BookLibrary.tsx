@@ -22,6 +22,7 @@ export default function BookLibrary({ books }: BookLibraryProps) {
   });
 
   const readingBooks = filteredBooks.filter(b => b.status === 'reading');
+  // borrow 중인 책만 (return=반납 완료 제외)
   const borrowedBooks = filteredBooks.filter(b => b.type === 'borrow');
   const wishBooks = filteredBooks.filter(b => b.type === 'wish');
 
