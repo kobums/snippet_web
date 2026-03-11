@@ -3,14 +3,12 @@
 import React from 'react';
 import { PieChart, Pie, Cell } from 'recharts';
 import { UserBookDto } from '@/types/library';
-import { StatsDto } from '@/types/stats';
 
 interface ReadingStatusProps {
-  stats: StatsDto | null;
   books: UserBookDto[];
 }
 
-export default function ReadingStatus({ stats, books }: ReadingStatusProps) {
+export default function ReadingStatus({ books }: ReadingStatusProps) {
   const reading = books.filter(b => b.status === 'reading').length;
   const completed = books.filter(b => b.status === 'completed').length;
   const dropped = books.filter(b => b.status === 'dropped').length;

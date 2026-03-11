@@ -3,6 +3,7 @@
 import React from 'react';
 import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
+import { useBookStore } from '@/stores/useBookStore';
 
 interface ReadingCalendarProps {
   completedBooks: UserBookDto[];
@@ -10,26 +11,28 @@ interface ReadingCalendarProps {
 
 export default function ReadingCalendar({ completedBooks }: ReadingCalendarProps) {
   const openBookRecord = useUIStore(s => s.openBookRecord);
+  const { selectedYear, selectedMonth } = useBookStore();
+
+  // selectedMonth는 1-indexed, Date는 0-indexed
+  const viewYear = selectedYear;
+  const viewMonth = selectedMonth - 1;
 
   const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
+  const isCurrentMonth = viewYear === today.getFullYear() && viewMonth === today.getMonth();
 
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
 
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const emptyCells = Array.from({ length: firstDay }, (_, i) => null);
+  const emptyCells = Array.from({ length: firstDay }, () => null);
 
   const completedBooksByDay: Record<number, UserBookDto[]> = {};
   completedBooks.forEach(book => {
     if (book.endDate) {
       const d = new Date(book.endDate);
-      if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
+      if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
         const date = d.getDate();
-        if (!completedBooksByDay[date]) {
-          completedBooksByDay[date] = [];
-        }
+        if (!completedBooksByDay[date]) completedBooksByDay[date] = [];
         completedBooksByDay[date].push(book);
       }
     }
@@ -44,9 +47,9 @@ export default function ReadingCalendar({ completedBooks }: ReadingCalendarProps
           </svg>
           독서 달력
         </div>
-        <span className="text-sm font-semibold text-gray-700">{currentYear}년 {currentMonth + 1}월</span>
+        <span className="text-xs text-gray-400">{viewYear}년 {viewMonth + 1}월</span>
       </div>
-      
+
       <div className="grid grid-cols-7 gap-1.5 text-center text-[10px] font-medium text-gray-400 mb-2">
         <div className="text-red-400">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div className="text-blue-400">토</div>
       </div>
@@ -58,11 +61,11 @@ export default function ReadingCalendar({ completedBooks }: ReadingCalendarProps
           const dayBooks = completedBooksByDay[day];
           const hasBooks = dayBooks && dayBooks.length > 0;
           const coverUrl = hasBooks ? dayBooks[dayBooks.length - 1].coverUrl : null;
-          const isToday = today.getDate() === day;
-          
+          const isToday = isCurrentMonth && today.getDate() === day;
+
           return (
-            <div 
-              key={day} 
+            <div
+              key={day}
               className={`aspect-[3/4] relative group rounded-md overflow-hidden border ${isToday ? 'border-purple-300 bg-purple-50/30' : 'border-gray-100 bg-gray-50/50'} flex items-center justify-center transition-all ${hasBooks ? 'cursor-pointer hover:border-purple-300 shadow-sm' : ''}`}
               onClick={() => hasBooks && openBookRecord(dayBooks[dayBooks.length - 1])}
             >
@@ -76,7 +79,6 @@ export default function ReadingCalendar({ completedBooks }: ReadingCalendarProps
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="text-white text-[9px] font-medium translate-y-2 group-hover:translate-y-0 transition-transform">{dayBooks.length}권</span>
                   </div>
-                  {/* Date number overlay */}
                   <div className="absolute top-1 left-1 bg-black/40 backdrop-blur-sm text-[9px] font-medium text-white w-4 h-4 rounded flex items-center justify-center shadow-sm">
                     {day}
                   </div>

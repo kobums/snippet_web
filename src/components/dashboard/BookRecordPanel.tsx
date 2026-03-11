@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { UserBookDto } from '@/types/library';
 import { RecordDto, RecordAddRequestDto } from '@/types/record';
-import { addRecordToBook, getMonthlyRecords } from '@/lib/recordApi';
+import { createRecord, getMonthlyRecords } from '@/lib/recordApi';
 import { handleApiError } from '@/lib/errorHandler';
+import { useBookStore } from '@/stores/useBookStore';
 import RecordToolbar, { type RecordTab, type SortOption } from './record/RecordToolbar';
 import RecordForm from './record/RecordForm';
 import RecordList from './record/RecordList';
@@ -44,14 +45,16 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   /* 모달 상태 */
   const [modalBook, setModalBook] = useState<UserBookDto | null>(null);
 
-  /* 탭 변경 시 이번 달 기록 불러오기 */
+  const { selectedYear, selectedMonth } = useBookStore();
+
+  /* 탭 변경 또는 월 변경 시 해당 월 기록 불러오기 */
   useEffect(() => {
     setRecordLoading(true);
-    getMonthlyRecords(tabToApiType[activeTab])
+    getMonthlyRecords(tabToApiType[activeTab], selectedYear, selectedMonth)
       .then(setRecords)
       .catch(e => handleApiError(e, '기록 불러오기 실패'))
       .finally(() => setRecordLoading(false));
-  }, [activeTab]);
+  }, [activeTab, selectedYear, selectedMonth]);
 
   const openForm = (tab: RecordTab = activeTab) => {
     setFormType(tab);
@@ -70,9 +73,9 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
         tag: formTag.trim() || undefined,
         relatedPage: formPage !== '' ? Number(formPage) : undefined,
       };
-      await addRecordToBook(Number(formBook), payload);
+      await createRecord(Number(formBook), payload);
       setFormText(''); setFormTag(''); setFormPage(''); setShowForm(false);
-      const updated = await getMonthlyRecords(tabToApiType[activeTab]);
+      const updated = await getMonthlyRecords(tabToApiType[activeTab], selectedYear, selectedMonth);
       setRecords(updated);
     } catch (e) {
       handleApiError(e, '기록 저장에 실패했습니다.', 'alert');
@@ -81,6 +84,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
     }
   };
 
+  // status=none(위시 전용)인 책은 기록 불가
   const recordableBooks = books.filter(b => b.status === 'reading' || b.status === 'completed');
 
   const displayRecords = [...records]

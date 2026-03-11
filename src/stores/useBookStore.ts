@@ -1,23 +1,16 @@
 import { create } from 'zustand';
 import { UserBookDto } from '@/types/library';
-import { StatsDto } from '@/types/stats';
-import {
-  getUserBooks,
-  updateBookStatus,
-  updateBookProgress,
-  updateBookType,
-  updateBookStartDate,
-  updateBookEndDate,
-} from '@/lib/libraryApi';
-import { getUserStats } from '@/lib/statsApi';
+import { getMonthlyUserBooks, patchUserBook } from '@/lib/userBookApi';
 import { handleApiError } from '@/lib/errorHandler';
 
 interface BookStore {
   books: UserBookDto[];
-  stats: StatsDto | null;
   loading: boolean;
+  selectedYear: number;
+  selectedMonth: number;
 
-  loadDashboard: () => Promise<void>;
+  loadDashboard: (year?: number, month?: number) => Promise<void>;
+  setSelectedMonth: (year: number, month: number) => void;
   updateStatus: (id: number, status: UserBookDto['status'], e?: React.MouseEvent) => Promise<void>;
   updateProgress: (id: number, page: number, e?: React.MouseEvent) => Promise<void>;
   updateType: (id: number, type: UserBookDto['type'], e?: React.MouseEvent) => Promise<void>;
@@ -29,19 +22,27 @@ interface BookStore {
 
 export const useBookStore = create<BookStore>((set, get) => ({
   books: [],
-  stats: null,
   loading: true,
+  selectedYear: new Date().getFullYear(),
+  selectedMonth: new Date().getMonth() + 1,
 
-  loadDashboard: async () => {
-    set({ loading: true });
+  loadDashboard: async (year?: number, month?: number) => {
+    const now = new Date();
+    const y = year ?? now.getFullYear();
+    const m = month ?? now.getMonth() + 1;
+    set({ loading: true, selectedYear: y, selectedMonth: m });
     try {
-      const [books, stats] = await Promise.all([getUserBooks(), getUserStats()]);
-      set({ books, stats });
+      const books = await getMonthlyUserBooks(y, m);
+      set({ books });
     } catch (e) {
       handleApiError(e, '대시보드 데이터를 불러오는데 실패했습니다.');
     } finally {
       set({ loading: false });
     }
+  },
+
+  setSelectedMonth: (year: number, month: number) => {
+    get().loadDashboard(year, month);
   },
 
   updateStatus: async (id, status, e?) => {
@@ -52,9 +53,9 @@ export const useBookStore = create<BookStore>((set, get) => ({
         const todayStr = new Date().toISOString();
         
         const promises: Promise<void>[] = [
-          updateBookStatus(id, status),
+          patchUserBook(id, { status }),
         ];
-        
+
         // 완독 시 진도율 업데이트는 백엔드 LibraryService.java 에서 일괄 처리되므로 호출 생략
         await Promise.all(promises);
         
@@ -69,7 +70,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
             : b),
         }));
       } else {
-        await updateBookStatus(id, status);
+        await patchUserBook(id, { status });
         set(s => ({ books: s.books.map(b => b.id === id ? { ...b, status } : b) }));
       }
     } catch (e) {
@@ -80,7 +81,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
   updateProgress: async (id, page, e?) => {
     e?.stopPropagation();
     try {
-      await updateBookProgress(id, page);
+      await patchUserBook(id, { readPage: page });
       set(s => ({ books: s.books.map(b => b.id === id ? { ...b, readPage: page } : b) }));
     } catch (e) {
       handleApiError(e, '진도 업데이트에 실패했습니다.');
@@ -90,7 +91,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
   updateType: async (id, type, e?) => {
     e?.stopPropagation();
     try {
-      await updateBookType(id, type);
+      await patchUserBook(id, { type });
       set(s => ({ books: s.books.map(b => b.id === id ? { ...b, type } : b) }));
     } catch (e) {
       handleApiError(e, '분류 변경에 실패했습니다.', 'alert');
@@ -99,7 +100,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
   updateStartDate: async (id, date) => {
     try {
-      await updateBookStartDate(id, date);
+      await patchUserBook(id, { startDate: date });
       set(s => ({ books: s.books.map(b => b.id === id ? { ...b, startDate: date } : b) }));
     } catch (e) {
       handleApiError(e, '시작일 변경에 실패했습니다.', 'alert');
@@ -108,7 +109,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
   updateEndDate: async (id, date) => {
     try {
-      await updateBookEndDate(id, date);
+      await patchUserBook(id, { endDate: date });
       set(s => ({ books: s.books.map(b => b.id === id ? { ...b, endDate: date } : b) }));
     } catch (e) {
       handleApiError(e, '종료일 변경에 실패했습니다.', 'alert');
@@ -121,7 +122,8 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
   refreshBooks: async () => {
     try {
-      const books = await getUserBooks();
+      const { selectedYear, selectedMonth } = get();
+      const books = await getMonthlyUserBooks(selectedYear, selectedMonth);
       set({ books });
     } catch (e) {
       handleApiError(e, '책 목록을 불러오는데 실패했습니다.');
