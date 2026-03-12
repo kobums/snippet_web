@@ -49,7 +49,7 @@ function getSearchModalConfig(activeTab: FilterTab) {
 }
 
 export default function ReadingManager({ books, loading }: ReadingManagerProps) {
-  const { updateStatus, updateType } = useBookStore();
+  const { updateStatus, updateType, loadDashboard } = useBookStore();
   const { openBookRecord, openSearchModal } = useUIStore();
   const [activeTab, setActiveTab] = useState<FilterTab>('reading');
   const [sortOption, setSortOption] = useState<SortOption>('newest');
@@ -86,7 +86,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
 
   const handleOpenSearch = () => {
     const config = getSearchModalConfig(activeTab);
-    openSearchModal({ allowedActions: config.allowedActions, defaultStatus: config.defaultStatus });
+    openSearchModal({ allowedActions: config.allowedActions, defaultStatus: config.defaultStatus, onSuccess: loadDashboard });
   };
 
   return (

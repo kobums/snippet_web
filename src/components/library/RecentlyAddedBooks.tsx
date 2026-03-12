@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
+import { useBookStore } from '@/stores/useBookStore';
 import PanelToolbar, { TabItem } from '@/components/ui/PanelToolbar';
 
 type PeriodFilter = '1week' | '1month' | 'all';
@@ -34,6 +35,7 @@ const PERIOD_DAYS: Record<PeriodFilter, number | null> = {
 export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
   const [period, setPeriod] = useState<PeriodFilter>('1week');
   const { openBookRecord, openSearchModal } = useUIStore();
+  const { loadDashboard } = useBookStore();
 
   const filteredBooks = (() => {
     const days = PERIOD_DAYS[period];
@@ -61,7 +63,7 @@ export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
         tabs={periodTabs}
         activeTab={period}
         onTabChange={setPeriod}
-        onNew={() => openSearchModal({ defaultStatus: 'reading' })}
+        onNew={() => openSearchModal({ defaultStatus: 'reading', onSuccess: loadDashboard })}
       />
 
       <div className="space-y-1.5">
@@ -92,7 +94,7 @@ export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
       </div>
 
       <button
-        onClick={() => openSearchModal({ defaultStatus: 'reading' })}
+        onClick={() => openSearchModal({ defaultStatus: 'reading', onSuccess: loadDashboard })}
         className="mt-3 flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

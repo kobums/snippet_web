@@ -102,6 +102,10 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   const handleSubmit = async () => {
     if (!formText.trim()) return;
     if (formBook === '') { alert('책을 선택해 주세요.'); return; }
+    if (formPage === '' && !formTag.trim()) {
+      alert('페이지 또는 태그를 입력해 주세요.');
+      return;
+    }
     setSubmitting(true);
     try {
       const payload: RecordAddRequestDto = {

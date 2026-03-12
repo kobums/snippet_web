@@ -13,7 +13,7 @@ interface BorrowedBooksProps {
 
 export default function BorrowedBooks({ books }: BorrowedBooksProps) {
   const { openBookRecord, openSearchModal } = useUIStore();
-  const { updateBookLocally } = useBookStore();
+  const { updateBookLocally, loadDashboard } = useBookStore();
 
   const handleReturn = async (e: React.MouseEvent, book: UserBookDto) => {
     e.stopPropagation();
@@ -29,7 +29,7 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
 
       <PanelToolbar
         expandUrl="/books/borrow"
-        onNew={() => openSearchModal({ allowedActions: ['borrow'], defaultStatus: 'reading' })}
+        onNew={() => openSearchModal({ allowedActions: ['borrow'], defaultStatus: 'reading', onSuccess: loadDashboard })}
       />
 
       <div className="space-y-3">
@@ -78,7 +78,7 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
       </div>
 
       <button
-        onClick={() => openSearchModal({ allowedActions: ['borrow'], defaultStatus: 'reading' })}
+        onClick={() => openSearchModal({ allowedActions: ['borrow'], defaultStatus: 'reading', onSuccess: loadDashboard })}
         className="mt-1 flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

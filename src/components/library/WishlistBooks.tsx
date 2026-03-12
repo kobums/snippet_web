@@ -12,7 +12,7 @@ interface WishlistBooksProps {
 }
 
 export default function WishlistBooks({ books }: WishlistBooksProps) {
-  const { updateBookLocally } = useBookStore();
+  const { updateBookLocally, loadDashboard } = useBookStore();
   const { openBookRecord, openSearchModal } = useUIStore();
 
   return (
@@ -23,7 +23,7 @@ export default function WishlistBooks({ books }: WishlistBooksProps) {
 
       <PanelToolbar
         expandUrl="/books/wishlist"
-        onNew={() => openSearchModal({ allowedActions: ['wish'], defaultStatus: 'waiting' })}
+        onNew={() => openSearchModal({ allowedActions: ['wish'], defaultStatus: 'waiting', onSuccess: loadDashboard })}
       />
 
       <div className="space-y-3">
@@ -80,7 +80,7 @@ export default function WishlistBooks({ books }: WishlistBooksProps) {
       </div>
 
       <button
-        onClick={() => openSearchModal({ allowedActions: ['wish'], defaultStatus: 'waiting' })}
+        onClick={() => openSearchModal({ allowedActions: ['wish'], defaultStatus: 'waiting', onSuccess: loadDashboard })}
         className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
