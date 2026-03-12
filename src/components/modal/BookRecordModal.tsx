@@ -3,10 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { getRecordsByBook, createRecord } from '@/lib/recordApi';
 import { RecordDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
+
+// 임시 ID 생성 유틸리티
+let tempRecordIdCounter = -1;
+const generateTempRecordId = () => tempRecordIdCounter--;
 
 interface BookRecordModalProps {
   isOpen: boolean;
@@ -42,6 +47,18 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
       setLocalEndDate(book.endDate?.slice(0, 10) || '');
     }
   }, [isOpen, book, activeTab]);
+
+  // 모달이 열릴 때마다 탭 및 작성 폼 초기화 (탭 변경과 무관하게)
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab('all');
+      setIsAdding(false);
+      setNewType('snippet');
+      setNewText('');
+      setNewTag('');
+      setNewRelatedPage('');
+    }
+  }, [isOpen]);
 
   const handleProgressUpdate = async () => {
     if (!book || localReadPage === '' || localReadPage === book.readPage) {
@@ -119,26 +136,56 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
   const handleAddRecord = async () => {
     if (!book || !newText.trim()) return;
+    if (newRelatedPage === '' && !newTag.trim()) {
+      alert('페이지 또는 태그를 입력해 주세요.');
+      return;
+    }
     if (newRelatedPage !== '' && (newRelatedPage < 0 || (book.totalPage && newRelatedPage > book.totalPage))) {
       alert(`0~${book.totalPage}p 사이로 입력해주세요`);
       return;
     }
-    
+
+    // 1️⃣ 임시 ID로 즉시 UI에 추가
+    const tempRecord: RecordDto = {
+      id: generateTempRecordId(),
+      bookId: book.bookId,
+      bookTitle: book.title,
+      type: newType,
+      text: newText,
+      tag: newTag || undefined,
+      relatedPage: newRelatedPage ? Number(newRelatedPage) : undefined,
+      createDate: new Date().toISOString()
+    };
+
+    setRecords(prev => [tempRecord, ...prev]);
+
+    // 2️⃣ 폼 즉시 리셋 (다음 기록 작성 가능)
+    setIsAdding(false);
+    setNewText('');
+    setNewTag('');
+    setNewRelatedPage('');
+
     try {
-      await createRecord(book.bookId, {
+      // 3️⃣ 백그라운드 API 호출
+      const realId = await createRecord(book.bookId, {
         type: newType,
         text: newText,
         tag: newTag || undefined,
         relatedPage: newRelatedPage ? Number(newRelatedPage) : undefined
       });
-      setIsAdding(false);
-      setNewText('');
-      setNewTag('');
-      setNewRelatedPage('');
-      loadRecords();
+
+      // 4️⃣ 성공: 실제 ID로 교체
+      setRecords(prev =>
+        prev.map(r => r.id === tempRecord.id ? { ...r, id: realId } : r)
+      );
+
+      toast.success('기록이 추가되었습니다');
+
     } catch (e) {
+      // 5️⃣ 실패: 롤백 + 에러 토스트
+      setRecords(prev => prev.filter(r => r.id !== tempRecord.id));
+      toast.error('기록 추가에 실패했습니다. 다시 시도해주세요.');
       console.error("Failed to add record", e);
-      alert("기록 추가에 실패했습니다.");
     }
   };
 
