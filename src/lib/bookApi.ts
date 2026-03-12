@@ -2,9 +2,9 @@ import { BookSearchDto } from '../types/library';
 import api from './api';
 
 // Search (알라딘 API)
-export const searchBooks = async (query: string): Promise<BookSearchDto[]> => {
+export const searchBooks = async (query: string, page: number = 1): Promise<BookSearchDto[]> => {
   const response = await api.get<BookSearchDto[]>('/books/search', {
-    params: { query },
+    params: { query, page },
   });
   return response.data;
 };
