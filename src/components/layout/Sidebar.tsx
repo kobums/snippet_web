@@ -4,16 +4,31 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 
+const NAV_ITEMS = [
+  { path: '/dashboard', label: '내 서재' },
+  { path: '/snippet', label: '추천 문장 스와이프' },
+];
+
+const BOOK_NAV_ITEMS = [
+  { path: '/books/have', label: '소장한 책' },
+  { path: '/books/borrow', label: '빌린 책' },
+  { path: '/books/wishlist', label: '갖고 싶은 책' },
+];
+
+const RECORD_NAV_ITEMS = [
+  { path: '/record/diary', label: '독서 일기' },
+  { path: '/record/snippet', label: '밑줄 긋기' },
+  { path: '/record/review', label: '독서 리뷰' },
+];
+
 export default function Sidebar({
   isOpen,
   onClose,
-  onNavigate,
-  currentView
+  currentPath,
 }: {
-  isOpen: boolean,
-  onClose: () => void,
-  onNavigate: (view: 'swipe' | 'dashboard') => void,
-  currentView: string
+  isOpen: boolean;
+  onClose: () => void;
+  currentPath: string;
 }) {
   const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -31,17 +46,25 @@ export default function Sidebar({
     };
   }, [isOpen, onClose]);
 
+  const navigate = (path: string) => {
+    onClose();
+    router.push(path);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     onClose();
     router.push('/login');
   };
+
+  const isActive = (path: string) => currentPath === path;
+
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -60,28 +83,51 @@ export default function Sidebar({
               <h2 className="text-xl font-light tracking-widest text-gray-900 uppercase">snippet</h2>
               <button onClick={onClose} className="text-gray-500 hover:text-gray-800 lg:hidden">✕</button>
             </div>
-            
+
             <nav className="flex flex-col gap-4 text-gray-700">
-              <button 
-                onClick={() => onNavigate('dashboard')}
-                className={`py-2 px-4 rounded-xl font-medium transition text-left ${currentView === 'dashboard' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
-              >
-                내 서재
-              </button>
-              <button 
-                onClick={() => onNavigate('swipe')}
-                className={`py-2 px-4 rounded-xl font-medium transition text-left ${currentView === 'swipe' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
-              >
-                추천 문장 스와이프
-              </button>
-              
+              {NAV_ITEMS.map(item => (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`py-2 px-4 rounded-xl font-medium transition text-left ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                >
+                  {item.label}
+                </button>
+              ))}
+
+              <div className="border-t border-gray-200 my-1" />
+              <p className="px-4 text-[11px] text-gray-400 font-medium uppercase tracking-wider">내 책장</p>
+
+              {BOOK_NAV_ITEMS.map(item => (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`py-2 px-4 rounded-xl font-medium transition text-left ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                >
+                  {item.label}
+                </button>
+              ))}
+
+              <div className="border-t border-gray-200 my-1" />
+              <p className="px-4 text-[11px] text-gray-400 font-medium uppercase tracking-wider">독서 기록</p>
+
+              {RECORD_NAV_ITEMS.map(item => (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`py-2 px-4 rounded-xl font-medium transition text-left ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                >
+                  {item.label}
+                </button>
+              ))}
+
+              <div className="border-t border-gray-200 my-1" />
               <button className="py-2 px-4 hover:bg-gray-100 rounded-xl transition text-left opacity-50 cursor-not-allowed">통계 (준비중)</button>
-              <button className="py-2 px-4 hover:bg-gray-100 rounded-xl transition text-left opacity-50 cursor-not-allowed">리뷰 (준비중)</button>
             </nav>
 
             <div className="mt-auto pt-8 border-t border-gray-200 flex flex-col gap-3">
               <button
-                onClick={() => { onClose(); router.push('/mypage'); }}
+                onClick={() => navigate('/mypage')}
                 className="py-2 px-4 hover:bg-gray-100 rounded-xl transition text-left text-gray-700 font-medium"
               >
                 내 정보
