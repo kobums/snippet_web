@@ -4,6 +4,7 @@ import { UserBookDto } from '@/types/library';
 interface SearchModalConfig {
   allowedActions?: ('wish' | 'have' | 'borrow')[];
   defaultStatus?: 'waiting' | 'reading' | 'completed' | 'dropped';
+  onSuccess?: () => void;
 }
 
 interface UIStore {

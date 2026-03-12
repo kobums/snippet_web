@@ -3,6 +3,10 @@ import { UserBookDto } from '@/types/library';
 import { getMonthlyUserBooks, patchUserBook } from '@/lib/userBookApi';
 import { handleApiError } from '@/lib/errorHandler';
 
+// 임시 ID 생성 유틸리티 (서버 응답 전까지 사용할 임시 ID - 음수 사용)
+let tempIdCounter = -1;
+const generateTempId = () => tempIdCounter--;
+
 interface BookStore {
   books: UserBookDto[];
   loading: boolean;
@@ -18,6 +22,11 @@ interface BookStore {
   updateEndDate: (id: number, date: string) => Promise<void>;
   updateBookLocally: (id: number, updates: Partial<UserBookDto>) => void;
   refreshBooks: () => Promise<void>;
+
+  // 낙관적 업데이트 함수들
+  addBookLocally: (book: Omit<UserBookDto, 'id'>) => number;
+  removeBookLocally: (id: number) => void;
+  updateBookId: (tempId: number, realId: number) => void;
 }
 
 export const useBookStore = create<BookStore>((set, get) => ({
@@ -128,5 +137,23 @@ export const useBookStore = create<BookStore>((set, get) => ({
     } catch (e) {
       handleApiError(e, '책 목록을 불러오는데 실패했습니다.');
     }
+  },
+
+  // 낙관적 업데이트 함수들
+  addBookLocally: (book) => {
+    const tempId = generateTempId();
+    const newBook = { ...book, id: tempId };
+    set(s => ({ books: [newBook, ...s.books] })); // 맨 앞에 추가
+    return tempId;
+  },
+
+  removeBookLocally: (id) => {
+    set(s => ({ books: s.books.filter(b => b.id !== id) }));
+  },
+
+  updateBookId: (tempId, realId) => {
+    set(s => ({
+      books: s.books.map(b => b.id === tempId ? { ...b, id: realId } : b)
+    }));
   },
 }));
