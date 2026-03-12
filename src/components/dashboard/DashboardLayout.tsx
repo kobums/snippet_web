@@ -2,17 +2,13 @@
 
 import React, { useEffect } from 'react';
 import { useBookStore } from '@/stores/useBookStore';
-import { useUIStore } from '@/stores/useUIStore';
-import BookRecordModal from '../modal/BookRecordModal';
-import BookSearchModal from '../modal/BookSearchModal';
 import DashboardStats from './DashboardStats';
 import ReadingProgress from './ReadingProgress';
 import BookLibrary from '../library/BookLibrary';
 
 
 export default function DashboardLayout() {
-  const { books, loading, loadDashboard, refreshBooks, selectedYear, selectedMonth, setSelectedMonth } = useBookStore();
-  const { selectedBook, closeBookRecord, isSearchModalOpen, searchModalConfig, closeSearchModal } = useUIStore();
+  const { books, loading, loadDashboard, selectedYear, selectedMonth, setSelectedMonth } = useBookStore();
 
   useEffect(() => { loadDashboard(); }, [loadDashboard]);
 
@@ -42,15 +38,6 @@ export default function DashboardLayout() {
         isCurrentMonth={isCurrentMonth} onPrevMonth={goToPrevMonth} onNextMonth={goToNextMonth} />
       <ReadingProgress books={books} loading={loading} />
       <BookLibrary books={books} />
-
-      <BookRecordModal isOpen={!!selectedBook} onClose={closeBookRecord} book={selectedBook} />
-      <BookSearchModal
-        isOpen={isSearchModalOpen}
-        onClose={closeSearchModal}
-        allowedActions={searchModalConfig.allowedActions}
-        defaultStatus={searchModalConfig.defaultStatus}
-        onSuccess={() => { closeSearchModal(); refreshBooks(); }}
-      />
     </div>
   );
 }
