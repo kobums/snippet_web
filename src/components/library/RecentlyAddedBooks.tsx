@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
+import PanelToolbar, { TabItem } from '@/components/ui/PanelToolbar';
 
 type PeriodFilter = '1week' | '1month' | 'all';
 
@@ -18,23 +19,27 @@ const STATUS_LABELS: Record<string, { text: string; color: string }> = {
   dropped: { text: '중단', color: 'bg-white/10 text-white/50' },
 };
 
-const PERIOD_CONFIG: { key: PeriodFilter; label: string; days: number | null }[] = [
-  { key: '1week', label: '최근 1주', days: 7 },
-  { key: '1month', label: '최근 1달', days: 30 },
-  { key: 'all', label: '전체', days: null },
+const periodTabs: TabItem<PeriodFilter>[] = [
+  { key: '1week', label: '최근 1주' },
+  { key: '1month', label: '최근 1달' },
+  { key: 'all', label: '전체' },
 ];
+
+const PERIOD_DAYS: Record<PeriodFilter, number | null> = {
+  '1week': 7,
+  '1month': 30,
+  'all': null,
+};
 
 export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
   const [period, setPeriod] = useState<PeriodFilter>('1week');
-  const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const { openBookRecord, openSearchModal } = useUIStore();
 
-  const currentPeriod = PERIOD_CONFIG.find(p => p.key === period)!;
-
   const filteredBooks = (() => {
-    if (currentPeriod.days === null) return books;
+    const days = PERIOD_DAYS[period];
+    if (days === null) return books;
     const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - currentPeriod.days);
+    cutoff.setDate(cutoff.getDate() - days);
     return books.filter(b => {
       if (!b.createDate) return true;
       return new Date(b.createDate) >= cutoff;
@@ -52,47 +57,13 @@ export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
         <span className="text-lg">최근 추가한 책</span>
       </h3>
 
-      {/* Toolbar */}
-      <div className="flex items-center justify-between mb-4 gap-2">
-        {/* Period Filter */}
-        <div className="relative">
-          <button
-            onClick={() => setShowPeriodMenu(prev => !prev)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg liquid-badge text-gray-900 text-xs font-medium hover:bg-white/50 transition-all border border-gray-200 shadow-sm"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            {currentPeriod.label}
-          </button>
-          {showPeriodMenu && (
-            <div className="absolute left-0 top-full mt-1 bg-white/95 border border-gray-200 rounded-xl p-1 min-w-[110px] z-50 backdrop-blur-xl shadow-xl">
-              {PERIOD_CONFIG.map(p => (
-                <button
-                  key={p.key}
-                  onClick={() => { setPeriod(p.key); setShowPeriodMenu(false); }}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                    period === p.key ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+      <PanelToolbar<PeriodFilter>
+        tabs={periodTabs}
+        activeTab={period}
+        onTabChange={setPeriod}
+        onNew={() => openSearchModal({ defaultStatus: 'reading' })}
+      />
 
-        {/* Actions */}
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => openSearchModal({ defaultStatus: 'reading' })}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 text-xs font-medium transition-all border border-blue-500/20"
-          >
-            새로 만들기
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Book List */}
       <div className="space-y-1.5">
         {recentBooks.length === 0 ? (
           <div className="text-xs text-gray-400 py-4 text-center">최근 추가한 책이 없습니다.</div>
@@ -120,7 +91,6 @@ export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
         )}
       </div>
 
-      {/* Add New Page */}
       <button
         onClick={() => openSearchModal({ defaultStatus: 'reading' })}
         className="mt-3 flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"

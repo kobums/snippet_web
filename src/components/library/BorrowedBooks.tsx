@@ -5,6 +5,7 @@ import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
 import { useBookStore } from '@/stores/useBookStore';
 import { patchUserBook } from '@/lib/userBookApi';
+import PanelToolbar from '@/components/ui/PanelToolbar';
 
 interface BorrowedBooksProps {
   books: UserBookDto[];
@@ -17,7 +18,6 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
   const handleReturn = async (e: React.MouseEvent, book: UserBookDto) => {
     e.stopPropagation();
     await patchUserBook(book.id, { type: 'return' });
-    // type=return으로 변경 시 백엔드가 status=completed, endDate=now를 자동 설정
     updateBookLocally(book.id, { type: 'return', status: 'completed' });
   };
 
@@ -27,23 +27,11 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
         <span className="text-lg">빌린 책</span>
       </h3>
 
-      {/* Toolbar */}
-      <div className="flex items-center justify-between mb-4 gap-2">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg liquid-badge text-gray-900 text-xs font-medium border border-gray-200">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          대여한 책
-        </div>
+      <PanelToolbar
+        expandUrl="/books/borrow"
+        onNew={() => openSearchModal({ allowedActions: ['borrow'], defaultStatus: 'reading' })}
+      />
 
-        <button
-          onClick={() => openSearchModal({ allowedActions: ['borrow'], defaultStatus: 'reading' })}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 text-xs font-medium transition-all border border-blue-500/20"
-        >
-          새로 만들기
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-      </div>
-
-      {/* Book Cards */}
       <div className="space-y-3">
         {books.length === 0 ? (
           <div className="text-xs text-gray-400 py-4 text-center">빌린 책이 없습니다.</div>
@@ -54,7 +42,6 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
               onClick={() => openBookRecord(book)}
               className="bg-white/60 border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:bg-white transition-colors group shadow-sm"
             >
-              {/* Cover Image */}
               {book.coverUrl && (
                 <div className="w-full flex justify-center py-4 px-6 bg-gray-50/50">
                   <img
@@ -64,15 +51,12 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
                   />
                 </div>
               )}
-
-              {/* Book Info */}
               <div className="px-4 py-3 space-y-1.5">
                 <p className="text-sm text-gray-900 font-medium leading-snug group-hover:text-purple-600 transition-colors">
                   {book.title}
                 </p>
                 <p className="text-[11px] text-gray-500">{book.author}</p>
                 <div className="flex items-center gap-1.5 pt-1">
-                  {/* 상태 배지 */}
                   <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${
                     book.status === 'reading' ? 'bg-blue-500/20 text-blue-300' :
                     book.status === 'waiting' ? 'bg-yellow-500/20 text-yellow-300' :
@@ -80,7 +64,6 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
                   }`}>
                     {book.status === 'reading' ? '읽는 중' : book.status === 'waiting' ? '대기 중' : book.status}
                   </span>
-                  {/* 반납 완료 버튼 */}
                   <button
                     onClick={(e) => handleReturn(e, book)}
                     className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-md bg-orange-500/20 text-orange-300 hover:bg-orange-500/30 transition-colors"
@@ -94,7 +77,6 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
         )}
       </div>
 
-      {/* Add New Page */}
       <button
         onClick={() => openSearchModal({ allowedActions: ['borrow'], defaultStatus: 'reading' })}
         className="mt-1 flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"

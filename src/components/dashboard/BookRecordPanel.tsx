@@ -6,16 +6,55 @@ import { RecordDto, RecordAddRequestDto } from '@/types/record';
 import { createRecord, getMonthlyRecords } from '@/lib/recordApi';
 import { handleApiError } from '@/lib/errorHandler';
 import { useBookStore } from '@/stores/useBookStore';
-import RecordToolbar, { type RecordTab, type SortOption } from './record/RecordToolbar';
+import PanelToolbar, { TabItem, SortItem, NewMenuItem } from '@/components/ui/PanelToolbar';
 import RecordForm from './record/RecordForm';
 import RecordList from './record/RecordList';
 import BookRecordModal from '@/components/modal/BookRecordModal';
+
+type RecordTab = 'diary' | 'underline' | 'review';
+type SortOption = 'newest' | 'oldest';
+
+const tabs: TabItem<RecordTab>[] = [
+  {
+    key: 'diary',
+    label: '이달의 일기',
+    icon: <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+  },
+  {
+    key: 'underline',
+    label: '이달의 밑줄',
+    icon: <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a3 3 0 1 1 1.32-1.32L7 12V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8l2.34 5.68a3 3 0 1 1-1.32 1.32L12 14Z"/></svg>,
+  },
+  {
+    key: 'review',
+    label: '이달의 리뷰',
+    icon: <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+  },
+];
+
+const sortOpts: SortItem<SortOption>[] = [
+  { key: 'newest', label: '최신순' },
+  { key: 'oldest', label: '오래된순' },
+];
+
+const newMenuItems: NewMenuItem[] = tabs.map(t => ({
+  key: t.key,
+  label: t.label.replace('이달의 ', '') + ' 작성',
+  icon: t.icon,
+}));
 
 /* 탭 → API type 매핑 */
 const tabToApiType: Record<RecordTab, RecordAddRequestDto['type']> = {
   diary: 'diary',
   underline: 'snippet',
   review: 'review',
+};
+
+/* 탭 → 전용 페이지 URL */
+const tabToUrl: Record<RecordTab, string> = {
+  diary: '/record/diary',
+  underline: '/record/snippet',
+  review: '/record/review',
 };
 
 interface BookRecordPanelProps {
@@ -25,9 +64,7 @@ interface BookRecordPanelProps {
 export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   const [activeTab, setActiveTab] = useState<RecordTab>('diary');
   const [sortOption, setSortOption] = useState<SortOption>('newest');
-  const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isExpanded, setIsExpanded] = useState(false);
 
   /* 기록 작성 폼 상태 */
   const [showForm, setShowForm] = useState(false);
@@ -84,7 +121,6 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
     }
   };
 
-  // status=none(위시 전용)인 책은 기록 불가
   const recordableBooks = books.filter(b => b.status === 'reading' || b.status === 'completed');
 
   const displayRecords = [...records]
@@ -95,16 +131,24 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   );
 
   return (
-    <div className={`liquid-panel p-6 relative z-10 flex flex-col transition-all duration-300 ${isExpanded ? 'fixed inset-4 z-50 shadow-2xl overflow-y-auto' : ''}`}>
+    <div className="liquid-panel p-6 relative z-10 flex flex-col">
       <h3 className="text-gray-900 font-semibold text-lg flex items-center gap-2 mb-5 shrink-0">독서 기록</h3>
 
-      <RecordToolbar
-        activeTab={activeTab} setActiveTab={setActiveTab}
-        sortOption={sortOption} setSortOption={setSortOption}
-        showSearch={showSearch} setShowSearch={setShowSearch}
-        searchQuery={searchQuery} setSearchQuery={setSearchQuery}
-        isExpanded={isExpanded} setIsExpanded={setIsExpanded}
-        onOpenForm={openForm}
+      <PanelToolbar<RecordTab, SortOption>
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        sortOptions={sortOpts}
+        activeSort={sortOption}
+        onSortChange={setSortOption}
+        searchEnabled
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="기록 내용 검색..."
+        expandUrl={tabToUrl[activeTab]}
+        onNew={() => openForm()}
+        newMenuItems={newMenuItems}
+        onNewMenuItem={(key) => openForm(key as RecordTab)}
       />
 
       {showForm && (
