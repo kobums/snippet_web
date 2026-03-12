@@ -15,7 +15,7 @@ export const LoginForm: React.FC = () => {
     setError('');
     try {
       await loginUseCase.execute({ email, password });
-      router.push('/');
+      router.push('/dashboard');
     } catch (err: unknown) {
       const message = err instanceof Error && 'response' in err
         ? (err as any).response?.data?.message

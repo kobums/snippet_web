@@ -23,7 +23,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       router.push('/login');
     } else if (token && isPublicPath) {
       // Redirect to home if user is already logged in and tries to access login/register
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [pathname, router]);
 
