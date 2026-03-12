@@ -288,6 +288,16 @@ body {
 }
 
 /* ─────────────────────────────────────
+   Recharts 포커스 outline 제거
+   ───────────────────────────────────── */
+.recharts-wrapper,
+.recharts-wrapper svg,
+.recharts-wrapper svg *,
+.recharts-surface {
+  outline: none !important;
+}
+
+/* ─────────────────────────────────────
    컨텐츠 z-index (배경 오버레이보다 위에)
    ───────────────────────────────────── */
 .content-layer {

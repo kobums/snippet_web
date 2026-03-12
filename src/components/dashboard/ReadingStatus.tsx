@@ -46,7 +46,7 @@ export default function ReadingStatus({ books }: ReadingStatusProps) {
       {/* Donut Chart */}
       <div className="flex flex-col items-center">
         <div className="relative">
-          <PieChart width={200} height={200}>
+          <PieChart width={200} height={200} style={{ outline: 'none' }}>
             {/* 배경 링 */}
             <Pie
               data={[{ value: 1 }]}
