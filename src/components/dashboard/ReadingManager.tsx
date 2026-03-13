@@ -48,6 +48,43 @@ function getSearchModalConfig(activeTab: FilterTab) {
   return { allowedActions: ['have', 'borrow'] as ('wish' | 'have' | 'borrow')[], defaultStatus: 'completed' as const };
 }
 
+function BookListSkeleton() {
+  return (
+    <div className="space-y-2">
+      <div className="text-xs text-gray-300 mb-3 w-16 h-4 bg-gray-100 rounded animate-pulse"></div>
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="bg-white/60 border border-gray-200 p-3 sm:p-4 rounded-2xl flex flex-col gap-2 sm:gap-3">
+          <div className="flex gap-2 sm:gap-3">
+            {/* 커버 스켈레톤 */}
+            <div className="w-14 h-20 bg-gray-100 rounded-md animate-pulse"></div>
+
+            {/* 텍스트 스켈레톤 */}
+            <div className="flex-1 min-w-0 space-y-2">
+              <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse"></div>
+              <div className="h-3 bg-gray-100 rounded w-1/2 animate-pulse"></div>
+
+              {/* 프로그레스 바 스켈레톤 */}
+              <div className="mt-4 space-y-1">
+                <div className="flex justify-between">
+                  <div className="h-3 bg-gray-100 rounded w-8 animate-pulse"></div>
+                  <div className="h-3 bg-gray-100 rounded w-16 animate-pulse"></div>
+                </div>
+                <div className="h-1.5 bg-gray-100 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* 버튼 스켈레톤 */}
+          <div className="flex gap-2 mt-1">
+            <div className="flex-1 h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+            <div className="flex-1 h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ReadingManager({ books, loading }: ReadingManagerProps) {
   const { updateStatus, updateType, loadDashboard } = useBookStore();
   const { openBookRecord, openSearchModal } = useUIStore();
@@ -90,8 +127,8 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
   };
 
   return (
-    <div className="liquid-panel p-6 relative z-10">
-      <h3 className="text-gray-900 font-medium mb-4 text-lg">독서 진행 관리</h3>
+    <div className="liquid-panel p-4 sm:p-5 md:p-6 relative z-10">
+      <h3 className="text-gray-900 font-medium mb-3 sm:mb-4 text-base sm:text-lg">독서 진행 관리</h3>
 
       <PanelToolbar<FilterTab, SortOption>
         tabs={tabs}
@@ -108,7 +145,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
       />
 
       {loading ? (
-        <div className="h-32 flex items-center justify-center text-gray-400">데이터를 불러오는 중입니다...</div>
+        <BookListSkeleton />
       ) : filteredBooks.length === 0 ? (
         <div className="h-32 bg-gray-50/50 border border-dashed border-gray-200 rounded-2xl flex items-center justify-center flex-col gap-2">
           <span className="text-gray-400">
@@ -126,8 +163,8 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
           {filteredBooks.map(book => {
             const progressPercent = calcProgress(book.readPage, book.totalPage);
             return (
-              <div key={book.id} onClick={() => openBookRecord(book)} className="bg-white/60 border border-gray-200 p-4 rounded-2xl flex flex-col gap-3 group relative overflow-hidden cursor-pointer hover:bg-white transition-colors shadow-sm">
-                <div className="flex gap-3 relative z-10">
+              <div key={book.id} onClick={() => openBookRecord(book)} className="bg-white/60 border border-gray-200 p-3 sm:p-4 rounded-2xl flex flex-col gap-2 sm:gap-3 group relative overflow-hidden cursor-pointer hover:bg-white transition-colors shadow-sm">
+                <div className="flex gap-2 sm:gap-3 relative z-10">
                   {book.coverUrl ? (
                     <img src={book.coverUrl} className="w-14 h-20 object-cover rounded-md shadow-md" alt="cover"/>
                   ) : (

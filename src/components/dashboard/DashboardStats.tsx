@@ -20,7 +20,7 @@ interface DashboardStatsProps {
 
 export default function DashboardStats({ books, completedBooks, loading, selectedYear, selectedMonth, isCurrentMonth, onPrevMonth, onNextMonth }: DashboardStatsProps) {
   return (
-    <div className="w-full lg:w-1/4 flex flex-col gap-5 shrink-0 lg:overflow-y-auto hide-scrollbar">
+    <div className="flex flex-col gap-5 h-full overflow-y-auto hide-scrollbar">
       {/* 월 네비게이터 */}
       <MonthNavigator
         selectedYear={selectedYear}

@@ -57,23 +57,23 @@ export default function YearStatistics({ books }: YearStatisticsProps) {
   const maxMonthly = Math.max(...Object.values(monthlyStats), 1);
 
   return (
-    <div className="liquid-panel p-6 flex flex-col gap-0 overflow-hidden">
-      <h3 className="text-gray-900 font-semibold text-lg flex items-center gap-2 mb-5 shrink-0">
+    <div className="liquid-panel p-4 sm:p-5 md:p-6 flex flex-col gap-0 overflow-hidden">
+      <h3 className="text-gray-900 font-semibold text-base sm:text-lg flex items-center gap-2 mb-4 sm:mb-5 shrink-0">
         연간 통계
       </h3>
 
       {/* 툴바 */}
-      <div className="flex items-center justify-between mb-5 shrink-0 gap-3 flex-wrap">
-        <div className="flex items-center gap-1.5">
+      <div className="flex items-center justify-between mb-4 sm:mb-5 shrink-0 gap-2 sm:gap-3 flex-wrap">
+        <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
           {tabConfig.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 ${
                 activeTab === tab.key
                   ? 'liquid-badge text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-800 hover:bg-white/50 border border-transparent'
               }`}
             >
-              {tab.icon}
+              <span className="hidden sm:inline-block">{tab.icon}</span>
               {tab.label}
             </button>
           ))}
@@ -85,12 +85,12 @@ export default function YearStatistics({ books }: YearStatisticsProps) {
       )}
 
       {activeTab === 'read' && (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 sm:gap-2">
           {completedBooks.length === 0 ? (
-            <p className="text-xs text-gray-400 py-4">올해 읽은 책이 없습니다.</p>
+            <p className="text-xs sm:text-sm text-gray-400 py-3 sm:py-4">올해 읽은 책이 없습니다.</p>
           ) : (
             completedBooks.map(b => (
-              <div key={b.id} className="flex items-center gap-2 text-xs text-gray-600 hover:text-gray-900 hover:bg-white/40 rounded-lg px-2 py-1 transition-all cursor-pointer group">
+              <div key={b.id} className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 hover:bg-white/40 rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 transition-all cursor-pointer group">
                 <span className="shrink-0">✅</span>
                 <span className="text-gray-500 shrink-0">
                   《<span className="text-gray-800 group-hover:text-purple-600 transition-colors">{b.title}</span>》
