@@ -8,6 +8,7 @@ import { getRecordsByBook, createRecord } from '@/lib/recordApi';
 import { RecordDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
+import { TimelineRecordSkeleton } from '@/components/ui/skeleton';
 
 // 임시 ID 생성 유틸리티
 let tempRecordIdCounter = -1;
@@ -348,7 +349,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                 </div>
               )}
 
-              {loading && !isAdding && <div className="pl-12 text-gray-500 text-sm">기록을 불러오는 중...</div>}
+              {loading && !isAdding && <TimelineRecordSkeleton count={3} />}
               
               {!loading && records.length === 0 && !isAdding && (
                  <div className="pl-12 text-gray-400 text-sm py-8">아직 작성된 기록이 없습니다. 우측 하단의 + 버튼을 눌러 기록을 남겨보세요.</div>

@@ -7,6 +7,7 @@ import { searchBooks } from '@/lib/bookApi';
 import { addUserBook } from '@/lib/userBookApi';
 import { BookSearchDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
+import { SearchResultSkeleton } from '@/components/ui/skeleton';
 
 interface BookSearchModalProps {
   isOpen: boolean;
@@ -205,7 +206,7 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
 
           {/* Search Results */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {loading && <div className="text-center text-gray-500 py-4">검색 중...</div>}
+            {loading && <SearchResultSkeleton count={3} />}
 
             {!loading && query.length > 1 && results.length === 0 && (
               <div className="text-center text-gray-500 py-4">검색 결과가 없습니다.</div>

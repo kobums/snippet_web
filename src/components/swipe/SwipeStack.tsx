@@ -6,6 +6,7 @@ import SwipeCard from "./SwipeCard";
 import { SnippetCard, SwipeDirection } from "@/types/snippet";
 import { fetchCards } from "@/lib/api";
 import { useArchive } from "@/hooks/useArchive";
+import { SwipeCardSkeleton } from "@/components/ui/skeleton";
 
 export default function SwipeStack() {
   const [cards, setCards] = useState<SnippetCard[]>([]);
@@ -53,17 +54,7 @@ export default function SwipeStack() {
 
   // 로딩 상태
   if (loading && cards.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full gap-4">
-        <div className="liquid-spinner" />
-        <p
-          className="text-sm font-light"
-          style={{ color: "var(--lg-text-tertiary)" }}
-        >
-          문장을 불러오는 중...
-        </p>
-      </div>
-    );
+    return <SwipeCardSkeleton />;
   }
 
   // 빈 상태
@@ -85,7 +76,7 @@ export default function SwipeStack() {
   }
 
   return (
-    <div className="relative w-full h-[420px] md:h-[460px] flex items-center justify-center">
+    <div className="relative w-full h-[380px] sm:h-[420px] md:h-[460px] flex items-center justify-center">
       <AnimatePresence>
         {cards.slice(-3).map((snippet, index, arr) => {
           const isTop = index === arr.length - 1;
@@ -95,7 +86,7 @@ export default function SwipeStack() {
           return (
             <div
               key={snippet.id}
-              className="absolute w-[350px] min-h-[380px] h-auto md:w-[400px] md:min-h-[420px]"
+              className="absolute w-[320px] min-h-[360px] sm:w-[350px] sm:min-h-[380px] md:w-[400px] md:min-h-[420px] h-auto"
               style={{
                 transform: `scale(${scale}) translateY(${translateY}px)`,
                 zIndex: index,
