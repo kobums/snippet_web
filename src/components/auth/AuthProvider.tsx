@@ -6,29 +6,36 @@ import { useRouter, usePathname } from 'next/navigation';
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    
     // Check auth only on client side
     const token = localStorage.getItem('token');
-    
+
     // Paths that are accessible without login
-    const publicPaths = ['/login', '/register'];
+    const publicPaths = ['/', '/login', '/register', '/snippet', '/privacy'];
     const isPublicPath = publicPaths.includes(pathname);
 
+    // Auth-only paths (redirect to dashboard if already logged in)
+    const authOnlyPaths = ['/login', '/register'];
+    const isAuthOnlyPath = authOnlyPaths.includes(pathname);
+
     if (!token && !isPublicPath) {
-      // Redirect to login if user isn't logged in and tries to access a protected page
+      // Don't render and redirect to login
+      setShouldRender(false);
       router.push('/login');
-    } else if (token && isPublicPath) {
-      // Redirect to home if user is already logged in and tries to access login/register
+    } else if (token && isAuthOnlyPath) {
+      // Don't render and redirect to dashboard (only for login/register pages)
+      setShouldRender(false);
       router.push('/dashboard');
+    } else {
+      // Allow rendering
+      setShouldRender(true);
     }
   }, [pathname, router]);
 
-  // Optionally, show a generic loading state before auth check is complete
-  if (!mounted) return null;
+  // Show nothing until auth check allows rendering
+  if (!shouldRender) return null;
 
   return <>{children}</>;
 }
