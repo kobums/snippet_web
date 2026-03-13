@@ -25,8 +25,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const requestUrl = error.config?.url || "";
-      // 인증 관련 API(로그인/회원가입)에서는 리다이렉트하지 않음
-      if (!requestUrl.startsWith("/auth/") && typeof window !== "undefined") {
+      // 인증 관련 API 또는 공개 API(snippets)에서는 리다이렉트하지 않음
+      if (!requestUrl.startsWith("/auth/") && !requestUrl.startsWith("/snippets/") && typeof window !== "undefined") {
         localStorage.removeItem("token");
         window.location.href = "/login";
       }
