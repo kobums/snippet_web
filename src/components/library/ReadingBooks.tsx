@@ -5,12 +5,14 @@ import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
 import { useBookStore } from '@/stores/useBookStore';
 import PanelToolbar from '@/components/ui/PanelToolbar';
+import { LibraryListSkeleton } from '@/components/ui/skeleton';
 
 interface ReadingBooksProps {
   books: UserBookDto[];
+  loading: boolean;
 }
 
-export default function ReadingBooks({ books }: ReadingBooksProps) {
+export default function ReadingBooks({ books, loading }: ReadingBooksProps) {
   const { openBookRecord, openSearchModal } = useUIStore();
   const { loadDashboard } = useBookStore();
 
@@ -26,7 +28,9 @@ export default function ReadingBooks({ books }: ReadingBooksProps) {
       />
 
       <div className="space-y-1.5">
-        {books.length === 0 ? (
+        {loading ? (
+          <LibraryListSkeleton count={3} />
+        ) : books.length === 0 ? (
           <button
             onClick={() => openSearchModal({ allowedActions: ['have'], defaultStatus: 'reading', onSuccess: loadDashboard })}
             className="w-full py-4 border border-dashed border-gray-300 rounded-xl text-sm text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-center gap-2"

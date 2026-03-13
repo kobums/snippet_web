@@ -5,6 +5,7 @@ import { UserBookDto } from '@/types/library';
 import { getUserBooks, patchUserBook } from '@/lib/userBookApi';
 import { useUIStore } from '@/stores/useUIStore';
 import { handleApiError } from '@/lib/errorHandler';
+import { BookGridSkeleton } from '@/components/ui/skeleton';
 
 export default function WishlistBooksPage() {
   const [books, setBooks] = useState<UserBookDto[]>([]);
@@ -45,16 +46,16 @@ export default function WishlistBooksPage() {
   });
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
+    <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">갖고 싶은 책</h2>
-          <p className="text-sm text-gray-500 mt-1">{books.length}권</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">갖고 싶은 책</h2>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">{books.length}권</p>
         </div>
         <button
           onClick={() => openSearchModal({ allowedActions: ['wish'], defaultStatus: 'waiting', onSuccess: loadBooks })}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl liquid-button text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl liquid-button text-sm w-full sm:w-auto justify-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           추가하기
@@ -79,9 +80,7 @@ export default function WishlistBooksPage() {
 
       {/* Book Grid */}
       {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="liquid-spinner" />
-        </div>
+        <BookGridSkeleton count={6} />
       ) : filteredBooks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 opacity-50">
@@ -96,7 +95,7 @@ export default function WishlistBooksPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
           {filteredBooks.map(book => (
             <div
               key={book.id}

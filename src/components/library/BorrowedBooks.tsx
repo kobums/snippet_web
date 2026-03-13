@@ -6,12 +6,14 @@ import { useUIStore } from '@/stores/useUIStore';
 import { useBookStore } from '@/stores/useBookStore';
 import { patchUserBook } from '@/lib/userBookApi';
 import PanelToolbar from '@/components/ui/PanelToolbar';
+import { LibraryCardSkeleton } from '@/components/ui/skeleton';
 
 interface BorrowedBooksProps {
   books: UserBookDto[];
+  loading: boolean;
 }
 
-export default function BorrowedBooks({ books }: BorrowedBooksProps) {
+export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
   const { openBookRecord, openSearchModal } = useUIStore();
   const { updateBookLocally, loadDashboard } = useBookStore();
 
@@ -33,7 +35,9 @@ export default function BorrowedBooks({ books }: BorrowedBooksProps) {
       />
 
       <div className="space-y-3">
-        {books.length === 0 ? (
+        {loading ? (
+          <LibraryCardSkeleton count={2} />
+        ) : books.length === 0 ? (
           <div className="text-xs text-gray-400 py-4 text-center">빌린 책이 없습니다.</div>
         ) : (
           books.map(book => (

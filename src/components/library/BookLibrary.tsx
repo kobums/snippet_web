@@ -10,9 +10,10 @@ import BookSearchInput from './BookSearchInput';
 
 interface BookLibraryProps {
   books: UserBookDto[];
+  loading: boolean;
 }
 
-export default function BookLibrary({ books }: BookLibraryProps) {
+export default function BookLibrary({ books, loading }: BookLibraryProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredBooks = books.filter(b => {
@@ -27,22 +28,22 @@ export default function BookLibrary({ books }: BookLibraryProps) {
   const wishBooks = filteredBooks.filter(b => b.type === 'wish');
 
   return (
-    <div className="w-full lg:w-1/4 flex flex-col gap-5 shrink-0 lg:overflow-y-auto hide-scrollbar">
+    <div className="flex flex-col gap-5 h-full overflow-y-auto hide-scrollbar">
 
       {/* 검색창 컴포넌트 분리 */}
       <BookSearchInput value={searchQuery} onChange={setSearchQuery} />
 
       {/* 1. 최근 추가한 책 (모든 액션 허용) */}
-      <RecentlyAddedBooks books={filteredBooks} />
+      <RecentlyAddedBooks books={filteredBooks} loading={loading} />
 
       {/* 2. 읽고 있는 책 (소장만) */}
-      <ReadingBooks books={readingBooks} />
+      <ReadingBooks books={readingBooks} loading={loading} />
 
       {/* 3. 빌린 책 (대여만) */}
-      <BorrowedBooks books={borrowedBooks} />
+      <BorrowedBooks books={borrowedBooks} loading={loading} />
 
       {/* 4. 갖고 싶은 책 (위시만) */}
-      <WishlistBooks books={wishBooks} />
+      <WishlistBooks books={wishBooks} loading={loading} />
     </div>
   );
 }

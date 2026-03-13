@@ -6,12 +6,14 @@ import { useBookStore } from '@/stores/useBookStore';
 import { useUIStore } from '@/stores/useUIStore';
 import { patchUserBook } from '@/lib/userBookApi';
 import PanelToolbar from '@/components/ui/PanelToolbar';
+import { LibraryCardSkeleton } from '@/components/ui/skeleton';
 
 interface WishlistBooksProps {
   books: UserBookDto[];
+  loading: boolean;
 }
 
-export default function WishlistBooks({ books }: WishlistBooksProps) {
+export default function WishlistBooks({ books, loading }: WishlistBooksProps) {
   const { updateBookLocally, loadDashboard } = useBookStore();
   const { openBookRecord, openSearchModal } = useUIStore();
 
@@ -27,7 +29,9 @@ export default function WishlistBooks({ books }: WishlistBooksProps) {
       />
 
       <div className="space-y-3">
-        {books.length === 0 ? (
+        {loading ? (
+          <LibraryCardSkeleton count={2} />
+        ) : books.length === 0 ? (
           <div className="text-xs text-gray-400 py-4 text-center">갖고 싶은 책이 없습니다.</div>
         ) : (
           books.map(book => (

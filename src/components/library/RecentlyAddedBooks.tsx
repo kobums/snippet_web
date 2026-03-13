@@ -5,11 +5,13 @@ import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
 import { useBookStore } from '@/stores/useBookStore';
 import PanelToolbar, { TabItem } from '@/components/ui/PanelToolbar';
+import { LibraryListSkeleton } from '@/components/ui/skeleton';
 
 type PeriodFilter = '1week' | '1month' | 'all';
 
 interface RecentlyAddedBooksProps {
   books: UserBookDto[];
+  loading: boolean;
 }
 
 const STATUS_LABELS: Record<string, { text: string; color: string }> = {
@@ -32,7 +34,7 @@ const PERIOD_DAYS: Record<PeriodFilter, number | null> = {
   'all': null,
 };
 
-export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
+export default function RecentlyAddedBooks({ books, loading }: RecentlyAddedBooksProps) {
   const [period, setPeriod] = useState<PeriodFilter>('1week');
   const { openBookRecord, openSearchModal } = useUIStore();
   const { loadDashboard } = useBookStore();
@@ -67,7 +69,9 @@ export default function RecentlyAddedBooks({ books }: RecentlyAddedBooksProps) {
       />
 
       <div className="space-y-1.5">
-        {recentBooks.length === 0 ? (
+        {loading ? (
+          <LibraryListSkeleton count={3} />
+        ) : recentBooks.length === 0 ? (
           <div className="text-xs text-gray-400 py-4 text-center">최근 추가한 책이 없습니다.</div>
         ) : (
           recentBooks.map(book => {
