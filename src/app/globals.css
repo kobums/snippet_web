@@ -64,9 +64,14 @@ input[type="number"] {
   --lg-pass: #ff3b30;
 }
 
+html {
+  background-color: var(--lg-bg-1);
+  /* overscroll-behavior-y: none; */ /* 세로만 막고 가로(뒤로가기/앞으로가기)는 허용 */
+}
+
 body {
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', Arial, Helvetica, sans-serif;
-  overscroll-behavior: none;
+  /* overscroll-behavior-y: none; */ /* 세로만 막고 가로(뒤로가기/앞으로가기)는 허용 */
   -webkit-user-select: none;
   user-select: none;
   -webkit-font-smoothing: antialiased;
@@ -303,4 +308,54 @@ body {
 .content-layer {
   position: relative;
   z-index: 1;
+}
+
+/* ─────────────────────────────────────
+   반응형 유틸리티
+   ───────────────────────────────────── */
+
+/* Safe Area (노치 대응) */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 스크롤바 숨김 */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 모바일 터치 타겟 최소 크기 (iOS HIG: 44×44px) */
+@media (max-width: 639px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* 모바일 글래스모피즘 blur 성능 최적화 */
+@media (max-width: 639px) {
+  .liquid-panel,
+  .liquid-card {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+}
+
+@media (min-width: 640px) {
+  .liquid-panel,
+  .liquid-card {
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+  }
+}
+
+/* iOS Safari 뷰포트 높이 대응 */
+@supports (-webkit-touch-callout: none) {
+  .min-h-dvh {
+    min-height: -webkit-fill-available;
+  }
 }

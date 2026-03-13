@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const tabs = [
   { href: "/", label: "스와이프", icon: "◇" },
   { href: "/archive", label: "보관함", icon: "♡" },
+  { href: "/dashboard/stats", label: "통계", icon: "📊" },
 ];
 
 export default function BottomNav() {

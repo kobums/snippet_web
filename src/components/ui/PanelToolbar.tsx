@@ -83,21 +83,21 @@ export default function PanelToolbar<TTab extends string = string, TSort extends
 
   return (
     <>
-      <div className="flex items-center justify-between mb-5 shrink-0 gap-3 flex-wrap">
+      <div className="flex items-center justify-between mb-4 sm:mb-5 shrink-0 gap-2 sm:gap-3 flex-wrap">
         {/* 좌측: 탭 */}
         {tabs && tabs.length > 0 && (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1 sm:gap-1.5">
             {tabs.map(tab => (
               <button
                 key={tab.key}
                 onClick={() => onTabChange?.(tab.key)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 ${
                   activeTab === tab.key
                     ? 'liquid-badge text-gray-900 shadow-sm'
                     : 'text-gray-500 hover:text-gray-800 hover:bg-white/50 border border-transparent'
                 }`}
               >
-                {tab.icon}
+                {tab.icon && <span className="hidden sm:inline-block">{tab.icon}</span>}
                 {tab.label}
               </button>
             ))}

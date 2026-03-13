@@ -6,6 +6,7 @@ import { SnippetArchive } from "@/types/snippet";
 import { fetchArchive } from "@/lib/api";
 import { useArchive } from "@/hooks/useArchive";
 import Link from "next/link";
+import { SnippetArchiveSkeleton } from "@/components/ui/skeleton";
 
 export default function ArchivePage() {
   const { likedIds } = useArchive();
@@ -27,8 +28,18 @@ export default function ArchivePage() {
   // 로딩 상태
   if (loading) {
     return (
-      <main className="min-h-dvh flex items-center justify-center content-layer">
-        <div className="liquid-spinner" />
+      <main className="min-h-dvh flex flex-col content-layer">
+        <header className="flex items-center justify-center pt-8 sm:pt-12 pb-4 sm:pb-6">
+          <h1
+            className="text-base sm:text-xl font-light tracking-[0.2em] sm:tracking-[0.25em] uppercase"
+            style={{ color: "var(--lg-text-secondary)" }}
+          >
+            보관함
+          </h1>
+        </header>
+        <div className="flex-1 px-4 sm:px-6 pb-20 sm:pb-24 space-y-3 sm:space-y-4 max-w-2xl mx-auto w-full">
+          <SnippetArchiveSkeleton count={3} />
+        </div>
       </main>
     );
   }
@@ -36,9 +47,9 @@ export default function ArchivePage() {
   return (
     <main className="min-h-dvh flex flex-col content-layer">
       {/* 헤더 */}
-      <header className="flex items-center justify-center pt-12 pb-6">
+      <header className="flex items-center justify-center pt-8 sm:pt-12 pb-4 sm:pb-6">
         <h1
-          className="text-xl font-light tracking-[0.25em] uppercase"
+          className="text-base sm:text-xl font-light tracking-[0.2em] sm:tracking-[0.25em] uppercase"
           style={{ color: "var(--lg-text-secondary)" }}
         >
           보관함
@@ -68,8 +79,8 @@ export default function ArchivePage() {
           </Link>
         </div>
       ) : (
-        /* 보관함 목록 */
-        <div className="flex-1 px-4 pb-24 space-y-4 max-w-lg mx-auto w-full">
+        /* 보관함 목록 */}
+        <div className="flex-1 px-4 sm:px-6 pb-20 sm:pb-24 space-y-3 sm:space-y-4 max-w-2xl mx-auto w-full">
           {snippets.map((snippet) => (
             <div key={snippet.id}>
               {/* 문장 카드 */}
@@ -77,7 +88,7 @@ export default function ArchivePage() {
                 onClick={() =>
                   setRevealedId(revealedId === snippet.id ? null : snippet.id)
                 }
-                className="liquid-panel w-full text-left p-6 cursor-pointer"
+                className="liquid-panel w-full text-left p-4 sm:p-6 cursor-pointer"
               >
                 <span
                   className="liquid-badge inline-block mb-3 px-4 py-1.5 text-xs font-medium"

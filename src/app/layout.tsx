@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import BottomNav from "@/components/layout/BottomNav";
+// import BottomNav from "@/components/layout/BottomNav";
 import AuthProvider from "@/components/auth/AuthProvider";
 import "./globals.css";
 
@@ -32,7 +32,10 @@ export default function RootLayout({
       <body className={`${geistSans.variable} antialiased bg-liquid`}>
         <AuthProvider>
           {children}
-          {/* <BottomNav /> */}
+          {/* BottomNav - 임시로 비활성화 */}
+          {/* <div className="lg:hidden">
+            <BottomNav />
+          </div> */}
         </AuthProvider>
       </body>
     </html>

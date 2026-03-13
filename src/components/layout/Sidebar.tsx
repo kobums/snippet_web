@@ -77,64 +77,69 @@ export default function Sidebar({
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-            className="fixed top-0 left-0 w-64 h-full bg-white/95 backdrop-blur-2xl border-r border-gray-200 z-50 flex flex-col p-6 shadow-2xl"
+            className="fixed top-0 left-0 w-72 sm:w-80 h-full bg-white/95 backdrop-blur-2xl border-r border-gray-200 z-50 flex flex-col p-4 sm:p-6 shadow-2xl"
           >
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-6 sm:mb-8 shrink-0">
               <h2 className="text-xl font-light tracking-widest text-gray-900 uppercase">snippet</h2>
               <button onClick={onClose} className="text-gray-500 hover:text-gray-800 lg:hidden">✕</button>
             </div>
 
-            <nav className="flex flex-col gap-4 text-gray-700">
+            <nav className="flex flex-col gap-3 sm:gap-4 text-gray-700 flex-1 overflow-y-auto hide-scrollbar pb-4">
               {NAV_ITEMS.map(item => (
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`py-2 px-4 rounded-xl font-medium transition text-left ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
                 >
                   {item.label}
                 </button>
               ))}
 
               <div className="border-t border-gray-200 my-1" />
-              <p className="px-4 text-[11px] text-gray-400 font-medium uppercase tracking-wider">내 책장</p>
+              <p className="px-3 sm:px-4 text-[10px] sm:text-[11px] text-gray-400 font-medium uppercase tracking-wider">내 책장</p>
 
               {BOOK_NAV_ITEMS.map(item => (
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`py-2 px-4 rounded-xl font-medium transition text-left ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
                 >
                   {item.label}
                 </button>
               ))}
 
               <div className="border-t border-gray-200 my-1" />
-              <p className="px-4 text-[11px] text-gray-400 font-medium uppercase tracking-wider">독서 기록</p>
+              <p className="px-3 sm:px-4 text-[10px] sm:text-[11px] text-gray-400 font-medium uppercase tracking-wider">독서 기록</p>
 
               {RECORD_NAV_ITEMS.map(item => (
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`py-2 px-4 rounded-xl font-medium transition text-left ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
                 >
                   {item.label}
                 </button>
               ))}
 
               <div className="border-t border-gray-200 my-1" />
-              <button className="py-2 px-4 hover:bg-gray-100 rounded-xl transition text-left opacity-50 cursor-not-allowed">통계 (준비중)</button>
+              <button
+                onClick={() => navigate('/dashboard/stats')}
+                className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive('/dashboard/stats') ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+              >
+                통계
+              </button>
             </nav>
 
-            <div className="mt-auto pt-8 border-t border-gray-200 flex flex-col gap-3">
+            <div className="mt-auto pt-6 sm:pt-8 border-t border-gray-200 flex flex-col gap-2 sm:gap-3 shrink-0">
               <button
                 onClick={() => navigate('/mypage')}
-                className="py-2 px-4 hover:bg-gray-100 rounded-xl transition text-left text-gray-700 font-medium"
+                className="py-2 px-4 hover:bg-gray-100 rounded-xl transition text-left text-gray-700 font-medium text-sm sm:text-base"
               >
                 내 정보
               </button>
               <button
                 onClick={handleLogout}
-                className="py-2 px-4 hover:bg-red-50 rounded-xl transition text-left text-red-500 font-medium"
+                className="py-2 px-4 hover:bg-red-50 rounded-xl transition text-left text-red-500 font-medium text-sm sm:text-base"
               >
                 로그아웃
               </button>
