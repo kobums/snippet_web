@@ -79,7 +79,7 @@ export default function ArchivePage() {
           </Link>
         </div>
       ) : (
-        /* 보관함 목록 */}
+        /* 보관함 목록 */
         <div className="flex-1 px-4 sm:px-6 pb-20 sm:pb-24 space-y-3 sm:space-y-4 max-w-2xl mx-auto w-full">
           {snippets.map((snippet) => (
             <div key={snippet.id}>
