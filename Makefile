@@ -3,7 +3,7 @@ tag=latest
 all: run
 
 run:
-	npm start
+	npm run dev
 
 build:
 	npm run build
