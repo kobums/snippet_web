@@ -23,11 +23,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     if (!token && !isPublicPath) {
       // Don't render and redirect to login
       setShouldRender(false);
-      router.push('/login');
+      router.replace('/login');
     } else if (token && isAuthOnlyPath) {
       // Don't render and redirect to dashboard (only for login/register pages)
       setShouldRender(false);
-      router.push('/dashboard');
+      router.replace('/dashboard');
     } else {
       // Allow rendering
       setShouldRender(true);
