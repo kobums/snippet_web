@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { addArchive as addArchiveApi } from "@/lib/api";
 
-const LIKED_KEY = "snippet_liked_ids";
 const SEEN_KEY = "snippet_seen_ids";
 
 function getStoredIds(key: string): number[] {
@@ -16,21 +16,18 @@ function setStoredIds(key: string, ids: number[]) {
 }
 
 export function useArchive() {
-  const [likedIds, setLikedIds] = useState<number[]>([]);
   const [seenIds, setSeenIds] = useState<number[]>([]);
 
   useEffect(() => {
-    setLikedIds(getStoredIds(LIKED_KEY));
     setSeenIds(getStoredIds(SEEN_KEY));
   }, []);
 
-  const addLiked = useCallback((id: number) => {
-    setLikedIds((prev) => {
-      if (prev.includes(id)) return prev;
-      const next = [...prev, id];
-      setStoredIds(LIKED_KEY, next);
-      return next;
-    });
+  const addLiked = useCallback(async (id: number) => {
+    try {
+      await addArchiveApi(id);
+    } catch {
+      console.error("보관함 추가 실패");
+    }
   }, []);
 
   const addSeen = useCallback((id: number) => {
@@ -42,5 +39,5 @@ export function useArchive() {
     });
   }, []);
 
-  return { likedIds, seenIds, addLiked, addSeen };
+  return { seenIds, addLiked, addSeen };
 }

@@ -11,7 +11,7 @@ import { SwipeCardSkeleton } from "@/components/ui/skeleton";
 export default function SwipeStack() {
   const [cards, setCards] = useState<SnippetCard[]>([]);
   const [loading, setLoading] = useState(true);
-  const { likedIds, seenIds, addLiked, addSeen } = useArchive();
+  const { seenIds, addLiked, addSeen } = useArchive();
 
   const loadCards = useCallback(async () => {
     try {
@@ -69,7 +69,7 @@ export default function SwipeStack() {
           모든 문장을 확인했어요
         </p>
         <p className="text-sm" style={{ color: "var(--lg-text-tertiary)" }}>
-          {likedIds.length}개의 문장을 보관함에 담았어요
+          보관함에서 모은 문장을 확인해보세요
         </p>
       </div>
     );

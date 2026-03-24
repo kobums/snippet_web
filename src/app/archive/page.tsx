@@ -4,26 +4,20 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SnippetArchive } from "@/types/snippet";
 import { fetchArchive } from "@/lib/api";
-import { useArchive } from "@/hooks/useArchive";
 import Link from "next/link";
 import { SnippetArchiveSkeleton } from "@/components/ui/skeleton";
 
 export default function ArchivePage() {
-  const { likedIds } = useArchive();
   const [snippets, setSnippets] = useState<SnippetArchive[]>([]);
   const [loading, setLoading] = useState(true);
   const [revealedId, setRevealedId] = useState<number | null>(null);
 
   useEffect(() => {
-    if (likedIds.length === 0) {
-      setLoading(false);
-      return;
-    }
-    fetchArchive(likedIds)
+    fetchArchive()
       .then(setSnippets)
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [likedIds]);
+  }, []);
 
   // 로딩 상태
   if (loading) {
