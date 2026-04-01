@@ -1,12 +1,13 @@
 # Snippet Web Frontend (Next.js)
 
 ## 기술 스택
-- **Next.js 16** (App Router) / React 19 / TypeScript 5
+- **Next.js 16.1.6** (App Router) / React 19.2.3 / TypeScript 5
 - **Tailwind CSS 4** + Liquid Glass 디자인 시스템
-- **Framer Motion** 스와이프 제스처
-- **Zustand** 상태 관리
-- **Axios** HTTP 클라이언트
-- **Recharts** 차트 시각화
+- **Framer Motion 12.34.3** 스와이프 제스처
+- **Zustand 5.0.11** 상태 관리
+- **Axios 1.13.6** HTTP 클라이언트
+- **Recharts 3.7.0** 차트 시각화
+- **react-hot-toast 2.6.0** 토스트 알림
 
 ## 디렉토리 구조
 
