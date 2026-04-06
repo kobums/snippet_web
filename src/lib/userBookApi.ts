@@ -17,6 +17,16 @@ export const getUserBooks = async (): Promise<UserBookDto[]> => {
   return response.data;
 };
 
+// 진행 탭용 책 목록 (waiting/reading: 전체, completed: 해당 월)
+export const getProgressBooks = async (year?: number, month?: number): Promise<UserBookDto[]> => {
+  const params = new URLSearchParams();
+  if (year !== undefined) params.append('year', String(year));
+  if (month !== undefined) params.append('month', String(month));
+  const query = params.toString() ? `?${params.toString()}` : '';
+  const response = await api.get<UserBookDto[]>(`/userbooks/progress${query}`);
+  return response.data;
+};
+
 // Read one
 export const getUserBook = async (id: number): Promise<UserBookDto> => {
   const response = await api.get<UserBookDto>(`/userbooks/${id}`);

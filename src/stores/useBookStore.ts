@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { UserBookDto } from '@/types/library';
-import { getMonthlyUserBooks, patchUserBook } from '@/lib/userBookApi';
+import { getMonthlyUserBooks, getProgressBooks, patchUserBook } from '@/lib/userBookApi';
 import { handleApiError } from '@/lib/errorHandler';
 
 // 임시 ID 생성 유틸리티 (서버 응답 전까지 사용할 임시 ID - 음수 사용)
@@ -9,11 +9,13 @@ const generateTempId = () => tempIdCounter--;
 
 interface BookStore {
   books: UserBookDto[];
+  progressBooks: UserBookDto[];
   loading: boolean;
   selectedYear: number;
   selectedMonth: number;
 
   loadDashboard: (year?: number, month?: number) => Promise<void>;
+  loadProgress: (year?: number, month?: number) => Promise<void>;
   setSelectedMonth: (year: number, month: number) => void;
   updateStatus: (id: number, status: UserBookDto['status'], e?: React.MouseEvent) => Promise<void>;
   updateProgress: (id: number, page: number, e?: React.MouseEvent) => Promise<void>;
@@ -31,6 +33,7 @@ interface BookStore {
 
 export const useBookStore = create<BookStore>((set, get) => ({
   books: [],
+  progressBooks: [],
   loading: true,
   selectedYear: new Date().getFullYear(),
   selectedMonth: new Date().getMonth() + 1,
@@ -41,8 +44,11 @@ export const useBookStore = create<BookStore>((set, get) => ({
     const m = month ?? now.getMonth() + 1;
     set({ loading: true, selectedYear: y, selectedMonth: m });
     try {
-      const books = await getMonthlyUserBooks(y, m);
-      set({ books });
+      const [books, progressBooks] = await Promise.all([
+        getMonthlyUserBooks(y, m),
+        getProgressBooks(y, m),
+      ]);
+      set({ books, progressBooks });
     } catch (e) {
       handleApiError(e, '대시보드 데이터를 불러오는데 실패했습니다.');
     } finally {
@@ -50,8 +56,21 @@ export const useBookStore = create<BookStore>((set, get) => ({
     }
   },
 
+  loadProgress: async (year?: number, month?: number) => {
+    const { selectedYear, selectedMonth } = get();
+    const y = year ?? selectedYear;
+    const m = month ?? selectedMonth;
+    try {
+      const progressBooks = await getProgressBooks(y, m);
+      set({ progressBooks });
+    } catch (e) {
+      handleApiError(e, '진행 중인 책 목록을 불러오는데 실패했습니다.');
+    }
+  },
+
   setSelectedMonth: (year: number, month: number) => {
     get().loadDashboard(year, month);
+    get().loadProgress(year, month);
   },
 
   updateStatus: async (id, status, e?) => {

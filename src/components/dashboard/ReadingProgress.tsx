@@ -7,13 +7,14 @@ import ReadingManager from './ReadingManager';
 
 interface ReadingProgressProps {
   books: UserBookDto[];
+  progressBooks: UserBookDto[];
   loading: boolean;
 }
 
-export default function ReadingProgress({ books, loading }: ReadingProgressProps) {
+export default function ReadingProgress({ books, progressBooks, loading }: ReadingProgressProps) {
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto hide-scrollbar relative">
-      <ReadingManager books={books} loading={loading} />
+      <ReadingManager books={progressBooks} loading={loading} />
       <BookRecordPanel books={books} />
       <YearStatistics books={books} />
     </div>
