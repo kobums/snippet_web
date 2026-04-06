@@ -56,10 +56,10 @@ export default function SwipeableTabs({ tabs, className = '' }: SwipeableTabsPro
               setActiveIndex(index);
             }}
             className={`
-              flex items-center gap-1.5 px-4 py-2 rounded-full whitespace-nowrap transition-all
+              flex items-center gap-1.5 px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm font-medium
               ${activeIndex === index
-                ? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white shadow-md'
-                : 'bg-white/60 backdrop-blur-sm text-gray-600 hover:bg-white/80'
+                ? 'liquid-button shadow-md'
+                : 'bg-white/60 backdrop-blur-sm text-gray-600 hover:bg-white/80 border border-white/60'
               }
             `}
           >
@@ -105,7 +105,7 @@ export default function SwipeableTabs({ tabs, className = '' }: SwipeableTabsPro
             }}
             className={`
               h-2 rounded-full transition-all
-              ${activeIndex === index ? 'w-8 bg-emerald-500' : 'w-2 bg-gray-300'}
+              ${activeIndex === index ? 'w-8 bg-purple-400' : 'w-2 bg-gray-300'}
             `}
             aria-label={`Go to ${tabs[index].label}`}
           />

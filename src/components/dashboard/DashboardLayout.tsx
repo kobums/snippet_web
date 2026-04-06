@@ -5,10 +5,11 @@ import { useBookStore } from '@/stores/useBookStore';
 import DashboardStats from './DashboardStats';
 import ReadingProgress from './ReadingProgress';
 import BookLibrary from '../library/BookLibrary';
+import SwipeableTabs from '../common/SwipeableTabs';
 
 
 export default function DashboardLayout() {
-  const { books, loading, loadDashboard, selectedYear, selectedMonth, setSelectedMonth } = useBookStore();
+  const { books, progressBooks, loading, loadDashboard, selectedYear, selectedMonth, setSelectedMonth } = useBookStore();
 
   useEffect(() => { loadDashboard(); }, [loadDashboard]);
 
@@ -31,24 +32,44 @@ export default function DashboardLayout() {
     return selectedYear === now.getFullYear() && selectedMonth === now.getMonth() + 1;
   })();
 
-  return (
-    <div className="w-full h-full p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 lg:gap-8 max-w-[2000px] mx-auto overflow-y-auto hide-scrollbar">
-
-      {/* 모바일/태블릿: 상단 Stats + Library */}
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:hidden">
-        <div className="w-full md:w-2/5">
+  const mobileTabs = [
+    {
+      label: '통계',
+      icon: '📊',
+      content: (
+        <div className="p-1">
           <DashboardStats books={books} completedBooks={completedBooks} loading={loading}
             selectedYear={selectedYear} selectedMonth={selectedMonth}
             isCurrentMonth={isCurrentMonth} onPrevMonth={goToPrevMonth} onNextMonth={goToNextMonth} />
         </div>
-        <div className="w-full md:w-3/5">
+      ),
+    },
+    {
+      label: '진행',
+      icon: '📖',
+      content: (
+        <div className="p-1">
+          <ReadingProgress books={books} progressBooks={progressBooks} loading={loading} />
+        </div>
+      ),
+    },
+    {
+      label: '서재',
+      icon: '📚',
+      content: (
+        <div className="p-1">
           <BookLibrary books={books} loading={loading} />
         </div>
-      </div>
+      ),
+    },
+  ];
 
-      {/* 모바일/태블릿: 하단 Progress */}
+  return (
+    <div className="w-full h-full p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 lg:gap-8 max-w-[2000px] mx-auto overflow-y-auto hide-scrollbar">
+
+      {/* 모바일/태블릿: SwipeableTabs */}
       <div className="flex-1 lg:hidden">
-        <ReadingProgress books={books} loading={loading} />
+        <SwipeableTabs tabs={mobileTabs} />
       </div>
 
       {/* 데스크톱: 원래 3열 레이아웃 */}
@@ -59,7 +80,7 @@ export default function DashboardLayout() {
             isCurrentMonth={isCurrentMonth} onPrevMonth={goToPrevMonth} onNextMonth={goToNextMonth} />
         </div>
         <div className="col-span-2">
-          <ReadingProgress books={books} loading={loading} />
+          <ReadingProgress books={books} progressBooks={progressBooks} loading={loading} />
         </div>
         <div className="col-span-1">
           <BookLibrary books={books} loading={loading} />
