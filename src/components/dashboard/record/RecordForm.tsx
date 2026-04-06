@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from 'react';
 import { UserBookDto } from '@/types/library';
 import { tabConfig, type RecordTab } from './RecordToolbar';
+import OcrButton from '@/components/ui/OcrButton';
 
 interface RecordFormProps {
   formType: RecordTab;
@@ -54,9 +55,17 @@ export default function RecordForm({
       </select>
 
       {/* 내용 입력 */}
-      <textarea ref={textareaRef} value={formText} onChange={e => setFormText(e.target.value)}
-        placeholder="내용을 입력하세요..." rows={4}
-        className="text-sm sm:text-base bg-white/80 border border-gray-200 rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5 text-gray-700 outline-none focus:border-blue-400 resize-none transition-colors placeholder-gray-400 leading-relaxed" />
+      <div className="relative">
+        <textarea ref={textareaRef} value={formText} onChange={e => setFormText(e.target.value)}
+          placeholder="내용을 입력하세요..." rows={4}
+          className="w-full text-sm sm:text-base bg-white/80 border border-gray-200 rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5 text-gray-700 outline-none focus:border-blue-400 resize-none transition-colors placeholder-gray-400 leading-relaxed" />
+        <div className="absolute bottom-2 right-2">
+          <OcrButton
+            onExtract={(text) => setFormText(formText ? `${formText}\n\n${text}` : text)}
+            className="text-xs py-1 px-2"
+          />
+        </div>
+      </div>
 
       {/* 태그 & 페이지 */}
       <div className="flex gap-2">
