@@ -12,4 +12,8 @@ export class AuthDataSource {
     const { data } = await api.post<User>('/auth/login', params);
     return data;
   }
+
+  async deleteAccount(): Promise<void> {
+    await api.delete('/auth/account');
+  }
 }

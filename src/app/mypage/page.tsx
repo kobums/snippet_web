@@ -3,10 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '@/core/domain/entities/User';
+import { deleteAccountUseCase } from '@/core/di/authInstances';
+import toast from 'react-hot-toast';
 
 export default function MyPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const userStr = localStorage.getItem('currentUser');
@@ -19,6 +23,20 @@ export default function MyPage() {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     router.push('/login');
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteAccountUseCase.execute();
+      toast.success('계정이 삭제되었습니다.');
+      router.push('/login');
+    } catch {
+      toast.error('계정 삭제에 실패했습니다.');
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
   return (
@@ -93,7 +111,44 @@ export default function MyPage() {
         >
           로그아웃
         </button>
+
+        {/* 계정 삭제 버튼 */}
+        <button
+          onClick={() => setShowDeleteConfirm(true)}
+          className="w-full max-w-md py-3 text-white/30 text-sm hover:text-red-400 transition-colors"
+        >
+          계정 삭제
+        </button>
       </section>
+
+      {/* 계정 삭제 확인 다이얼로그 */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDeleteConfirm(false)} />
+          <div className="relative w-full max-w-sm bg-white/10 border border-white/20 backdrop-blur-xl rounded-3xl p-8 flex flex-col gap-4">
+            <h2 className="text-white text-lg font-semibold text-center">계정을 삭제하시겠습니까?</h2>
+            <p className="text-white/60 text-sm text-center leading-relaxed">
+              모든 독서 기록, 서재, 스니펫이 영구적으로 삭제됩니다.<br />이 작업은 되돌릴 수 없습니다.
+            </p>
+            <div className="flex flex-col gap-2 mt-2">
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                className="w-full py-3 bg-red-500/80 border border-red-400/30 rounded-2xl text-white font-medium hover:bg-red-500 transition-all disabled:opacity-50"
+              >
+                {deleting ? '삭제 중...' : '계정 삭제'}
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+                className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-white/60 hover:text-white transition-all"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

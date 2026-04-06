@@ -27,6 +27,11 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  async deleteAccount(): Promise<void> {
+    await this.authDataSource.deleteAccount();
+    this.logout();
+  }
+
   getCurrentUser(): User | null {
     if (typeof window !== 'undefined') {
       const userStr = localStorage.getItem('currentUser');
