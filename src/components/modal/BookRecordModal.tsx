@@ -21,7 +21,7 @@ interface BookRecordModalProps {
 }
 
 export default function BookRecordModal({ isOpen, onClose, book }: BookRecordModalProps) {
-  const { updateStatus, updateProgress, updateStartDate, updateEndDate } = useBookStore();
+  const { updateStatus, updateProgress, updateStartDate, updateEndDate, updateType } = useBookStore();
   const [records, setRecords] = useState<RecordDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'snippet' | 'diary' | 'review'>('all');
@@ -36,6 +36,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
   // Progress State
   const [localReadPage, setLocalReadPage] = useState<number | ''>('');
   const [localStatus, setLocalStatus] = useState<UserBookDto['status']>('waiting');
+  const [localType, setLocalType] = useState<UserBookDto['type']>('wish');
   const [localStartDate, setLocalStartDate] = useState('');
   const [localEndDate, setLocalEndDate] = useState('');
 
@@ -44,6 +45,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
       loadRecords();
       setLocalReadPage(book.readPage);
       setLocalStatus(book.status);
+      setLocalType(book.type);
       setLocalStartDate(book.startDate?.slice(0, 10) || '');
       setLocalEndDate(book.endDate?.slice(0, 10) || '');
     }
@@ -76,6 +78,12 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
     setLocalReadPage(newPage);
     await updateProgress(book.id, newPage);
+  };
+
+  const handleTypeChange = async (newType: UserBookDto['type']) => {
+    if (!book || newType === localType) return;
+    setLocalType(newType);
+    await updateType(book.id, newType);
   };
 
   const handleStatusChange = async (newStatus: UserBookDto['status']) => {
@@ -223,6 +231,19 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                 
                 {/* Book Info Editor */}
                 <div className="flex flex-wrap items-center gap-2">
+                  {/* Type */}
+                  <select
+                    value={localType}
+                    onChange={(e) => handleTypeChange(e.target.value as UserBookDto['type'])}
+                    className="appearance-none bg-white/60 hover:bg-white text-gray-700 font-medium text-xs px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-300 shadow-sm transition-all cursor-pointer"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', paddingRight: '1.75rem' }}
+                  >
+                    <option value="wish">위시리스트</option>
+                    <option value="have">소장</option>
+                    <option value="borrow">대출 중</option>
+                    <option value="return">반납</option>
+                  </select>
+
                   {/* Status */}
                   <select
                     value={localStatus}
