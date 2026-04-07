@@ -15,6 +15,12 @@ const BOOK_NAV_ITEMS = [
   { path: '/books/wishlist', label: '갖고 싶은 책' },
 ];
 
+const PROGRESS_NAV_ITEMS = [
+  { path: '/books/reading', label: '읽는 중' },
+  { path: '/books/waiting', label: '읽을 예정' },
+  { path: '/books/completed', label: '완독' },
+];
+
 const RECORD_NAV_ITEMS = [
   { path: '/record/diary', label: '독서 일기' },
   { path: '/record/snippet', label: '밑줄 긋기' },
@@ -99,6 +105,19 @@ export default function Sidebar({
               <p className="px-3 sm:px-4 text-[10px] sm:text-[11px] text-gray-400 font-medium uppercase tracking-wider">내 책장</p>
 
               {BOOK_NAV_ITEMS.map(item => (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                >
+                  {item.label}
+                </button>
+              ))}
+
+              <div className="border-t border-gray-200 my-1" />
+              <p className="px-3 sm:px-4 text-[10px] sm:text-[11px] text-gray-400 font-medium uppercase tracking-wider">독서 진행</p>
+
+              {PROGRESS_NAV_ITEMS.map(item => (
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
