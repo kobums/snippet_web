@@ -3,6 +3,7 @@ tag=latest
 all: run
 
 run:
+	cp .env.local .env
 	npm run dev
 
 build:
