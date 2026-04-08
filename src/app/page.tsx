@@ -10,7 +10,7 @@ export default function LandingPage() {
         <div
           className="absolute w-[500px] h-[500px] rounded-full opacity-30 blur-3xl"
           style={{
-            background: "radial-gradient(circle, #c8b6ff 0%, transparent 70%)",
+            background: "radial-gradient(circle, #e8e8e8 0%, transparent 70%)",
             top: "-10%",
             left: "-10%",
             animation: "drift 20s ease-in-out infinite",
@@ -19,7 +19,7 @@ export default function LandingPage() {
         <div
           className="absolute w-[400px] h-[400px] rounded-full opacity-25 blur-3xl"
           style={{
-            background: "radial-gradient(circle, #a8d8ea 0%, transparent 70%)",
+            background: "radial-gradient(circle, #dedede 0%, transparent 70%)",
             bottom: "10%",
             right: "-5%",
             animation: "drift 25s ease-in-out infinite reverse",
@@ -28,7 +28,7 @@ export default function LandingPage() {
         <div
           className="absolute w-[300px] h-[300px] rounded-full opacity-20 blur-3xl"
           style={{
-            background: "radial-gradient(circle, #ffc8dd 0%, transparent 70%)",
+            background: "radial-gradient(circle, #e8e8e8 0%, transparent 70%)",
             top: "40%",
             left: "50%",
             animation: "drift 18s ease-in-out infinite 3s",
@@ -76,7 +76,7 @@ export default function LandingPage() {
           <Link
             href="/snippet"
             className="px-8 py-3 rounded-2xl text-sm font-medium text-white transition-all hover:scale-[1.02]"
-            style={{ background: "var(--lg-accent)" }}
+            style={{ background: "var(--color-primary)" }}
           >
             문장 스와이프 시작하기
           </Link>

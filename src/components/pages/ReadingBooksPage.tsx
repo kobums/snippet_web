@@ -54,7 +54,7 @@ export default function ReadingBooksPage() {
             placeholder="제목이나 저자로 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all"
           />
         </div>
       </div>
@@ -89,15 +89,15 @@ export default function ReadingBooksPage() {
                     </svg>
                   </div>
                 )}
-                <p className="text-sm font-medium text-gray-900 truncate group-hover:text-purple-600 transition-colors">{book.title}</p>
+                <p className="text-sm font-medium text-gray-900 truncate group-hover:text-accent transition-colors">{book.title}</p>
                 <p className="text-xs text-gray-500 truncate mt-0.5">{book.author}</p>
                 <div className="mt-2">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-[10px] font-medium text-blue-600">{progressPercent}%</span>
+                    <span className="text-[10px] font-medium text-secondary">{progressPercent}%</span>
                     <span className="text-[10px] text-gray-400">{book.readPage}/{book.totalPage || '?'}p</span>
                   </div>
                   <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
+                    <div className="h-full bg-secondary rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
                   </div>
                 </div>
               </div>

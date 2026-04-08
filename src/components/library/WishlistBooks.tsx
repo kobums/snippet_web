@@ -50,7 +50,7 @@ export default function WishlistBooks({ books, loading }: WishlistBooksProps) {
                 </div>
               )}
               <div className="px-4 py-3 space-y-2">
-                <p className="text-sm text-gray-900 font-medium leading-snug group-hover:text-purple-600 transition-colors">
+                <p className="text-sm text-gray-900 font-medium leading-snug group-hover:text-accent transition-colors">
                   {book.title}
                 </p>
                 <div className="flex flex-col gap-1.5">
@@ -60,7 +60,7 @@ export default function WishlistBooks({ books, loading }: WishlistBooksProps) {
                       await patchUserBook(book.id, { type: 'have', status: 'reading' });
                       updateBookLocally(book.id, { type: 'have', status: 'reading' });
                     }}
-                    className="flex items-center gap-1.5 text-[11px] text-blue-300 hover:text-blue-200 transition-colors"
+                    className="flex items-center gap-1.5 text-[11px] text-info/80 hover:text-info transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                     소장/읽기시작

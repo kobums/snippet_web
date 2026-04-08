@@ -92,7 +92,7 @@ function BookRow({ book, status }: { book: UserBookDto; status: string }) {
         {formatDate(book.startDate)} ~ {isCompleted ? formatDate(book.endDate) : ''}
       </span>
       <span className="text-gray-500 shrink-0">
-        《<span className="text-gray-800 group-hover:text-purple-600 transition-colors">{book.title}</span>》
+        《<span className="text-gray-800 group-hover:text-accent transition-colors">{book.title}</span>》
       </span>
       <span className="text-gray-400">읽기</span>
     </div>

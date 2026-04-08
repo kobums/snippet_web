@@ -8,9 +8,9 @@ import { handleApiError } from '@/lib/errorHandler';
 import { BookGridSkeleton } from '@/components/ui/skeleton';
 
 const STATUS_LABELS: Record<string, { text: string; color: string }> = {
-  waiting:   { text: '대기중', color: 'bg-yellow-100 text-yellow-600' },
-  reading:   { text: '읽는중', color: 'bg-blue-100 text-blue-600' },
-  completed: { text: '완독',   color: 'bg-green-100 text-green-600' },
+  waiting:   { text: '대기중', color: 'bg-warning/15 text-amber-700' },
+  reading:   { text: '읽는중', color: 'bg-info/15 text-info' },
+  completed: { text: '완독',   color: 'bg-secondary/15 text-secondary' },
   dropped:   { text: '중단',   color: 'bg-gray-100 text-gray-500' },
   none:      { text: '미정',   color: 'bg-gray-100 text-gray-400' },
 };
@@ -71,7 +71,7 @@ export default function OwnedBooksPage() {
             placeholder="제목이나 저자로 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all"
           />
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function OwnedBooksPage() {
           <p className="text-sm">소장한 책이 없습니다</p>
           <button
             onClick={() => openSearchModal({ allowedActions: ['have'], defaultStatus: 'reading', onSuccess: loadBooks })}
-            className="mt-4 text-sm text-purple-500 hover:text-purple-700 transition-colors"
+            className="mt-4 text-sm text-accent hover:text-accent/80 transition-colors"
           >
             첫 번째 책을 추가해보세요
           </button>
@@ -118,7 +118,7 @@ export default function OwnedBooksPage() {
                     </svg>
                   </div>
                 )}
-                <p className="text-sm font-medium text-gray-900 truncate group-hover:text-purple-600 transition-colors">{book.title}</p>
+                <p className="text-sm font-medium text-gray-900 truncate group-hover:text-accent transition-colors">{book.title}</p>
                 <p className="text-xs text-gray-500 truncate mt-0.5">{book.author}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${statusInfo.color}`}>

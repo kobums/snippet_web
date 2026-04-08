@@ -73,7 +73,7 @@ export default function WishlistBooksPage() {
             placeholder="제목이나 저자로 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all"
           />
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function WishlistBooksPage() {
           <p className="text-sm">갖고 싶은 책이 없습니다</p>
           <button
             onClick={() => openSearchModal({ allowedActions: ['wish'], defaultStatus: 'waiting', onSuccess: loadBooks })}
-            className="mt-4 text-sm text-purple-500 hover:text-purple-700 transition-colors"
+            className="mt-4 text-sm text-accent hover:text-accent/80 transition-colors"
           >
             첫 번째 책을 추가해보세요
           </button>
@@ -117,12 +117,12 @@ export default function WishlistBooksPage() {
                   </svg>
                 </div>
               )}
-              <p className="text-sm font-medium text-gray-900 truncate group-hover:text-purple-600 transition-colors">{book.title}</p>
+              <p className="text-sm font-medium text-gray-900 truncate group-hover:text-accent transition-colors">{book.title}</p>
               <p className="text-xs text-gray-500 truncate mt-0.5">{book.author}</p>
               <div className="flex flex-col gap-1.5 mt-2">
                 <button
                   onClick={(e) => handleConvert(e, book, 'have')}
-                  className="w-full text-[11px] font-medium py-1.5 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                  className="w-full text-[11px] font-medium py-1.5 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors"
                 >
                   소장/읽기시작
                 </button>

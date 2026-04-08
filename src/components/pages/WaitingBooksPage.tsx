@@ -54,7 +54,7 @@ export default function WaitingBooksPage() {
             placeholder="제목이나 저자로 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all"
           />
         </div>
       </div>
@@ -87,9 +87,9 @@ export default function WaitingBooksPage() {
                   </svg>
                 </div>
               )}
-              <p className="text-sm font-medium text-gray-900 truncate group-hover:text-purple-600 transition-colors">{book.title}</p>
+              <p className="text-sm font-medium text-gray-900 truncate group-hover:text-accent transition-colors">{book.title}</p>
               <p className="text-xs text-gray-500 truncate mt-0.5">{book.author}</p>
-              <span className="inline-block mt-2 text-[10px] font-medium px-2 py-0.5 rounded-md bg-yellow-100 text-yellow-600">대기중</span>
+              <span className="inline-block mt-2 text-[10px] font-medium px-2 py-0.5 rounded-md bg-warning/15 text-amber-700">대기중</span>
             </div>
           ))}
         </div>

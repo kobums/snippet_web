@@ -67,7 +67,7 @@ export default function MonthlyComparisonSection({ data, year }: MonthlyComparis
                 </div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-purple-400 to-purple-500 rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-accent/80 to-accent rounded-full transition-all duration-500"
                     style={{ width: `${maxPages > 0 ? (monthData.totalPages / maxPages) * 100 : 0}%` }}
                   />
                 </div>
@@ -92,7 +92,7 @@ export default function MonthlyComparisonSection({ data, year }: MonthlyComparis
             <XAxis dataKey="month" stroke="#9ca3af" fontSize={12} />
             <YAxis stroke="#9ca3af" fontSize={12} />
             <Tooltip />
-            <Bar dataKey="완료권수" fill="#5ebd8a" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="완료권수" fill="#34c759" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

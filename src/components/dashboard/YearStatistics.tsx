@@ -93,7 +93,7 @@ export default function YearStatistics({ books }: YearStatisticsProps) {
               <div key={b.id} className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 hover:bg-white/40 rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 transition-all cursor-pointer group">
                 <span className="shrink-0">✅</span>
                 <span className="text-gray-500 shrink-0">
-                  《<span className="text-gray-800 group-hover:text-purple-600 transition-colors">{b.title}</span>》
+                  《<span className="text-gray-800 group-hover:text-accent transition-colors">{b.title}</span>》
                 </span>
               </div>
             ))

@@ -66,7 +66,7 @@ export default function ReadingCalendar({ completedBooks }: ReadingCalendarProps
           return (
             <div
               key={day}
-              className={`aspect-[3/4] relative group rounded-md overflow-hidden border ${isToday ? 'border-purple-300 bg-purple-50/30' : 'border-gray-100 bg-gray-50/50'} flex items-center justify-center transition-all ${hasBooks ? 'cursor-pointer hover:border-purple-300 shadow-sm' : ''}`}
+              className={`aspect-[3/4] relative group rounded-md overflow-hidden border ${isToday ? 'border-accent/30 bg-accent/5' : 'border-gray-100 bg-gray-50/50'} flex items-center justify-center transition-all ${hasBooks ? 'cursor-pointer hover:border-accent/30 shadow-sm' : ''}`}
               onClick={() => hasBooks && openBookRecord(dayBooks[dayBooks.length - 1])}
             >
               {hasBooks ? (
@@ -84,7 +84,7 @@ export default function ReadingCalendar({ completedBooks }: ReadingCalendarProps
                   </div>
                 </>
               ) : (
-                <span className={`text-[10px] ${isToday ? 'text-purple-600 font-bold' : 'text-gray-400'}`}>{day}</span>
+                <span className={`text-[10px] ${isToday ? 'text-accent font-bold' : 'text-gray-400'}`}>{day}</span>
               )}
             </div>
           );

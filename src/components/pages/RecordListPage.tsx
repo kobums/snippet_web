@@ -135,7 +135,7 @@ export default function RecordListPage({ type, title, description }: RecordListP
             placeholder="내용, 태그, 책 제목으로 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all"
           />
         </div>
         <div className="relative sm:w-auto">
@@ -189,7 +189,7 @@ export default function RecordListPage({ type, title, description }: RecordListP
           {!searchQuery && (
             <button
               onClick={() => setShowForm(true)}
-              className="mt-4 text-sm text-purple-500 hover:text-purple-700 transition-colors"
+              className="mt-4 text-sm text-accent hover:text-accent/80 transition-colors"
             >
               첫 기록을 작성해보세요
             </button>
@@ -223,7 +223,7 @@ export default function RecordListPage({ type, title, description }: RecordListP
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                   </svg>
-                  <span className="text-xs text-gray-500 truncate group-hover:text-purple-600 transition-colors">{record.bookTitle}</span>
+                  <span className="text-xs text-gray-500 truncate group-hover:text-accent transition-colors">{record.bookTitle}</span>
                 </div>
 
                 {/* 페이지 */}

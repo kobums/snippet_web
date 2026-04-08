@@ -68,7 +68,7 @@ export default function CategoryAnalysisSection({ data }: CategoryAnalysisSectio
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-accent/80 to-accent rounded-full transition-all duration-500"
                       style={{ width: `${category.completionRate}%` }}
                     />
                   </div>
@@ -111,7 +111,7 @@ export default function CategoryAnalysisSection({ data }: CategoryAnalysisSectio
               <XAxis type="number" domain={[0, 100]} stroke="#9ca3af" fontSize={12} />
               <YAxis type="category" dataKey="category" stroke="#9ca3af" fontSize={12} width={100} />
               <Tooltip />
-              <Bar dataKey="완독률" fill="#7c5cbf" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="완독률" fill="#b794f4" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

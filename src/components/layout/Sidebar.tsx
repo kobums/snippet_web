@@ -95,7 +95,7 @@ export default function Sidebar({
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-accent/15 text-accent' : 'hover:bg-gray-100 text-gray-600'}`}
                 >
                   {item.label}
                 </button>
@@ -108,7 +108,7 @@ export default function Sidebar({
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-accent/15 text-accent' : 'hover:bg-gray-100 text-gray-600'}`}
                 >
                   {item.label}
                 </button>
@@ -121,7 +121,7 @@ export default function Sidebar({
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-accent/15 text-accent' : 'hover:bg-gray-100 text-gray-600'}`}
                 >
                   {item.label}
                 </button>
@@ -134,7 +134,7 @@ export default function Sidebar({
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                  className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive(item.path) ? 'bg-accent/15 text-accent' : 'hover:bg-gray-100 text-gray-600'}`}
                 >
                   {item.label}
                 </button>
@@ -143,7 +143,7 @@ export default function Sidebar({
               <div className="border-t border-gray-200 my-1" />
               <button
                 onClick={() => navigate('/dashboard/stats')}
-                className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive('/dashboard/stats') ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100 text-gray-600'}`}
+                className={`py-2 px-3 sm:px-4 rounded-xl font-medium transition text-left text-sm sm:text-base ${isActive('/dashboard/stats') ? 'bg-accent/15 text-accent' : 'hover:bg-gray-100 text-gray-600'}`}
               >
                 통계
               </button>

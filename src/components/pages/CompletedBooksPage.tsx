@@ -61,7 +61,7 @@ export default function CompletedBooksPage() {
             placeholder="제목이나 저자로 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-300 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all"
           />
         </div>
       </div>
@@ -86,8 +86,8 @@ export default function CompletedBooksPage() {
               {book.coverUrl ? (
                 <div className="w-full aspect-[2/3] rounded-lg overflow-hidden mb-3 bg-gray-50 relative">
                   <img src={book.coverUrl} alt={book.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-green-500/10 flex items-end justify-end p-1.5">
-                    <span className="text-[10px] font-bold text-white bg-green-500 px-1.5 py-0.5 rounded">완독</span>
+                  <div className="absolute inset-0 bg-secondary/10 flex items-end justify-end p-1.5">
+                    <span className="text-[10px] font-bold text-white bg-secondary px-1.5 py-0.5 rounded">완독</span>
                   </div>
                 </div>
               ) : (
@@ -97,7 +97,7 @@ export default function CompletedBooksPage() {
                   </svg>
                 </div>
               )}
-              <p className="text-sm font-medium text-gray-900 truncate group-hover:text-purple-600 transition-colors">{book.title}</p>
+              <p className="text-sm font-medium text-gray-900 truncate group-hover:text-accent transition-colors">{book.title}</p>
               <p className="text-xs text-gray-500 truncate mt-0.5">{book.author}</p>
               {book.endDate && (
                 <p className="text-[10px] text-gray-400 mt-1.5">

@@ -15,9 +15,9 @@ export default function ReadingStatus({ books }: ReadingStatusProps) {
   const totalDisplay = reading + completed + dropped;
 
   const COLORS = {
-    completed: '#5ebd8a', // green
-    reading:   '#9b7ee8', // purple
-    dropped:   '#f87171', // red
+    completed: '#34c759', // secondary (green)
+    reading:   '#b794f4', // accent (purple)
+    dropped:   '#ff3b30', // error (red)
     empty:     'rgba(0,0,0,0.05)',
   };
 

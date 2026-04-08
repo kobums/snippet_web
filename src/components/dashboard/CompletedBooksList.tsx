@@ -52,7 +52,7 @@ export default function CompletedBooksList({ completedBooks, loading }: Complete
                 )}
               </div>
               <div className="px-3 sm:px-4 py-2.5 sm:py-3 flex flex-col gap-1.5">
-                <h4 className="flex items-center gap-2 text-gray-900 font-medium text-sm sm:text-base leading-snug group-hover:text-purple-600 transition-colors">
+                <h4 className="flex items-center gap-2 text-gray-900 font-medium text-sm sm:text-base leading-snug group-hover:text-accent transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                   </svg>

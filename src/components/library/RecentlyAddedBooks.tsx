@@ -15,10 +15,10 @@ interface RecentlyAddedBooksProps {
 }
 
 const STATUS_LABELS: Record<string, { text: string; color: string }> = {
-  wish: { text: '갖고싶은', color: 'bg-pink-500/20 text-pink-300' },
-  waiting: { text: '대기중', color: 'bg-yellow-500/20 text-yellow-300' },
-  reading: { text: '읽는중', color: 'bg-blue-500/20 text-blue-300' },
-  completed: { text: '완독', color: 'bg-green-500/20 text-green-300' },
+  wish: { text: '갖고싶은', color: 'bg-accent/20 text-accent' },
+  waiting: { text: '대기중', color: 'bg-warning/20 text-warning' },
+  reading: { text: '읽는중', color: 'bg-info/20 text-info' },
+  completed: { text: '완독', color: 'bg-secondary/20 text-secondary' },
   dropped: { text: '중단', color: 'bg-white/10 text-white/50' },
 };
 
@@ -82,10 +82,10 @@ export default function RecentlyAddedBooks({ books, loading }: RecentlyAddedBook
                 onClick={() => openBookRecord(book)}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/60 border border-gray-200 hover:bg-white transition-colors cursor-pointer group shadow-sm"
               >
-                <div className="w-7 h-7 rounded border border-gray-200 bg-gray-50 shrink-0 flex items-center justify-center text-gray-400 group-hover:bg-purple-50 group-hover:text-purple-500 group-hover:border-purple-200 transition-colors">
+                <div className="w-7 h-7 rounded border border-gray-200 bg-gray-50 shrink-0 flex items-center justify-center text-gray-400 group-hover:bg-accent/5 group-hover:text-accent group-hover:border-accent/20 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
                 </div>
-                <span className="text-sm text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">
+                <span className="text-sm text-gray-800 truncate flex-1 group-hover:text-accent transition-colors">
                   {book.title}
                 </span>
                 <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md shrink-0 ${statusInfo.color}`}>

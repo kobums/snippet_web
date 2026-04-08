@@ -56,14 +56,14 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
                 </div>
               )}
               <div className="px-4 py-3 space-y-1.5">
-                <p className="text-sm text-gray-900 font-medium leading-snug group-hover:text-purple-600 transition-colors">
+                <p className="text-sm text-gray-900 font-medium leading-snug group-hover:text-accent transition-colors">
                   {book.title}
                 </p>
                 <p className="text-[11px] text-gray-500">{book.author}</p>
                 <div className="flex items-center gap-1.5 pt-1">
                   <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${
-                    book.status === 'reading' ? 'bg-blue-500/20 text-blue-300' :
-                    book.status === 'waiting' ? 'bg-yellow-500/20 text-yellow-300' :
+                    book.status === 'reading' ? 'bg-info/20 text-info' :
+                    book.status === 'waiting' ? 'bg-warning/20 text-warning' :
                     'bg-gray-500/20 text-gray-400'
                   }`}>
                     {book.status === 'reading' ? '읽는 중' : book.status === 'waiting' ? '대기 중' : book.status}

@@ -79,8 +79,8 @@ export const RegisterForm: React.FC = () => {
                   }}
                   onFocus={(e) => {
                     e.target.style.background = 'rgba(255, 255, 255, 0.4)';
-                    e.target.style.border = '1px solid var(--lg-accent)';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(124, 92, 191, 0.1)';
+                    e.target.style.border = '1px solid rgba(26, 26, 26, 0.5)';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(26, 26, 26, 0.08)';
                   }}
                   onBlur={(e) => {
                     e.target.style.background = 'rgba(255, 255, 255, 0.3)';
@@ -110,8 +110,8 @@ export const RegisterForm: React.FC = () => {
                   }}
                   onFocus={(e) => {
                     e.target.style.background = 'rgba(255, 255, 255, 0.4)';
-                    e.target.style.border = '1px solid var(--lg-accent)';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(124, 92, 191, 0.1)';
+                    e.target.style.border = '1px solid rgba(26, 26, 26, 0.5)';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(26, 26, 26, 0.08)';
                   }}
                   onBlur={(e) => {
                     e.target.style.background = 'rgba(255, 255, 255, 0.3)';
@@ -141,8 +141,8 @@ export const RegisterForm: React.FC = () => {
                   }}
                   onFocus={(e) => {
                     e.target.style.background = 'rgba(255, 255, 255, 0.4)';
-                    e.target.style.border = '1px solid var(--lg-accent)';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(124, 92, 191, 0.1)';
+                    e.target.style.border = '1px solid rgba(26, 26, 26, 0.5)';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(26, 26, 26, 0.08)';
                   }}
                   onBlur={(e) => {
                     e.target.style.background = 'rgba(255, 255, 255, 0.3)';
@@ -208,7 +208,7 @@ export const RegisterForm: React.FC = () => {
                 className="text-sm font-light inline-flex items-center gap-1 transition-colors duration-200"
                 style={{ color: 'var(--lg-text-secondary)' }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = 'var(--lg-accent)';
+                  e.currentTarget.style.color = 'var(--lg-text-primary)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = 'var(--lg-text-secondary)';
@@ -217,7 +217,7 @@ export const RegisterForm: React.FC = () => {
                 이미 계정이 있으신가요?
                 <span
                   className="font-medium"
-                  style={{ color: 'var(--lg-accent)' }}
+                  style={{ color: 'var(--lg-text-primary)' }}
                 >
                   로그인
                 </span>

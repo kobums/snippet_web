@@ -105,7 +105,7 @@ export default function SwipeableTabs({ tabs, className = '' }: SwipeableTabsPro
             }}
             className={`
               h-2 rounded-full transition-all
-              ${activeIndex === index ? 'w-8 bg-purple-400' : 'w-2 bg-gray-300'}
+              ${activeIndex === index ? 'w-8 bg-accent' : 'w-2 bg-gray-300'}
             `}
             aria-label={`Go to ${tabs[index].label}`}
           />

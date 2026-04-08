@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { getRecordsByBook, createRecord } from '@/lib/recordApi';
+import { getRecordsByBook, createRecord, patchRecord, deleteRecord } from '@/lib/recordApi';
 import { RecordDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
@@ -32,6 +32,13 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
   const [newText, setNewText] = useState('');
   const [newTag, setNewTag] = useState('');
   const [newRelatedPage, setNewRelatedPage] = useState<number | ''>('');
+
+  // Edit Record State
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editType, setEditType] = useState<'snippet' | 'diary' | 'review'>('snippet');
+  const [editText, setEditText] = useState('');
+  const [editTag, setEditTag] = useState('');
+  const [editRelatedPage, setEditRelatedPage] = useState<number | ''>('');
 
   // Progress State
   const [localReadPage, setLocalReadPage] = useState<number | ''>('');
@@ -143,6 +150,51 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     }
   };
 
+  const startEditing = (record: RecordDto) => {
+    setEditingId(record.id);
+    setEditType(record.type);
+    setEditText(record.text);
+    setEditTag(record.tag || '');
+    setEditRelatedPage(record.relatedPage ?? '');
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+    setEditText('');
+    setEditTag('');
+    setEditRelatedPage('');
+  };
+
+  const handleUpdateRecord = async (record: RecordDto) => {
+    if (!editText.trim()) return;
+
+    const updated: RecordDto = { ...record, type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined };
+    setRecords(prev => prev.map(r => r.id === record.id ? updated : r));
+    cancelEditing();
+
+    try {
+      await patchRecord(record.id, { type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined });
+      toast.success('기록이 수정되었습니다');
+    } catch (e) {
+      setRecords(prev => prev.map(r => r.id === record.id ? record : r));
+      toast.error('기록 수정에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteRecord = async (record: RecordDto) => {
+    if (!confirm('이 기록을 삭제하시겠습니까?')) return;
+
+    setRecords(prev => prev.filter(r => r.id !== record.id));
+
+    try {
+      await deleteRecord(record.id);
+      toast.success('기록이 삭제되었습니다');
+    } catch (e) {
+      setRecords(prev => [record, ...prev]);
+      toast.error('기록 삭제에 실패했습니다.');
+    }
+  };
+
   const handleAddRecord = async () => {
     if (!book || !newText.trim()) return;
     if (newRelatedPage === '' && !newTag.trim()) {
@@ -235,7 +287,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                   <select
                     value={localType}
                     onChange={(e) => handleTypeChange(e.target.value as UserBookDto['type'])}
-                    className="appearance-none bg-white/60 hover:bg-white text-gray-700 font-medium text-xs px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-300 shadow-sm transition-all cursor-pointer"
+                    className="appearance-none bg-white/60 hover:bg-white text-gray-700 font-medium text-xs px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/30 shadow-sm transition-all cursor-pointer"
                     style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', paddingRight: '1.75rem' }}
                   >
                     <option value="wish">위시리스트</option>
@@ -248,7 +300,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                   <select
                     value={localStatus}
                     onChange={(e) => handleStatusChange(e.target.value as UserBookDto['status'])}
-                    className="appearance-none bg-white/60 hover:bg-white text-gray-700 font-medium text-xs px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-300 shadow-sm transition-all cursor-pointer"
+                    className="appearance-none bg-white/60 hover:bg-white text-gray-700 font-medium text-xs px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/30 shadow-sm transition-all cursor-pointer"
                     style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', paddingRight: '1.75rem' }}
                   >
                     <option value="waiting">읽고 싶은</option>
@@ -268,7 +320,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                           onChange={(e) => setLocalReadPage(e.target.value === '' ? '' : Number(e.target.value))}
                           onBlur={handleProgressUpdate}
                           onKeyDown={(e) => e.key === 'Enter' && handleProgressUpdate()}
-                          className="w-12 px-1 text-xs text-center border-b border-gray-300 hover:border-purple-400 focus:border-purple-500 bg-transparent outline-none transition-colors text-gray-900 font-medium"
+                          className="w-12 px-1 text-xs text-center border-b border-gray-300 hover:border-accent/50 focus:border-accent bg-transparent outline-none transition-colors text-gray-900 font-medium"
                         />
                         <span className="text-[11px] text-gray-400 font-medium">/ {book.totalPage || '?'}p</span>
                       </div>
@@ -316,7 +368,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                     setActiveTab(tab.id as any);
                     if (isAdding) setIsAdding(false);
                   }}
-                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-purple-100 text-purple-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-accent/15 text-accent' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
                 >
                   {tab.label}
                 </button>
@@ -381,33 +433,71 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                   <div className="absolute left-[-1.1rem] top-4 w-4 h-4 rounded-full border-4 border-white z-10"
                     style={{ backgroundColor: record.type === 'snippet' ? '#f472b6' : record.type === 'diary' ? '#c084fc' : '#34d399' }}
                   ></div>
-                  
-                  <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:bg-gray-50 transition-colors shadow-sm">
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-gray-100"
-                          style={{ 
-                            color: record.type === 'snippet' ? '#db2777' : record.type === 'diary' ? '#9333ea' : '#059669',
-                            backgroundColor: record.type === 'snippet' ? 'rgba(244, 114, 182, 0.1)' : record.type === 'diary' ? 'rgba(192, 132, 252, 0.1)' : 'rgba(52, 211, 153, 0.1)' 
-                          }}
-                        >
-                          {record.type}
-                        </span>
-                        {record.relatedPage && <span className="text-xs text-gray-400">p.{record.relatedPage}</span>}
+
+                  {editingId === record.id ? (
+                    <div className="bg-white border border-accent/20 rounded-2xl p-4 shadow-sm">
+                      <div className="flex gap-2 mb-3">
+                        <select value={editType} onChange={e => setEditType(e.target.value as any)} className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-2 py-1 outline-none">
+                          <option value="snippet">밑줄</option>
+                          <option value="diary">일기</option>
+                          <option value="review">리뷰</option>
+                        </select>
+                        <input
+                          type="number"
+                          placeholder="관련 페이지"
+                          value={editRelatedPage}
+                          onChange={e => setEditRelatedPage(e.target.value ? Number(e.target.value) : '')}
+                          className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-3 py-1 outline-none w-24 placeholder-gray-400"
+                        />
+                        <input type="text" placeholder="태그" value={editTag} onChange={e => setEditTag(e.target.value)} className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg px-3 py-1 outline-none flex-1 placeholder-gray-400" />
                       </div>
-                      <span className="text-xs text-gray-400">{new Date(record.createDate).toLocaleDateString()}</span>
+                      <textarea
+                        autoFocus
+                        value={editText}
+                        onChange={e => setEditText(e.target.value)}
+                        className="w-full bg-transparent border-none text-gray-900 text-sm resize-none outline-none min-h-[80px] placeholder-gray-400"
+                      />
+                      <div className="flex justify-end gap-2 mt-2">
+                        <button onClick={cancelEditing} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:bg-gray-100">취소</button>
+                        <button onClick={() => handleUpdateRecord(record)} disabled={!editText.trim()} className="px-4 py-2 rounded-xl text-xs bg-accent/80 hover:bg-accent text-white disabled:opacity-50">저장</button>
+                      </div>
                     </div>
-                    
-                    <p className={`text-gray-800 text-sm leading-relaxed whitespace-pre-wrap ${record.type === 'snippet' && 'italic text-gray-700 border-l-2 border-gray-300 pl-3'}`}>
-                      {record.type === 'snippet' ? `"${record.text}"` : record.text}
-                    </p>
-                    
-                    {record.tag && (
-                      <div className="mt-4 pt-3 border-t border-gray-100">
-                        <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-md">{record.tag}</span>
+                  ) : (
+                    <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:bg-gray-50 transition-colors shadow-sm">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-gray-100"
+                            style={{
+                              color: record.type === 'snippet' ? '#db2777' : record.type === 'diary' ? '#9333ea' : '#059669',
+                              backgroundColor: record.type === 'snippet' ? 'rgba(244, 114, 182, 0.1)' : record.type === 'diary' ? 'rgba(192, 132, 252, 0.1)' : 'rgba(52, 211, 153, 0.1)'
+                            }}
+                          >
+                            {record.type}
+                          </span>
+                          {record.relatedPage && <span className="text-xs text-gray-400">p.{record.relatedPage}</span>}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400">{new Date(record.createDate).toLocaleDateString()}</span>
+                          <button onClick={() => startEditing(record)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-700 transition-all p-1 rounded-lg hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                          </button>
+                          <button onClick={() => handleDeleteRecord(record)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1 rounded-lg hover:bg-red-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                          </button>
+                        </div>
                       </div>
-                    )}
-                  </div>
+
+                      <p className={`text-gray-800 text-sm leading-relaxed whitespace-pre-wrap ${record.type === 'snippet' && 'italic text-gray-700 border-l-2 border-gray-300 pl-3'}`}>
+                        {record.type === 'snippet' ? `"${record.text}"` : record.text}
+                      </p>
+
+                      {record.tag && (
+                        <div className="mt-4 pt-3 border-t border-gray-100">
+                          <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-md">{record.tag}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -420,7 +510,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                 if (activeTab !== 'all') setNewType(activeTab);
                 setIsAdding(true);
               }}
-              className="absolute bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg shadow-purple-500/20 flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-20"
+              className="absolute bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-secondary to-accent rounded-full shadow-lg shadow-accent/20 flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-20"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>

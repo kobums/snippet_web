@@ -54,10 +54,10 @@ export default function ReadingBooks({ books, loading }: ReadingBooksProps) {
                     <div className="w-8 h-11 bg-gray-100 rounded-md shrink-0 border border-gray-200" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-800 truncate group-hover:text-purple-600 transition-colors">{book.title}</p>
+                    <p className="text-sm text-gray-800 truncate group-hover:text-accent transition-colors">{book.title}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }} />
+                        <div className="h-full bg-secondary rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }} />
                       </div>
                       <span className="text-[10px] text-gray-400 shrink-0">{progressPercent}%</span>
                     </div>

@@ -46,7 +46,7 @@ export default function MyPage() {
         <div
           className="absolute w-[500px] h-[500px] rounded-full opacity-30 blur-3xl"
           style={{
-            background: "radial-gradient(circle, #c8b6ff 0%, transparent 70%)",
+            background: "radial-gradient(circle, #e8e8e8 0%, transparent 70%)",
             top: "-10%",
             left: "-10%",
           }}
@@ -54,7 +54,7 @@ export default function MyPage() {
         <div
           className="absolute w-[400px] h-[400px] rounded-full opacity-25 blur-3xl"
           style={{
-            background: "radial-gradient(circle, #a8d8ea 0%, transparent 70%)",
+            background: "radial-gradient(circle, #dedede 0%, transparent 70%)",
             bottom: "10%",
             right: "-5%",
           }}
@@ -87,7 +87,7 @@ export default function MyPage() {
         {/* 프로필 카드 */}
         <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-md rounded-3xl p-8 flex flex-col items-center gap-6">
           {/* 아바타 */}
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400/60 to-blue-400/60 flex items-center justify-center text-white text-2xl font-light border border-white/20">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-accent/60 to-info/60 flex items-center justify-center text-white text-2xl font-light border border-white/20">
             {user?.name?.charAt(0)?.toUpperCase() || '?'}
           </div>
 
