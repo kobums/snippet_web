@@ -3,6 +3,14 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* App Design Tokens → Tailwind utilities (bg-accent, text-secondary 등) */
+  --color-primary: #1a1a1a;
+  --color-secondary: #34c759;
+  --color-accent: #b794f4;
+  --color-info: #007aff;
+  --color-warning: #ffcc00;
+  --color-error: #ff3b30;
 }
 
 /* number input 스피너 제거 */
@@ -16,14 +24,70 @@ input[type="number"] {
 }
 
 /* ─────────────────────────────────────
+   App Design Tokens (앱과 동일한 컬러 시스템)
+   ───────────────────────────────────── */
+:root {
+  /* Primary Colors - 브랜드 메인 컬러 (블랙) */
+  --color-primary: #1a1a1a;
+  --color-primary-light: #424242;
+  --color-primary-dark: #000000;
+  --color-primary-subtle: #f0f0f0;
+
+  /* Secondary Colors - 보조 컬러 (그린) */
+  --color-secondary: #34c759;
+  --color-secondary-light: #5dd97c;
+  --color-secondary-dark: #28a745;
+  --color-secondary-subtle: #e5f7ec;
+
+  /* Semantic Colors */
+  --color-success: #34c759;
+  --color-warning: #ffcc00;
+  --color-error: #ff3b30;
+  --color-info: #007aff;
+
+  /* Neutral Palette */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #eeeeee;
+  --color-neutral-300: #e0e0e0;
+  --color-neutral-400: #bdbdbd;
+  --color-neutral-500: #9e9e9e;
+  --color-neutral-600: #757575;
+  --color-neutral-700: #616161;
+  --color-neutral-800: #424242;
+  --color-neutral-900: #212121;
+
+  /* Background Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f0f0f5;
+  --color-bg-tertiary: #f8f8fa;
+
+  /* Text Colors */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+  --color-text-disabled: #cccccc;
+
+  /* Accent */
+  --color-accent-purple: #b794f4;
+
+  /* Chart Colors */
+  --color-chart-1: #ff6b9d;
+  --color-chart-2: #4ecdc4;
+  --color-chart-3: #ffa07a;
+  --color-chart-4: #98d8c8;
+  --color-chart-5: #b5838d;
+}
+
+/* ─────────────────────────────────────
    Liquid Glass 디자인 토큰
    ───────────────────────────────────── */
 :root {
   /* 배경 컬러 */
-  --lg-bg-1: #f0f0f5;
-  --lg-bg-2: #e8e0f0;
-  --lg-bg-3: #d8e8f8;
-  --lg-bg-4: #f5e8f0;
+  --lg-bg-1: #f8f8fa;
+  --lg-bg-2: #f0f0f0;
+  --lg-bg-3: #ebebeb;
+  --lg-bg-4: #f5f5f5;
 
   /* 글래스 서피스 */
   --lg-glass-bg: rgba(255, 255, 255, 0.45);
@@ -36,7 +100,7 @@ input[type="number"] {
   --lg-saturate: 180%;
 
   /* 셰도우 */
-  --lg-shadow-sm: 
+  --lg-shadow-sm:
     0 2px 8px rgba(0, 0, 0, 0.04),
     0 1px 2px rgba(0, 0, 0, 0.06);
   --lg-shadow-md:
@@ -52,14 +116,14 @@ input[type="number"] {
     0 6px 20px rgba(0, 0, 0, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 
-  /* 텍스트 */
-  --lg-text-primary: rgba(0, 0, 0, 0.85);
-  --lg-text-secondary: rgba(0, 0, 0, 0.55);
-  --lg-text-tertiary: rgba(0, 0, 0, 0.35);
+  /* 텍스트 - 앱 DesignTokens와 동일한 값 */
+  --lg-text-primary: #1a1a1a;
+  --lg-text-secondary: #666666;
+  --lg-text-tertiary: #999999;
 
-  /* 액센트 */
-  --lg-accent: #7c5cbf;
-  --lg-accent-light: rgba(124, 92, 191, 0.15);
+  /* 액센트 - 앱의 accentPurple */
+  --lg-accent: #b794f4;
+  --lg-accent-light: rgba(183, 148, 244, 0.15);
   --lg-like: #34c759;
   --lg-pass: #ff3b30;
 }
@@ -88,6 +152,7 @@ body {
     radial-gradient(ellipse 60% 50% at 90% 80%, var(--lg-bg-3) 0%, transparent 55%),
     radial-gradient(ellipse 50% 40% at 50% 10%, var(--lg-bg-4) 0%, transparent 50%);
   position: relative;
+  background-attachment: fixed;
 }
 
 /* 노이즈 텍스처 오버레이 */
@@ -215,24 +280,24 @@ body {
    ───────────────────────────────────── */
 .liquid-button {
   position: relative;
-  background: linear-gradient(135deg, rgba(124, 92, 191, 0.2), rgba(124, 92, 191, 0.1));
+  background: linear-gradient(135deg, rgba(66, 66, 66, 0.92), rgba(26, 26, 26, 0.96));
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(124, 92, 191, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 100px;
   box-shadow:
-    0 2px 12px rgba(124, 92, 191, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  color: var(--lg-accent);
+    0 2px 12px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   font-weight: 500;
   transition: all 0.25s ease;
 }
 
 .liquid-button:hover {
-  background: linear-gradient(135deg, rgba(124, 92, 191, 0.3), rgba(124, 92, 191, 0.15));
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(0, 0, 0, 1));
   box-shadow:
-    0 4px 20px rgba(124, 92, 191, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    0 4px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   transform: translateY(-1px);
 }
 
@@ -283,7 +348,7 @@ body {
   height: 36px;
   border-radius: 50%;
   border: 2.5px solid rgba(0, 0, 0, 0.08);
-  border-top-color: var(--lg-accent);
+  border-top-color: var(--color-primary);
   animation: spin 0.8s linear infinite;
   box-shadow: var(--lg-shadow-sm);
 }
