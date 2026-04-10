@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import toast from 'react-hot-toast';
 import { UserBookDto } from '@/types/library';
 import { getMonthlyUserBooks, getProgressBooks, patchUserBook } from '@/lib/userBookApi';
 import { handleApiError } from '@/lib/errorHandler';
@@ -75,32 +76,33 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
   updateStatus: async (id, status, e?) => {
     e?.stopPropagation();
+    const statusMessages: Record<string, string> = {
+      completed: '완독 처리되었습니다!',
+      dropped: '중단 처리되었습니다.',
+      reading: '읽기를 시작했습니다!',
+      waiting: '대기 목록에 추가했습니다.',
+    };
     try {
       if (status === 'completed' || status === 'dropped') {
-        const book = get().books.find(b => b.id === id);
         const todayStr = new Date().toISOString();
-        
-        const promises: Promise<void>[] = [
-          patchUserBook(id, { status }),
-        ];
-
         // 완독 시 진도율 업데이트는 백엔드 LibraryService.java 에서 일괄 처리되므로 호출 생략
-        await Promise.all(promises);
-        
+        await patchUserBook(id, { status });
+        const applyUpdate = (b: UserBookDto) =>
+          b.id === id
+            ? { ...b, status, endDate: todayStr, ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {}) }
+            : b;
         set(s => ({
-          books: s.books.map(b => b.id === id
-            ? { 
-                ...b, 
-                status, 
-                endDate: todayStr, 
-                ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {})
-              }
-            : b),
+          books: s.books.map(applyUpdate),
+          progressBooks: s.progressBooks.map(applyUpdate),
         }));
       } else {
         await patchUserBook(id, { status });
-        set(s => ({ books: s.books.map(b => b.id === id ? { ...b, status } : b) }));
+        set(s => ({
+          books: s.books.map(b => b.id === id ? { ...b, status } : b),
+          progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, status } : b),
+        }));
       }
+      toast.success(statusMessages[status] ?? '업데이트되었습니다.');
     } catch (e) {
       handleApiError(e, '상태 변경에 실패했습니다.', 'alert');
     }
@@ -120,7 +122,10 @@ export const useBookStore = create<BookStore>((set, get) => ({
     e?.stopPropagation();
     try {
       await patchUserBook(id, { type });
-      set(s => ({ books: s.books.map(b => b.id === id ? { ...b, type } : b) }));
+      set(s => ({
+        books: s.books.map(b => b.id === id ? { ...b, type } : b),
+        progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, type } : b),
+      }));
     } catch (e) {
       handleApiError(e, '분류 변경에 실패했습니다.', 'alert');
     }
