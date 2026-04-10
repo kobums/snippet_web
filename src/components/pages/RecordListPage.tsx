@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { RecordDto, RecordAddRequestDto } from '@/types/record';
 import { UserBookDto } from '@/types/library';
 import { getRecords, createRecord } from '@/lib/recordApi';
@@ -79,6 +80,7 @@ export default function RecordListPage({ type, title, description }: RecordListP
       setFormText(''); setFormTag(''); setFormPage(''); setShowForm(false);
       const allRecords = await getRecords();
       setRecords(allRecords.filter(r => r.type === type));
+      toast.success('기록이 저장되었습니다!');
     } catch (e) {
       handleApiError(e, '기록 저장에 실패했습니다.', 'alert');
     } finally {

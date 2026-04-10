@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { UserBookDto } from '@/types/library';
 import { RecordDto, RecordAddRequestDto } from '@/types/record';
 import { createRecord, getMonthlyRecords } from '@/lib/recordApi';
@@ -118,6 +119,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
       setFormText(''); setFormTag(''); setFormPage(''); setShowForm(false);
       const updated = await getMonthlyRecords(tabToApiType[activeTab], selectedYear, selectedMonth);
       setRecords(updated);
+      toast.success('기록이 저장되었습니다!');
     } catch (e) {
       handleApiError(e, '기록 저장에 실패했습니다.', 'alert');
     } finally {
