@@ -8,3 +8,17 @@ export interface RegisterParams {
   password: string;
   name: string;
 }
+
+export interface RegisterResponse {
+  email: string;
+  message: string;
+}
+
+export interface SendCodeParams {
+  email: string;
+}
+
+export interface VerifyCodeParams {
+  email: string;
+  code: string;
+}

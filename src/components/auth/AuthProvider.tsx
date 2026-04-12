@@ -13,11 +13,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const token = localStorage.getItem('token');
 
     // Paths that are accessible without login
-    const publicPaths = ['/', '/login', '/register', '/snippet', '/privacy'];
-    const isPublicPath = publicPaths.includes(pathname);
+    const publicPaths = ['/', '/login', '/register', '/verify', '/snippet', '/privacy'];
+    const isPublicPath = publicPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
 
     // Auth-only paths (redirect to dashboard if already logged in)
-    const authOnlyPaths = ['/login', '/register'];
+    const authOnlyPaths = ['/login', '/register', '/verify'];
     const isAuthOnlyPath = authOnlyPaths.includes(pathname);
 
     if (!token && !isPublicPath) {

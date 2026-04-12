@@ -18,8 +18,8 @@ export const RegisterForm: React.FC = () => {
     setError('');
     setIsLoading(true);
     try {
-      await registerUseCase.execute({ email, password, name });
-      router.push('/login');
+      const result = await registerUseCase.execute({ email, password, name });
+      router.push(`/verify?email=${encodeURIComponent(result.email)}`);
     } catch (err: unknown) {
       const message = err instanceof Error && 'response' in err
         ? (err as any).response?.data?.message
