@@ -97,9 +97,14 @@ export const useBookStore = create<BookStore>((set, get) => ({
         }));
       } else {
         await patchUserBook(id, { status });
+        const updates: Partial<UserBookDto> = { status };
+        if (status === 'reading') {
+          updates.startDate = new Date().toISOString();
+          updates.endDate = new Date().toISOString();
+        }
         set(s => ({
-          books: s.books.map(b => b.id === id ? { ...b, status } : b),
-          progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, status } : b),
+          books: s.books.map(b => b.id === id ? { ...b, ...updates } : b),
+          progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, ...updates } : b),
         }));
       }
       toast.success(statusMessages[status] ?? '업데이트되었습니다.');

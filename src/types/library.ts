@@ -20,6 +20,8 @@ export interface LibraryAddRequestDto {
   type: 'wish' | 'have' | 'borrow' | 'return';
   /** none: 위시 전용 | waiting/reading/completed/dropped: have or borrow */
   status: 'none' | 'waiting' | 'reading' | 'completed' | 'dropped';
+  readPage: number;
+  createDate: string;
   startDate?: string;
   endDate?: string;
 }
