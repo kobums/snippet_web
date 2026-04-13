@@ -61,11 +61,49 @@ function formatCount(count: number): string {
   return count.toString();
 }
 
-function getRankStyle(rank: number): string {
-  if (rank === 1) return 'text-yellow-500 font-bold';
-  if (rank === 2) return 'text-gray-400 font-bold';
-  if (rank === 3) return 'text-amber-600 font-bold';
-  return 'text-gray-400';
+function getRankColor(rank: number): string {
+  if (rank === 1) return '#f59e0b';
+  if (rank === 2) return '#9ca3af';
+  if (rank === 3) return '#b45309';
+  return 'var(--lg-text-tertiary)';
+}
+
+// ============================================================================
+// FilterChip
+// ============================================================================
+function FilterChip({
+  label,
+  selected,
+  onTap,
+}: {
+  label: string;
+  selected: boolean;
+  onTap: () => void;
+}) {
+  return (
+    <button
+      onClick={onTap}
+      className="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150"
+      style={
+        selected
+          ? {
+              background: 'linear-gradient(135deg, rgba(66,66,66,0.92), rgba(26,26,26,0.96))',
+              color: '#ffffff',
+              border: '1px solid rgba(255,255,255,0.12)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+            }
+          : {
+              background: 'rgba(255,255,255,0.45)',
+              backdropFilter: 'blur(12px)',
+              color: 'var(--lg-text-secondary)',
+              border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+            }
+      }
+    >
+      {label}
+    </button>
+  );
 }
 
 // ============================================================================
@@ -111,7 +149,7 @@ export default function PopularBooks() {
         setPage(pageNo);
         setHasMore(data.length >= 20);
       } catch {
-        // 에러 시 빈 상태 유지
+        // silent
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -152,120 +190,95 @@ export default function PopularBooks() {
     }
   };
 
-  const handleLoadMore = () => {
-    if (!loadingMore && hasMore) {
-      fetchBooks(page + 1);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-gray-100">
-        <div className="px-4 pt-4 pb-2">
-          <h1 className="text-xl font-semibold text-gray-900">인기 도서</h1>
-          <p className="text-sm text-gray-500 mt-0.5">전국 공공도서관 인기 대출 도서</p>
-        </div>
+    <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-48 lg:px-64 py-4 sm:py-6">
 
-        {/* 기간 필터 */}
-        <div className="flex gap-2 px-4 pb-2 overflow-x-auto scrollbar-hide">
+      {/* Page title */}
+      <div className="mb-5">
+        <h2 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--lg-text-primary)' }}>
+          인기 도서
+        </h2>
+        <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--lg-text-secondary)' }}>
+          전국 공공도서관 인기 대출 도서
+        </p>
+      </div>
+
+      {/* Filters */}
+      <div className="space-y-2 mb-5">
+        {/* 기간 */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
           {PERIODS.map((p) => (
-            <button
+            <FilterChip
               key={p.key}
-              onClick={() => setPeriod(p.key)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                period === p.key
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {p.label}
-            </button>
+              label={p.label}
+              selected={period === p.key}
+              onTap={() => setPeriod(p.key)}
+            />
           ))}
         </div>
-
-        {/* 장르 필터 */}
-        <div className="flex gap-2 px-4 pb-2 overflow-x-auto scrollbar-hide">
+        {/* 장르 */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
           {KDC_CATEGORIES.map((cat) => (
-            <button
+            <FilterChip
               key={cat.code}
-              onClick={() => setKdc(cat.code)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                kdc === cat.code
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
-              }`}
-            >
-              {cat.label}
-            </button>
+              label={cat.label}
+              selected={kdc === cat.code}
+              onTap={() => setKdc(cat.code)}
+            />
           ))}
         </div>
-
-        {/* 연령 필터 */}
-        <div className="flex gap-2 px-4 pb-2 overflow-x-auto scrollbar-hide">
+        {/* 연령 */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
           {AGE_FILTERS.map((a) => (
-            <button
+            <FilterChip
               key={a.code}
-              onClick={() => setAge(a.code)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                age === a.code
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
-              }`}
-            >
-              {a.label}
-            </button>
+              label={a.label}
+              selected={age === a.code}
+              onTap={() => setAge(a.code)}
+            />
           ))}
         </div>
-
-        {/* 성별 필터 */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
+        {/* 성별 */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
           {GENDER_FILTERS.map((g) => (
-            <button
+            <FilterChip
               key={g.code}
-              onClick={() => setGender(g.code)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                gender === g.code
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
-              }`}
-            >
-              {g.label}
-            </button>
+              label={g.label}
+              selected={gender === g.code}
+              onTap={() => setGender(g.code)}
+            />
           ))}
         </div>
       </div>
 
       {/* Book list */}
-      <div className="py-2">
-        {loading ? (
-          <BookListSkeleton />
-        ) : books.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <>
-            {books.map((book) => (
-              <PopularBookRow
-                key={`${book.rank}-${book.isbn13}`}
-                book={book}
-                onAdd={(type) => handleAddToLibrary(book, type)}
-              />
-            ))}
+      {loading ? (
+        <BookListSkeleton />
+      ) : books.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="space-y-2">
+          {books.map((book) => (
+            <PopularBookRow
+              key={`${book.rank}-${book.isbn13}`}
+              book={book}
+              onAdd={(type) => handleAddToLibrary(book, type)}
+            />
+          ))}
 
-            {hasMore && (
-              <div className="flex justify-center py-6">
-                <button
-                  onClick={handleLoadMore}
-                  disabled={loadingMore}
-                  className="px-6 py-2 text-sm text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200 disabled:opacity-50 transition-colors"
-                >
-                  {loadingMore ? '불러오는 중...' : '더 보기'}
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+          {hasMore && (
+            <div className="flex justify-center pt-4 pb-2">
+              <button
+                onClick={() => !loadingMore && fetchBooks(page + 1)}
+                disabled={loadingMore}
+                className="px-6 py-2 text-sm rounded-full liquid-button disabled:opacity-50"
+              >
+                {loadingMore ? '불러오는 중...' : '더 보기'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -283,28 +296,36 @@ function PopularBookRow({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+    <div
+      className="liquid-panel flex items-center gap-3 px-4 py-3 cursor-default"
+      style={{ borderRadius: '16px' }}
+    >
       {/* 순위 */}
-      <div className={`w-8 text-center text-sm ${getRankStyle(book.rank)}`}>
-        {book.rank <= 3 && <span className="block text-xs">🏆</span>}
-        <span>{book.rank}위</span>
+      <div className="w-8 shrink-0 text-center">
+        <span
+          className="text-xs font-bold"
+          style={{ color: getRankColor(book.rank) }}
+        >
+          {book.rank}
+        </span>
       </div>
 
       {/* 표지 */}
-      <div className="relative w-12 h-16 shrink-0 rounded overflow-hidden bg-gray-100">
+      <div className="relative w-10 h-14 shrink-0 rounded-lg overflow-hidden"
+        style={{ background: 'rgba(0,0,0,0.06)' }}>
         {book.coverUrl ? (
           <Image
             src={book.coverUrl}
             alt={book.title}
             fill
             className="object-cover"
-            sizes="48px"
+            sizes="40px"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
+              style={{ color: 'var(--lg-text-tertiary)' }}>
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
           </div>
         )}
@@ -312,39 +333,53 @@ function PopularBookRow({
 
       {/* 정보 */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug">{book.title}</p>
-        <p className="text-xs text-gray-500 mt-0.5 truncate">{book.author}</p>
-        <p className="text-xs text-gray-400 truncate">{book.publisher}</p>
-        <div className="flex items-center gap-1 mt-1">
-          <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-          <span className="text-xs text-gray-400">대출 {formatCount(book.loanCount)}회</span>
+        <p className="text-sm font-semibold line-clamp-1 leading-snug"
+          style={{ color: 'var(--lg-text-primary)' }}>
+          {book.title}
+        </p>
+        <p className="text-xs truncate mt-0.5" style={{ color: 'var(--lg-text-secondary)' }}>
+          {book.author}
+        </p>
+        <div className="flex items-center gap-1.5 mt-1">
+          {book.kdcName && (
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded-md liquid-badge"
+              style={{ color: 'var(--lg-text-secondary)' }}
+            >
+              {book.kdcName.split(' > ').pop()}
+            </span>
+          )}
+          <span className="text-[10px]" style={{ color: 'var(--lg-text-tertiary)' }}>
+            대출 {formatCount(book.loanCount)}회
+          </span>
         </div>
       </div>
 
-      {/* 추가 버튼 + 드롭다운 */}
+      {/* 추가 버튼 */}
       <div className="relative shrink-0">
         <button
           onClick={() => setOpen((v) => !v)}
-          className="w-8 h-8 flex items-center justify-center bg-gray-900 text-white rounded-full hover:bg-gray-700 transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-full liquid-button"
           aria-label="서재에 추가"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         </button>
 
         {open && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-            <div className="absolute right-0 top-10 z-20 bg-white rounded-xl shadow-lg border border-gray-100 py-1 min-w-[100px]">
+            <div
+              className="absolute right-0 top-10 z-20 liquid-panel py-1 min-w-[96px]"
+              style={{ borderRadius: '14px' }}
+            >
               {(['have', 'borrow', 'wish'] as const).map((type) => (
                 <button
                   key={type}
                   onClick={() => { onAdd(type); setOpen(false); }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="w-full text-left px-4 py-2 text-sm transition-colors hover:bg-white/30 first:rounded-t-[13px] last:rounded-b-[13px]"
+                  style={{ color: 'var(--lg-text-primary)' }}
                 >
                   {type === 'have' ? '소장' : type === 'borrow' ? '대출' : '위시'}
                 </button>
@@ -359,17 +394,18 @@ function PopularBookRow({
 
 function BookListSkeleton() {
   return (
-    <div className="divide-y divide-gray-50">
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3 px-4 py-3 animate-pulse">
-          <div className="w-8 h-8 bg-gray-100 rounded" />
-          <div className="w-12 h-16 bg-gray-100 rounded" />
+    <div className="space-y-2">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="liquid-panel flex items-center gap-3 px-4 py-3 animate-pulse"
+          style={{ borderRadius: '16px' }}>
+          <div className="w-8 h-4 rounded" style={{ background: 'rgba(0,0,0,0.06)' }} />
+          <div className="w-10 h-14 rounded-lg" style={{ background: 'rgba(0,0,0,0.06)' }} />
           <div className="flex-1 space-y-2">
-            <div className="h-4 bg-gray-100 rounded w-3/4" />
-            <div className="h-3 bg-gray-100 rounded w-1/2" />
-            <div className="h-3 bg-gray-100 rounded w-1/3" />
+            <div className="h-4 rounded-md w-3/4" style={{ background: 'rgba(0,0,0,0.06)' }} />
+            <div className="h-3 rounded-md w-1/2" style={{ background: 'rgba(0,0,0,0.06)' }} />
+            <div className="h-3 rounded-md w-1/3" style={{ background: 'rgba(0,0,0,0.06)' }} />
           </div>
-          <div className="w-8 h-8 bg-gray-100 rounded-full" />
+          <div className="w-8 h-8 rounded-full" style={{ background: 'rgba(0,0,0,0.06)' }} />
         </div>
       ))}
     </div>
@@ -378,21 +414,19 @@ function BookListSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-24 text-center px-4">
-      <svg
-        className="w-16 h-16 text-gray-200 mb-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1}
-          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-        />
-      </svg>
-      <p className="text-gray-400 text-sm">인기 도서 정보를 불러올 수 없습니다</p>
+    <div className="flex flex-col items-center justify-center py-24 text-center">
+      <div className="liquid-panel w-20 h-20 flex items-center justify-center mb-4" style={{ borderRadius: '24px' }}>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
+          style={{ color: 'var(--lg-text-tertiary)' }}>
+          <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </div>
+      <p className="text-sm font-medium" style={{ color: 'var(--lg-text-secondary)' }}>
+        인기 도서 정보를 불러올 수 없습니다
+      </p>
+      <p className="text-xs mt-1" style={{ color: 'var(--lg-text-tertiary)' }}>
+        잠시 후 다시 시도해주세요
+      </p>
     </div>
   );
 }

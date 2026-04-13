@@ -1,10 +1,12 @@
+"use client"
+
+import AppShell from "@/components/layout/AppShell";
 import PopularBooks from '@/components/library/PopularBooks';
 
 export default function PopularBooksPage() {
-  return <PopularBooks />;
+  return (
+    <AppShell>
+      <PopularBooks />
+    </AppShell>
+  );
 }
-
-export const metadata = {
-  title: '인기 도서 | Snippet',
-  description: '전국 공공도서관 인기 대출 도서',
-};
