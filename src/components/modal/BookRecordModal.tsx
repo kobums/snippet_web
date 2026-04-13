@@ -326,7 +326,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                       </div>
                     </div>
                   )}
-
+                <div className="flex items-center gap-2">
                   {/* Start Date */}
                   <div className="flex items-center gap-2 bg-white/60 hover:bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-sm transition-all">
                     <span className="text-xs text-gray-500 font-medium">시작</span>
@@ -349,7 +349,8 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                         className="text-xs text-gray-700 bg-transparent outline-none font-medium cursor-pointer"
                       />
                     </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
