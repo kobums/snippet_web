@@ -13,6 +13,7 @@ const BOOK_NAV_ITEMS = [
   { path: '/books/have', label: '소장한 책' },
   { path: '/books/borrow', label: '빌린 책' },
   { path: '/books/wishlist', label: '갖고 싶은 책' },
+  { path: '/books/popular', label: '📈 인기 도서' },
 ];
 
 const PROGRESS_NAV_ITEMS = [
