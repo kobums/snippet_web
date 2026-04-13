@@ -1,6 +1,6 @@
 import { AuthRepository } from '../../core/domain/repositories/AuthRepository';
 import { AuthDataSource } from '../datasources/AuthDataSource';
-import { LoginParams, RegisterParams, RegisterResponse, SendCodeParams, VerifyCodeParams } from '../../types/auth';
+import { LoginParams, RegisterParams, SendCodeParams } from '../../types/auth';
 import { User } from '../../core/domain/entities/User';
 
 export class AuthRepositoryImpl implements AuthRepository {
@@ -15,21 +15,17 @@ export class AuthRepositoryImpl implements AuthRepository {
     return user;
   }
 
-  async register(params: RegisterParams): Promise<RegisterResponse> {
-    return this.authDataSource.register(params);
-  }
-
-  async sendVerificationCode(params: SendCodeParams): Promise<void> {
-    await this.authDataSource.sendVerificationCode(params);
-  }
-
-  async verifyCode(params: VerifyCodeParams): Promise<User> {
-    const user = await this.authDataSource.verifyCode(params);
+  async register(params: RegisterParams): Promise<User> {
+    const user = await this.authDataSource.register(params);
     if (user.token) {
       this.saveToken(user.token);
       this.saveCurrentUser(user);
     }
     return user;
+  }
+
+  async sendEmailCode(params: SendCodeParams): Promise<void> {
+    await this.authDataSource.sendEmailCode(params);
   }
 
   logout(): void {

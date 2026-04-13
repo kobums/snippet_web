@@ -5,6 +5,6 @@ export class SendVerificationCodeUseCase {
   constructor(private authRepository: AuthRepository) {}
 
   async execute(params: SendCodeParams): Promise<void> {
-    return this.authRepository.sendVerificationCode(params);
+    return this.authRepository.sendEmailCode(params);
   }
 }

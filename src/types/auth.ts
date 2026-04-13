@@ -7,6 +7,7 @@ export interface RegisterParams {
   email: string;
   password: string;
   name: string;
+  code: string;
 }
 
 export interface RegisterResponse {
