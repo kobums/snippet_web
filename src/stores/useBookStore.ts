@@ -175,17 +175,25 @@ export const useBookStore = create<BookStore>((set, get) => ({
   addBookLocally: (book) => {
     const tempId = generateTempId();
     const newBook = { ...book, id: tempId };
-    set(s => ({ books: [newBook, ...s.books] })); // 맨 앞에 추가
+    const inProgress = book.status === 'waiting' || book.status === 'reading';
+    set(s => ({
+      books: [newBook, ...s.books],
+      progressBooks: inProgress ? [newBook, ...s.progressBooks] : s.progressBooks,
+    }));
     return tempId;
   },
 
   removeBookLocally: (id) => {
-    set(s => ({ books: s.books.filter(b => b.id !== id) }));
+    set(s => ({
+      books: s.books.filter(b => b.id !== id),
+      progressBooks: s.progressBooks.filter(b => b.id !== id),
+    }));
   },
 
   updateBookId: (tempId, realId) => {
     set(s => ({
-      books: s.books.map(b => b.id === tempId ? { ...b, id: realId } : b)
+      books: s.books.map(b => b.id === tempId ? { ...b, id: realId } : b),
+      progressBooks: s.progressBooks.map(b => b.id === tempId ? { ...b, id: realId } : b),
     }));
   },
 }));
