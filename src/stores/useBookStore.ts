@@ -117,7 +117,10 @@ export const useBookStore = create<BookStore>((set, get) => ({
     e?.stopPropagation();
     try {
       await patchUserBook(id, { readPage: page });
-      set(s => ({ books: s.books.map(b => b.id === id ? { ...b, readPage: page } : b) }));
+      set(s => ({
+        books: s.books.map(b => b.id === id ? { ...b, readPage: page } : b),
+        progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, readPage: page } : b),
+      }));
     } catch (e) {
       handleApiError(e, '진도 업데이트에 실패했습니다.');
     }
