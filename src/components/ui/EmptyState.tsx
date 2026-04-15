@@ -20,7 +20,7 @@ export function EmptyState({ icon, message, actionLabel, onAction }: EmptyStateP
         <p className="text-gray-400 text-sm">{message}</p>
         {actionLabel && onAction && (
           <button onClick={onAction}
-            className="mt-4 flex items-center gap-2 text-xs text-blue-500 hover:text-blue-600 font-medium bg-blue-50 px-4 py-2 rounded-xl transition-all border border-blue-100 mx-auto">
+            className="mt-4 flex items-center gap-2 text-xs text-primary hover:text-primary/75 font-medium bg-primary/8 hover:bg-primary/12 px-4 py-2 rounded-xl transition-all border border-primary/10 mx-auto">
             <PlusIcon size={14} />
             {actionLabel}
           </button>

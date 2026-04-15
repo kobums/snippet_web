@@ -369,7 +369,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                     setActiveTab(tab.id as any);
                     if (isAdding) setIsAdding(false);
                   }}
-                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-accent/15 text-accent' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
                 >
                   {tab.label}
                 </button>
@@ -417,7 +417,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                     />
                     <div className="flex justify-end gap-2 mt-2">
                        <button onClick={() => setIsAdding(false)} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:bg-gray-100">취소</button>
-                       <button onClick={handleAddRecord} disabled={!newText.trim()} className="px-4 py-2 rounded-xl text-xs bg-blue-500/80 hover:bg-blue-500 text-white disabled:opacity-50">저장</button>
+                       <button onClick={handleAddRecord} disabled={!newText.trim()} className="px-4 py-2 rounded-xl text-xs bg-primary hover:bg-primary/85 text-white disabled:opacity-50">저장</button>
                     </div>
                   </div>
                 </div>
@@ -460,7 +460,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                       />
                       <div className="flex justify-end gap-2 mt-2">
                         <button onClick={cancelEditing} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:bg-gray-100">취소</button>
-                        <button onClick={() => handleUpdateRecord(record)} disabled={!editText.trim()} className="px-4 py-2 rounded-xl text-xs bg-accent/80 hover:bg-accent text-white disabled:opacity-50">저장</button>
+                        <button onClick={() => handleUpdateRecord(record)} disabled={!editText.trim()} className="px-4 py-2 rounded-xl text-xs bg-primary hover:bg-primary/85 text-white disabled:opacity-50">저장</button>
                       </div>
                     </div>
                   ) : (
@@ -511,7 +511,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                 if (activeTab !== 'all') setNewType(activeTab);
                 setIsAdding(true);
               }}
-              className="absolute bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-secondary to-accent rounded-full shadow-lg shadow-accent/20 flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-20"
+              className="absolute bottom-8 right-8 w-14 h-14 bg-primary rounded-full shadow-lg shadow-primary/20 flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-20"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>

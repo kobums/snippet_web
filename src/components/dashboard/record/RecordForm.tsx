@@ -85,7 +85,7 @@ export default function RecordForm({
       <div className="flex gap-2 justify-end mt-1">
         <button onClick={onCancel} className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-gray-500 hover:text-gray-700 transition-colors font-medium">취소</button>
         <button onClick={onSubmit} disabled={submitting || !formText.trim()}
-          className="px-4 sm:px-5 py-1.5 bg-blue-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm hover:bg-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+          className="px-4 sm:px-5 py-1.5 bg-primary text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm hover:bg-primary/85 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
           {submitting ? '저장 중...' : '저장하기'}
         </button>
       </div>

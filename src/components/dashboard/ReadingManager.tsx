@@ -187,7 +187,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                           <span>{book.readPage} / {book.totalPage || '?'}p</span>
                         </div>
                         <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); openBookRecord(book); }}>
-                          <div className="h-full bg-blue-500 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+                          <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
                         </div>
                       </>
                     )}
@@ -195,7 +195,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                 </div>
                 {activeTab === 'reading' && (
                   <div className="flex gap-2 relative z-10 mt-1">
-                    <button onClick={(e) => updateStatus(book.id, 'completed', e)} className="flex-1 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs rounded-lg transition-colors">완독 처리</button>
+                    <button onClick={(e) => updateStatus(book.id, 'completed', e)} className="flex-1 py-1.5 bg-primary/10 hover:bg-primary/15 text-primary text-xs rounded-lg transition-colors">완독 처리</button>
                     <button onClick={(e) => updateStatus(book.id, 'dropped', e)} className="flex-1 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs rounded-lg transition-colors">중단</button>
                   </div>
                 )}
@@ -208,7 +208,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                     }} className="flex-1 py-1.5 liquid-button text-xs transition-colors">읽기 시작</button>
                   </div>
                 )}
-                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/20 blur-2xl rounded-full z-0 group-hover:bg-blue-400/30 transition-colors"></div>
+                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/10 blur-2xl rounded-full z-0 group-hover:bg-primary/15 transition-colors"></div>
               </div>
             );
           })}

@@ -70,7 +70,7 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
                   </span>
                   <button
                     onClick={(e) => handleReturn(e, book)}
-                    className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-md bg-orange-500/20 text-orange-300 hover:bg-orange-500/30 transition-colors"
+                    className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/15 transition-colors"
                   >
                     반납 완료
                   </button>
