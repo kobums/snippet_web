@@ -199,7 +199,7 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
               placeholder="책 제목이나 저자를 입력하세요" 
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all font-light"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all font-light"
               autoFocus
             />
           </div>

@@ -13,6 +13,15 @@
   --color-error: #ff3b30;
 }
 
+/* 버튼/클릭 가능한 요소에 pointer 커서 */
+button,
+[role="button"],
+select,
+label[for],
+a {
+  cursor: pointer;
+}
+
 /* number input 스피너 제거 */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
