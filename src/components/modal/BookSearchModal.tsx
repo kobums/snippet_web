@@ -145,14 +145,19 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
         ...book,
         type,
         status,
+        readPage: 0,
         startDate: now,
-        endDate: now
+        endDate: now,
+        createDate: now,
       });
 
       // 4️⃣ 성공: 임시 ID → 실제 ID 교체
       updateBookId(tempId, realId);
 
-      // 5️⃣ 성공 토스트
+      // 5️⃣ 성공 콜백 호출 (페이지 목록 갱신)
+      onSuccess?.();
+
+      // 6️⃣ 성공 토스트
       toast.success(`"${book.title}" 책이 추가되었습니다`);
 
     } catch (e) {
