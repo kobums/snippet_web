@@ -1,4 +1,4 @@
-import { LoginParams, RegisterParams, SendCodeParams } from '../../types/auth';
+import { LoginParams, RegisterParams, SendCodeParams, VerifyCodeParams } from '../../types/auth';
 import { User } from '../../core/domain/entities/User';
 import api from '../../lib/api';
 
@@ -15,6 +15,11 @@ export class AuthDataSource {
 
   async sendEmailCode(params: SendCodeParams): Promise<void> {
     await api.post('/auth/emailcode', params);
+  }
+
+  async verifyCode(params: VerifyCodeParams): Promise<User> {
+    const { data } = await api.post<User>('/auth/verifycode', params);
+    return data;
   }
 
   async deleteAccount(): Promise<void> {

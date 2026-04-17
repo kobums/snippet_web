@@ -1,6 +1,6 @@
 import { AuthRepository } from '../../core/domain/repositories/AuthRepository';
 import { AuthDataSource } from '../datasources/AuthDataSource';
-import { LoginParams, RegisterParams, SendCodeParams } from '../../types/auth';
+import { LoginParams, RegisterParams, SendCodeParams, VerifyCodeParams } from '../../types/auth';
 import { User } from '../../core/domain/entities/User';
 
 export class AuthRepositoryImpl implements AuthRepository {
@@ -26,6 +26,10 @@ export class AuthRepositoryImpl implements AuthRepository {
 
   async sendEmailCode(params: SendCodeParams): Promise<void> {
     await this.authDataSource.sendEmailCode(params);
+  }
+
+  async verifyCode(params: VerifyCodeParams): Promise<User> {
+    return this.authDataSource.verifyCode(params);
   }
 
   logout(): void {

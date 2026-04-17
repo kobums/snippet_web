@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { sendVerificationCodeUseCase, verifyEmailCodeUseCase } from '@/core/di/authInstances';
+import { sendVerificationCodeUseCase } from '@/core/di/authInstances';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -27,7 +27,6 @@ export const VerifyEmailForm: React.FC = () => {
 
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -71,25 +70,8 @@ export const VerifyEmailForm: React.FC = () => {
     inputRefs.current[lastIndex]?.focus();
   };
 
-  const handleVerify = async () => {
-    const fullCode = code.join('');
-    if (fullCode.length < 6) {
-      setError('6자리 인증 코드를 모두 입력해 주세요.');
-      return;
-    }
-    setError('');
-    setIsVerifying(true);
-    try {
-      await verifyEmailCodeUseCase.execute({ email, code: fullCode });
-      router.push('/dashboard');
-    } catch (err: unknown) {
-      const message = (err as any)?.response?.data?.message;
-      setError(message || '인증에 실패했습니다.');
-      setCode(['', '', '', '', '', '']);
-      inputRefs.current[0]?.focus();
-    } finally {
-      setIsVerifying(false);
-    }
+  const handleVerify = () => {
+    router.push('/register');
   };
 
   const handleResend = async () => {
@@ -148,7 +130,7 @@ export const VerifyEmailForm: React.FC = () => {
                   value={digit}
                   onChange={e => handleChange(i, e.target.value)}
                   onKeyDown={e => handleKeyDown(i, e)}
-                  disabled={isVerifying}
+                  disabled={false}
                   className="w-11 h-14 text-center text-xl font-semibold rounded-2xl outline-none transition-all duration-300"
                   style={inputStyle}
                   onFocus={e => Object.assign(e.target.style, inputFocusStyle)}
@@ -172,10 +154,10 @@ export const VerifyEmailForm: React.FC = () => {
 
             <button
               onClick={handleVerify}
-              disabled={isVerifying || code.join('').length < 6}
+              disabled={false || code.join('').length < 6}
               className="liquid-button w-full py-3.5 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isVerifying ? (
+              {false ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   확인 중...
