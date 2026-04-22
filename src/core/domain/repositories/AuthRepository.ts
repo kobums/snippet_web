@@ -6,6 +6,7 @@ export interface AuthRepository {
   register(params: RegisterParams): Promise<User>;
   sendEmailCode(params: SendCodeParams): Promise<void>;
   verifyCode(params: VerifyCodeParams): Promise<User>;
+  getMe(): Promise<User>;
   logout(): void;
   getCurrentUser(): User | null;
   deleteAccount(): Promise<void>;

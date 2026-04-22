@@ -8,6 +8,7 @@ import { SendVerificationCodeUseCase } from '@/core/usecases/auth/SendVerificati
 const authDataSource = new AuthDataSource();
 const authRepository = new AuthRepositoryImpl(authDataSource);
 
+export { authRepository };
 export const loginUseCase = new LoginUseCase(authRepository);
 export const registerUseCase = new RegisterUseCase(authRepository);
 export const deleteAccountUseCase = new DeleteAccountUseCase(authRepository);

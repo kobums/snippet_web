@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { authRepository } from '@/core/di/authInstances';
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -9,32 +10,42 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
-    // Check auth only on client side
-    const token = localStorage.getItem('token');
-
-    // Paths that are accessible without login
     const publicPaths = ['/', '/login', '/register', '/verify', '/snippet', '/privacy'];
     const isPublicPath = publicPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
-
-    // Auth-only paths (redirect to dashboard if already logged in)
     const authOnlyPaths = ['/login', '/register', '/verify'];
     const isAuthOnlyPath = authOnlyPaths.includes(pathname);
 
-    if (!token && !isPublicPath) {
-      // Don't render and redirect to login
-      setShouldRender(false);
-      router.replace('/login');
-    } else if (token && isAuthOnlyPath) {
-      // Don't render and redirect to dashboard (only for login/register pages)
-      setShouldRender(false);
-      router.replace('/dashboard');
-    } else {
-      // Allow rendering
-      setShouldRender(true);
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      if (!isPublicPath) {
+        router.replace('/login');
+      } else {
+        setShouldRender(true);
+      }
+      return;
     }
+
+    // Token exists: validate with server for auto-login
+    authRepository.getMe()
+      .then(() => {
+        if (isAuthOnlyPath) {
+          router.replace('/dashboard');
+        } else {
+          setShouldRender(true);
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
+        if (!isPublicPath) {
+          router.replace('/login');
+        } else {
+          setShouldRender(true);
+        }
+      });
   }, [pathname, router]);
 
-  // Show nothing until auth check allows rendering
   if (!shouldRender) return null;
 
   return <>{children}</>;

@@ -22,6 +22,11 @@ export class AuthDataSource {
     return data;
   }
 
+  async getMe(): Promise<User> {
+    const { data } = await api.get<User>('/auth/me');
+    return data;
+  }
+
   async deleteAccount(): Promise<void> {
     await api.delete('/auth/account');
   }

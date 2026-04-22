@@ -39,6 +39,12 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  async getMe(): Promise<User> {
+    const user = await this.authDataSource.getMe();
+    this.saveCurrentUser(user);
+    return user;
+  }
+
   async deleteAccount(): Promise<void> {
     await this.authDataSource.deleteAccount();
     this.logout();
