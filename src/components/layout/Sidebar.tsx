@@ -26,6 +26,7 @@ const RECORD_NAV_ITEMS = [
   { path: '/record/diary', label: '독서 일기' },
   { path: '/record/snippet', label: '밑줄 긋기' },
   { path: '/record/review', label: '독서 리뷰' },
+  { path: '/record/session', label: '독서 세션' },
 ];
 
 export default function Sidebar({

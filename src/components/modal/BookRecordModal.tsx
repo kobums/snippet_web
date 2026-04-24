@@ -5,7 +5,9 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { getRecordsByBook, createRecord, patchRecord, deleteRecord } from '@/lib/recordApi';
+import { getSessionsByBook } from '@/lib/readingSessionApi';
 import { RecordDto } from '@/types/record';
+import { ReadingSessionDto } from '@/types/readingSession';
 import { UserBookDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
 import { TimelineRecordSkeleton } from '@/components/ui/skeleton';
@@ -24,7 +26,9 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
   const { updateStatus, updateProgress, updateStartDate, updateEndDate, updateType } = useBookStore();
   const [records, setRecords] = useState<RecordDto[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'snippet' | 'diary' | 'review'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'snippet' | 'diary' | 'review' | 'session'>('all');
+  const [sessions, setSessions] = useState<ReadingSessionDto[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState(false);
   
   // Add Record State
   const [isAdding, setIsAdding] = useState(false);
@@ -49,7 +53,11 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
   useEffect(() => {
     if (isOpen && book) {
-      loadRecords();
+      if (activeTab === 'session') {
+        loadSessions();
+      } else {
+        loadRecords();
+      }
       setLocalReadPage(book.readPage);
       setLocalStatus(book.status);
       setLocalType(book.type);
@@ -85,6 +93,12 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
     setLocalReadPage(newPage);
     await updateProgress(book.id, newPage);
+
+    if (book.totalPage > 0 && newPage === book.totalPage && localStatus === 'reading') {
+      setLocalStatus('completed');
+      await updateStatus(book.id, 'completed');
+      toast.success('완독을 축하합니다! 🎉');
+    }
   };
 
   const handleTypeChange = async (newType: UserBookDto['type']) => {
@@ -148,6 +162,32 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadSessions = async () => {
+    if (!book) return;
+    setLoadingSessions(true);
+    try {
+      const data = await getSessionsByBook(book.id);
+      setSessions(data);
+    } catch (e) {
+      console.error("Failed to load sessions", e);
+    } finally {
+      setLoadingSessions(false);
+    }
+  };
+
+  const formatSessionDuration = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    if (h > 0) return `${h}시간 ${m}분`;
+    if (m > 0) return `${m}분`;
+    return `${seconds}초`;
+  };
+
+  const formatSessionPace = (secondsPerPage: number) => {
+    if (secondsPerPage <= 0) return '-';
+    return `${(secondsPerPage / 60).toFixed(1)} min/p`;
   };
 
   const startEditing = (record: RecordDto) => {
@@ -356,12 +396,13 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto hide-scrollbar">
               {[
                 { id: 'all', label: '전체' },
                 { id: 'snippet', label: '밑줄(스니펫)' },
                 { id: 'diary', label: '일기/단상' },
-                { id: 'review', label: '리뷰' }
+                { id: 'review', label: '리뷰' },
+                { id: 'session', label: '독서세션' },
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -369,7 +410,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                     setActiveTab(tab.id as any);
                     if (isAdding) setIsAdding(false);
                   }}
-                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${activeTab === tab.id ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors shrink-0 ${activeTab === tab.id ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
                 >
                   {tab.label}
                 </button>
@@ -377,10 +418,59 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
             </div>
           </div>
 
+          {/* Session Tab Content */}
+          {activeTab === 'session' && (
+            <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50 hide-scrollbar">
+              {loadingSessions ? (
+                <div className="space-y-3">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="h-24 rounded-2xl bg-gray-100 animate-pulse" />
+                  ))}
+                </div>
+              ) : sessions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-3 opacity-50">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <p className="text-sm">이 책의 독서 세션이 없습니다</p>
+                  <p className="text-xs mt-1 text-gray-300">앱에서 타이머를 사용해 세션을 기록해보세요</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {sessions.map(session => (
+                    <div key={session.id} className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-gray-400">
+                          {new Date(session.sessionDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' })}
+                        </span>
+                        <span className="text-xs font-semibold text-accent">{formatSessionDuration(session.durationSeconds)}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-600 mb-2">
+                        <span>{session.startPage}p</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300">
+                          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                        <span>{session.endPage}p</span>
+                        <span className="ml-auto text-xs font-semibold text-emerald-600">+{session.pagesRead}p</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span>페이스: {formatSessionPace(session.secondsPerPage)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Timeline View */}
+          {activeTab !== 'session' && (
           <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50 hide-scrollbar relative">
             <div className="absolute left-10 top-0 bottom-0 w-px bg-gray-200"></div>
-            
+
             <div className="space-y-6">
               {isAdding && (
                 <div className="relative pl-12 pr-4">
@@ -503,12 +593,13 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
               ))}
             </div>
           </div>
+          )}
 
           {/* Floating Action Button */}
-          {!isAdding && (
-            <button 
+          {!isAdding && activeTab !== 'session' && (
+            <button
               onClick={() => {
-                if (activeTab !== 'all') setNewType(activeTab);
+                if (activeTab !== 'all') setNewType(activeTab as any);
                 setIsAdding(true);
               }}
               className="absolute bottom-8 right-8 w-14 h-14 bg-primary rounded-full shadow-lg shadow-primary/20 flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-20"
