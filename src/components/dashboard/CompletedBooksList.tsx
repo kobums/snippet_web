@@ -38,7 +38,7 @@ export default function CompletedBooksList({ completedBooks, loading }: Complete
             <div
               key={book.id}
               onClick={() => openBookRecord(book)}
-              className="bg-white/60 border border-white/60 rounded-2xl overflow-hidden cursor-pointer hover:bg-white dark:hover:bg-white/10 transition-colors shadow-sm group"
+              className="bg-white border border-white/60 rounded-2xl overflow-hidden cursor-pointer hover:bg-white/60 dark:bg-white/10 dark:hover:bg-white/5 transition-colors shadow-sm group"
             >
               <div className="w-full h-[180px] sm:h-[200px] bg-gray-50 dark:bg-white/5 flex items-center justify-center p-3 sm:p-4">
                 {book.coverUrl ? (
