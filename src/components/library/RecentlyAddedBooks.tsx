@@ -57,7 +57,7 @@ export default function RecentlyAddedBooks({ books, loading }: RecentlyAddedBook
 
   return (
     <div className="liquid-panel p-5">
-      <h3 className="text-gray-900 font-medium mb-4 flex items-center gap-2">
+      <h3 className="text-gray-900 dark:text-[#f0f0f0] font-medium mb-4 flex items-center gap-2">
         <span className="text-lg">최근 추가한 책</span>
       </h3>
 
@@ -72,7 +72,7 @@ export default function RecentlyAddedBooks({ books, loading }: RecentlyAddedBook
         {loading ? (
           <LibraryListSkeleton count={3} />
         ) : recentBooks.length === 0 ? (
-          <div className="text-xs text-gray-400 py-4 text-center">최근 추가한 책이 없습니다.</div>
+          <div className="text-xs text-gray-400 dark:text-[#666] py-4 text-center">최근 추가한 책이 없습니다.</div>
         ) : (
           recentBooks.map(book => {
             const statusInfo = STATUS_LABELS[book.status] || STATUS_LABELS.wish;
@@ -80,12 +80,12 @@ export default function RecentlyAddedBooks({ books, loading }: RecentlyAddedBook
               <div
                 key={book.id}
                 onClick={() => openBookRecord(book)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/60 border border-gray-200 hover:bg-white transition-colors cursor-pointer group shadow-sm"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/60 border border-gray-200 dark:bg-white/5 dark:border-white/8 hover:bg-white dark:hover:bg-white/10 transition-colors cursor-pointer group shadow-sm"
               >
-                <div className="w-7 h-7 rounded border border-gray-200 bg-gray-50 shrink-0 flex items-center justify-center text-gray-400 group-hover:bg-accent/5 group-hover:text-accent group-hover:border-accent/20 transition-colors">
+                <div className="w-7 h-7 rounded border border-gray-200 bg-gray-50 shrink-0 flex items-center justify-center text-gray-400 dark:text-[#666] group-hover:bg-accent/5 group-hover:text-accent group-hover:border-accent/20 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
                 </div>
-                <span className="text-sm text-gray-800 truncate flex-1 group-hover:text-accent transition-colors">
+                <span className="text-sm text-gray-800 dark:text-[#d0d0d0] truncate flex-1 group-hover:text-accent transition-colors">
                   {book.title}
                 </span>
                 <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md shrink-0 ${statusInfo.color}`}>
@@ -99,7 +99,7 @@ export default function RecentlyAddedBooks({ books, loading }: RecentlyAddedBook
 
       <button
         onClick={() => openSearchModal({ defaultStatus: 'reading', onSuccess: loadDashboard })}
-        className="mt-3 flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
+        className="mt-3 flex items-center gap-2 text-xs text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] transition-colors px-3 py-2 w-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         새 페이지

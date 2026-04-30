@@ -20,9 +20,9 @@ export default function ReadingInsightsSection({ data }: ReadingInsightsSectionP
       {insights.map((insight, idx) => (
         <div key={idx} className="liquid-card p-5 md:p-6 text-center space-y-2">
           <div className="text-3xl">{insight.icon}</div>
-          <h3 className="text-xs sm:text-sm text-gray-500">{insight.title}</h3>
-          <p className="text-xl sm:text-2xl font-bold text-gray-800">{insight.value}</p>
-          {insight.subtitle && <p className="text-xs text-gray-400 truncate">{insight.subtitle}</p>}
+          <h3 className="text-xs sm:text-sm text-gray-500 dark:text-[#a0a0a0]">{insight.title}</h3>
+          <p className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-[#d0d0d0]">{insight.value}</p>
+          {insight.subtitle && <p className="text-xs text-gray-400 dark:text-[#666] truncate">{insight.subtitle}</p>}
         </div>
       ))}
     </div>

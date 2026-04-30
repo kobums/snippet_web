@@ -51,33 +51,33 @@ function getSearchModalConfig(activeTab: FilterTab) {
 function BookListSkeleton() {
   return (
     <div className="space-y-2">
-      <div className="text-xs text-gray-300 mb-3 w-16 h-4 bg-gray-100 rounded animate-pulse"></div>
+      <div className="text-xs text-gray-300 dark:text-[#444] mb-3 w-16 h-4 bg-gray-100 rounded animate-pulse"></div>
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white/60 border border-gray-200 p-3 sm:p-4 rounded-2xl flex flex-col gap-2 sm:gap-3">
+        <div key={i} className="bg-white/60 border border-gray-200 dark:bg-white/5 dark:border-white/8 p-3 sm:p-4 rounded-2xl flex flex-col gap-2 sm:gap-3">
           <div className="flex gap-2 sm:gap-3">
             {/* 커버 스켈레톤 */}
-            <div className="w-14 h-20 bg-gray-100 rounded-md animate-pulse"></div>
+            <div className="w-14 h-20 bg-gray-100 dark:bg-white/10 rounded-md animate-pulse"></div>
 
             {/* 텍스트 스켈레톤 */}
             <div className="flex-1 min-w-0 space-y-2">
-              <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse"></div>
-              <div className="h-3 bg-gray-100 rounded w-1/2 animate-pulse"></div>
+              <div className="h-4 bg-gray-100 dark:bg-white/10 rounded w-3/4 animate-pulse"></div>
+              <div className="h-3 bg-gray-100 dark:bg-white/10 rounded w-1/2 animate-pulse"></div>
 
               {/* 프로그레스 바 스켈레톤 */}
               <div className="mt-4 space-y-1">
                 <div className="flex justify-between">
-                  <div className="h-3 bg-gray-100 rounded w-8 animate-pulse"></div>
-                  <div className="h-3 bg-gray-100 rounded w-16 animate-pulse"></div>
+                  <div className="h-3 bg-gray-100 dark:bg-white/10 rounded w-8 animate-pulse"></div>
+                  <div className="h-3 bg-gray-100 dark:bg-white/10 rounded w-16 animate-pulse"></div>
                 </div>
-                <div className="h-1.5 bg-gray-100 rounded-full animate-pulse"></div>
+                <div className="h-1.5 bg-gray-100 dark:bg-white/10 rounded-full animate-pulse"></div>
               </div>
             </div>
           </div>
 
           {/* 버튼 스켈레톤 */}
           <div className="flex gap-2 mt-1">
-            <div className="flex-1 h-8 bg-gray-100 rounded-lg animate-pulse"></div>
-            <div className="flex-1 h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+            <div className="flex-1 h-8 bg-gray-100 dark:bg-white/10 rounded-lg animate-pulse"></div>
+            <div className="flex-1 h-8 bg-gray-100 dark:bg-white/10 rounded-lg animate-pulse"></div>
           </div>
         </div>
       ))}
@@ -128,7 +128,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
 
   return (
     <div className="liquid-panel p-4 sm:p-5 md:p-6 relative z-10">
-      <h3 className="text-gray-900 font-medium mb-3 sm:mb-4 text-base sm:text-lg">독서 진행 관리</h3>
+      <h3 className="text-gray-900 dark:text-[#f0f0f0] font-medium mb-3 sm:mb-4 text-base sm:text-lg">독서 진행 관리</h3>
 
       <PanelToolbar<FilterTab, SortOption>
         tabs={tabs}
@@ -147,8 +147,8 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
       {loading ? (
         <BookListSkeleton />
       ) : filteredBooks.length === 0 ? (
-        <div className="h-32 bg-gray-50/50 border border-dashed border-gray-200 rounded-2xl flex items-center justify-center flex-col gap-2">
-          <span className="text-gray-400">
+        <div className="h-32 bg-gray-50/50 dark:bg-white/2 border border-dashed border-gray-200 rounded-2xl flex items-center justify-center flex-col gap-2">
+          <span className="text-gray-400 dark:text-[#666]">
             {activeTab === 'waiting' && '대기 중인 책이 없습니다.'}
             {activeTab === 'reading' && '현재 읽고 있는 책이 없습니다.'}
             {activeTab === 'done' && '완료하거나 중단한 책이 없습니다.'}
@@ -159,34 +159,34 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
         </div>
       ) : (
         <div className="space-y-2">
-          <div className="text-xs text-gray-400 mb-3">할 일 {filteredBooks.length}</div>
+          <div className="text-xs text-gray-400 dark:text-[#666] mb-3">할 일 {filteredBooks.length}</div>
           {filteredBooks.map(book => {
             const progressPercent = calcProgress(book.readPage, book.totalPage);
             return (
-              <div key={book.id} onClick={() => openBookRecord(book)} className="bg-white/60 border border-gray-200 p-3 sm:p-4 rounded-2xl flex flex-col gap-2 sm:gap-3 group relative overflow-hidden cursor-pointer hover:bg-white transition-colors shadow-sm">
+              <div key={book.id} onClick={() => openBookRecord(book)} className="bg-white/60 border border-gray-200 dark:bg-white/5 dark:border-white/8 p-3 sm:p-4 rounded-2xl flex flex-col gap-2 sm:gap-3 group relative overflow-hidden cursor-pointer hover:bg-white dark:hover:bg-white/10 transition-colors shadow-sm">
                 <div className="flex gap-2 sm:gap-3 relative z-10">
                   {book.coverUrl ? (
                     <img src={book.coverUrl} className="w-14 h-20 object-cover rounded-md shadow-md" alt="cover"/>
                   ) : (
-                    <div className="w-14 h-20 bg-gray-100 rounded-md flex-shrink-0"></div>
+                    <div className="w-14 h-20 bg-gray-100 dark:bg-white/10 rounded-md flex-shrink-0"></div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-gray-900 font-medium text-sm truncate group-hover:text-accent transition-colors">{book.title}</h4>
+                      <h4 className="text-gray-900 dark:text-[#f0f0f0] font-medium text-sm truncate group-hover:text-accent transition-colors">{book.title}</h4>
                       {activeTab === 'done' && (
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${book.status === 'completed' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-gray-50 text-gray-500 border border-gray-100'}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${book.status === 'completed' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-gray-50 text-gray-500 dark:text-[#a0a0a0] border border-gray-100 dark:border-white/8'}`}>
                           {book.status === 'completed' ? '완독' : '중단'}
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-500 text-xs truncate mt-1">{book.author}</p>
+                    <p className="text-gray-500 dark:text-[#a0a0a0] text-xs truncate mt-1">{book.author}</p>
                     {activeTab === 'reading' && (
                       <>
-                        <div className="mt-4 flex justify-between text-xs text-gray-500 mb-1">
+                        <div className="mt-4 flex justify-between text-xs text-gray-500 dark:text-[#a0a0a0] mb-1">
                           <span>{progressPercent}%</span>
                           <span>{book.readPage} / {book.totalPage || '?'}p</span>
                         </div>
-                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); openBookRecord(book); }}>
+                        <div className="h-1.5 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); openBookRecord(book); }}>
                           <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
                         </div>
                       </>
@@ -195,8 +195,8 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                 </div>
                 {activeTab === 'reading' && (
                   <div className="flex gap-2 relative z-10 mt-1">
-                    <button onClick={(e) => updateStatus(book.id, 'completed', e)} className="flex-1 py-1.5 bg-primary/10 hover:bg-primary/15 text-primary text-xs rounded-lg transition-colors">완독 처리</button>
-                    <button onClick={(e) => updateStatus(book.id, 'dropped', e)} className="flex-1 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs rounded-lg transition-colors">중단</button>
+                    <button onClick={(e) => updateStatus(book.id, 'completed', e)} className="flex-1 py-1.5 bg-primary/10 hover:bg-primary/15 text-primary dark:bg-white/10 dark:hover:bg-white/15 dark:text-[#f0f0f0] text-xs rounded-lg transition-colors">완독 처리</button>
+                    <button onClick={(e) => updateStatus(book.id, 'dropped', e)} className="flex-1 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/15 text-red-700 dark:text-red-400 text-xs rounded-lg transition-colors">중단</button>
                   </div>
                 )}
                 {activeTab === 'waiting' && (

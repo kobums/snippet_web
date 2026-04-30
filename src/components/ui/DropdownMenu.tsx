@@ -32,12 +32,16 @@ export function DropdownMenu({ isOpen, onClose, items, activeKey, onSelect, alig
 
   return (
     <div ref={ref}
-      className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} top-full mt-1 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-xl p-1 min-w-[120px] z-50 shadow-xl`}>
+      className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} top-full mt-1 backdrop-blur-xl rounded-xl p-1 min-w-[120px] z-50 shadow-xl
+        bg-white/95 border border-gray-200
+        dark:bg-[#1c1c1e]/95 dark:border-white/10`}>
       {items.map(item => (
         <button key={item.key}
           onClick={() => { onSelect(item.key); onClose(); }}
           className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors ${
-            activeKey === item.key ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50'
+            activeKey === item.key
+              ? 'bg-gray-100 text-gray-900 font-medium dark:bg-white/10 dark:text-[#f0f0f0]'
+              : 'text-gray-600 hover:bg-gray-50 dark:text-[#a0a0a0] dark:hover:bg-white/8'
           }`}>
           {item.label}
         </button>

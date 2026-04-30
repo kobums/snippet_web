@@ -19,8 +19,8 @@ export function TabFilter({ tabs, activeKey, onSelect }: TabFilterProps) {
         <button key={tab.key} onClick={() => onSelect(tab.key)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             activeKey === tab.key
-              ? 'liquid-badge text-gray-900 shadow-sm'
-              : 'text-gray-500 hover:text-gray-800 hover:bg-white/50 border border-transparent'
+              ? 'liquid-badge text-gray-900 dark:text-[#f0f0f0] shadow-sm'
+              : 'text-gray-500 hover:text-gray-800 hover:bg-white/50 border border-transparent dark:text-[#666] dark:hover:text-[#f0f0f0] dark:hover:bg-white/8'
           }`}>
           {tab.icon}
           {tab.label}

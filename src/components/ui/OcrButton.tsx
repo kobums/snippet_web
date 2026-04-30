@@ -49,7 +49,7 @@ export default function OcrButton({ onExtract, className = '' }: OcrButtonProps)
         onClick={() => inputRef.current?.click()}
         disabled={loading}
         title="이미지에서 텍스트 추출 (OCR)"
-        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/60 border border-gray-200 text-sm text-gray-600 hover:bg-white transition-all disabled:opacity-50 ${className}`}
+        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/60 border border-gray-200 dark:bg-white/5 dark:border-white/8 text-sm text-gray-600 dark:text-[#a0a0a0] hover:bg-white dark:hover:bg-white/10 transition-all disabled:opacity-50 ${className}`}
       >
         {loading ? (
           <>

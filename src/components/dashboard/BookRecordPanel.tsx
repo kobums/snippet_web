@@ -187,7 +187,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
 
   return (
     <div className="liquid-panel p-4 sm:p-5 md:p-6 relative z-10 flex flex-col">
-      <h3 className="text-gray-900 font-semibold text-base sm:text-lg flex items-center gap-2 mb-4 sm:mb-5 shrink-0">독서 기록</h3>
+      <h3 className="text-gray-900 dark:text-[#f0f0f0] font-semibold text-base sm:text-lg flex items-center gap-2 mb-4 sm:mb-5 shrink-0">독서 기록</h3>
 
       <PanelToolbar<AllTab, SortOption>
         tabs={recordTabs}
@@ -225,11 +225,11 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
           {sessionLoading ? (
             <div className="space-y-2 mt-1">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-20 rounded-xl bg-gray-100/60 animate-pulse" />
+                <div key={i} className="h-20 rounded-xl bg-gray-100/60 dark:bg-white/8 animate-pulse" />
               ))}
             </div>
           ) : displaySessions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+            <div className="flex flex-col items-center justify-center py-10 text-gray-400 dark:text-[#666]">
               <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-2 opacity-40">
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
@@ -238,10 +238,10 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
           ) : (
             <div className="space-y-2 mt-1">
               {displaySessions.map(s => (
-                <div key={s.id} onClick={() => setSelectedSession(s)} className="bg-white/60 border border-gray-100 rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-white transition-colors cursor-pointer">
+                <div key={s.id} onClick={() => setSelectedSession(s)} className="bg-white/60 border border-gray-100 dark:border-white/8 rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-white dark:hover:bg-white/10 transition-colors cursor-pointer">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-800 truncate">{s.bookTitle}</p>
-                    <p className="text-[11px] text-gray-400 mt-0.5">
+                    <p className="text-xs font-medium text-gray-800 dark:text-[#d0d0d0] truncate">{s.bookTitle}</p>
+                    <p className="text-[11px] text-gray-400 dark:text-[#666] mt-0.5">
                       {new Date(s.sessionDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
                       {' · '}
                       {s.startPage}p → {s.endPage}p
@@ -274,7 +274,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
 
       {!isSessionTab && !showForm && displayRecords.length > 0 && (
         <button onClick={() => openForm()}
-          className="mt-3 sm:mt-4 flex items-center gap-2 text-xs sm:text-sm text-gray-400 hover:text-gray-600 transition-colors px-3 sm:px-4 py-2 sm:py-2.5 w-full border-t border-gray-50">
+          className="mt-3 sm:mt-4 flex items-center gap-2 text-xs sm:text-sm text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] transition-colors px-3 sm:px-4 py-2 sm:py-2.5 w-full border-t border-gray-50">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           새 페이지
         </button>

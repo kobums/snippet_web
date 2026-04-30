@@ -59,7 +59,7 @@ export default function SwipeableTabs({ tabs, className = '' }: SwipeableTabsPro
               flex items-center gap-1.5 px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm font-medium
               ${activeIndex === index
                 ? 'liquid-button shadow-md'
-                : 'bg-white/60 backdrop-blur-sm text-gray-600 hover:bg-white/80 border border-white/60'
+                : 'bg-white/60 backdrop-blur-sm text-gray-600 dark:text-[#a0a0a0] hover:bg-white/80 border border-white/60'
               }
             `}
           >

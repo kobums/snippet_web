@@ -44,30 +44,30 @@ export default function LandingPage() {
         >
           snippet
         </h1>
-        <p className="text-lg md:text-xl text-gray-500 font-light mb-2">
+        <p className="text-lg md:text-xl text-gray-500 dark:text-[#a0a0a0] font-light mb-2">
           블라인드 북 큐레이션
         </p>
-        <p className="text-sm text-gray-400 text-center max-w-md leading-relaxed mb-12">
+        <p className="text-sm text-gray-400 dark:text-[#666] text-center max-w-md leading-relaxed mb-12">
           표지, 제목, 작가 이름 — 모든 편견을 가리고<br />
-          오직 <span className="text-gray-600 font-medium">책 속의 한 문장</span>만으로 책을 만나보세요.
+          오직 <span className="text-gray-600 dark:text-[#a0a0a0] font-medium">책 속의 한 문장</span>만으로 책을 만나보세요.
         </p>
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl w-full mb-12">
           <div className="liquid-panel p-5 text-center">
             <div className="text-2xl mb-2">👆</div>
-            <p className="text-sm font-medium text-gray-800 mb-1">스와이프</p>
-            <p className="text-xs text-gray-500">마음에 드는 문장을<br />오른쪽으로 넘기세요</p>
+            <p className="text-sm font-medium text-gray-800 dark:text-[#d0d0d0] mb-1">스와이프</p>
+            <p className="text-xs text-gray-500 dark:text-[#a0a0a0]">마음에 드는 문장을<br />오른쪽으로 넘기세요</p>
           </div>
           <div className="liquid-panel p-5 text-center">
             <div className="text-2xl mb-2">🔍</div>
-            <p className="text-sm font-medium text-gray-800 mb-1">발견</p>
-            <p className="text-xs text-gray-500">숨겨진 책의 정체를<br />확인해보세요</p>
+            <p className="text-sm font-medium text-gray-800 dark:text-[#d0d0d0] mb-1">발견</p>
+            <p className="text-xs text-gray-500 dark:text-[#a0a0a0]">숨겨진 책의 정체를<br />확인해보세요</p>
           </div>
           <div className="liquid-panel p-5 text-center">
             <div className="text-2xl mb-2">📚</div>
-            <p className="text-sm font-medium text-gray-800 mb-1">기록</p>
-            <p className="text-xs text-gray-500">나만의 서재에<br />독서 기록을 남기세요</p>
+            <p className="text-sm font-medium text-gray-800 dark:text-[#d0d0d0] mb-1">기록</p>
+            <p className="text-xs text-gray-500 dark:text-[#a0a0a0]">나만의 서재에<br />독서 기록을 남기세요</p>
           </div>
         </div>
 
@@ -82,7 +82,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/dashboard"
-            className="px-8 py-3 rounded-2xl liquid-panel text-sm font-medium text-gray-700 text-center transition-all hover:scale-[1.02]"
+            className="px-8 py-3 rounded-2xl liquid-panel text-sm font-medium text-gray-700 dark:text-[#d0d0d0] text-center transition-all hover:scale-[1.02]"
           >
             내 서재 바로가기
           </Link>
@@ -91,10 +91,10 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="pb-8 flex flex-col items-center gap-3 content-layer relative z-10">
-        <div className="flex gap-4 text-xs text-gray-400">
-          <Link href="/login" className="hover:text-gray-600 transition-colors">로그인</Link>
-          <Link href="/register" className="hover:text-gray-600 transition-colors">회원가입</Link>
-          <Link href="/privacy" className="hover:text-gray-600 transition-colors">개인정보 처리 방침</Link>
+        <div className="flex gap-4 text-xs text-gray-400 dark:text-[#666]">
+          <Link href="/login" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">로그인</Link>
+          <Link href="/register" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">회원가입</Link>
+          <Link href="/privacy" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">개인정보 처리 방침</Link>
         </div>
       </footer>
     </main>

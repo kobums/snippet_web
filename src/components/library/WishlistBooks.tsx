@@ -19,7 +19,7 @@ export default function WishlistBooks({ books, loading }: WishlistBooksProps) {
 
   return (
     <div className="liquid-panel p-5">
-      <h3 className="text-gray-900 font-medium mb-4 flex items-center gap-2">
+      <h3 className="text-gray-900 dark:text-[#f0f0f0] font-medium mb-4 flex items-center gap-2">
         <span className="text-lg">갖고 싶은 책</span>
       </h3>
 
@@ -32,16 +32,16 @@ export default function WishlistBooks({ books, loading }: WishlistBooksProps) {
         {loading ? (
           <LibraryCardSkeleton count={2} />
         ) : books.length === 0 ? (
-          <div className="text-xs text-gray-400 py-4 text-center">갖고 싶은 책이 없습니다.</div>
+          <div className="text-xs text-gray-400 dark:text-[#666] py-4 text-center">갖고 싶은 책이 없습니다.</div>
         ) : (
           books.map(book => (
             <div
               key={book.id}
               onClick={() => openBookRecord(book)}
-              className="bg-white/60 border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:bg-white transition-colors group shadow-sm"
+              className="bg-white/60 border border-gray-200 dark:bg-white/5 dark:border-white/8 rounded-2xl overflow-hidden cursor-pointer hover:bg-white dark:hover:bg-white/10 transition-colors group shadow-sm"
             >
               {book.coverUrl && (
-                <div className="w-full flex justify-center py-4 px-6 bg-gray-50/50">
+                <div className="w-full flex justify-center py-4 px-6 bg-gray-50/50 dark:bg-white/2">
                   <img
                     src={book.coverUrl}
                     alt={book.title}
@@ -50,7 +50,7 @@ export default function WishlistBooks({ books, loading }: WishlistBooksProps) {
                 </div>
               )}
               <div className="px-4 py-3 space-y-2">
-                <p className="text-sm text-gray-900 font-medium leading-snug group-hover:text-accent transition-colors">
+                <p className="text-sm text-gray-900 dark:text-[#f0f0f0] font-medium leading-snug group-hover:text-accent transition-colors">
                   {book.title}
                 </p>
                 <div className="flex flex-col gap-1.5">
@@ -85,7 +85,7 @@ export default function WishlistBooks({ books, loading }: WishlistBooksProps) {
 
       <button
         onClick={() => openSearchModal({ allowedActions: ['wish'], defaultStatus: 'waiting', onSuccess: loadDashboard })}
-        className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition-colors px-3 py-2 w-full"
+        className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] transition-colors px-3 py-2 w-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         새 페이지

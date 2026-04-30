@@ -71,7 +71,7 @@ export default function StatsPage() {
         <div className="max-w-[1400px] mx-auto pb-20">
           {/* Header */}
           <div className="liquid-panel p-5 md:p-6 flex items-center justify-between mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">독서 통계</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-[#d0d0d0]">독서 통계</h1>
             <YearNavigator year={selectedYear} onChange={setSelectedYear} />
           </div>
 

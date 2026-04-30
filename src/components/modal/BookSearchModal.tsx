@@ -188,23 +188,27 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 50, opacity: 0 }}
-          className="w-full max-w-md bg-white/95 border border-gray-200 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col max-h-[80vh] shadow-2xl"
+          className="w-full max-w-md backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col max-h-[80vh] shadow-2xl
+            bg-white/95 border border-gray-200
+            dark:bg-[#1c1c1e]/95 dark:border-white/10"
           onClick={e => e.stopPropagation()}
         >
           {/* Header & Search Input */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex justify-between items-center mb-4 text-gray-900">
+          <div className="p-4 border-b border-gray-200 dark:border-white/10">
+            <div className="flex justify-between items-center mb-4 text-gray-900 dark:text-[#f0f0f0]">
               <h2 className="text-xl font-bold">도서 검색 및 추가</h2>
-              <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+              <button onClick={onClose} className="p-2 rounded-full transition-colors text-gray-500 hover:bg-gray-100 dark:text-[#a0a0a0] dark:hover:bg-white/8">
                 ✕
               </button>
             </div>
-            <input 
-              type="text" 
-              placeholder="책 제목이나 저자를 입력하세요" 
+            <input
+              type="text"
+              placeholder="책 제목이나 저자를 입력하세요"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all font-light"
+              className="w-full rounded-xl px-4 py-3 transition-all font-light focus:outline-none focus:ring-2
+                bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-primary/40 focus:ring-primary/10
+                dark:bg-white/6 dark:border-white/10 dark:text-[#f0f0f0] dark:placeholder-[#666] dark:focus:border-accent/40 dark:focus:ring-accent/10"
               autoFocus
             />
           </div>
@@ -214,21 +218,23 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
             {loading && <SearchResultSkeleton count={3} />}
 
             {!loading && query.length > 1 && results.length === 0 && (
-              <div className="text-center text-gray-500 py-4">검색 결과가 없습니다.</div>
+              <div className="text-center py-4 text-gray-500 dark:text-[#666]">검색 결과가 없습니다.</div>
             )}
 
             {results.map((book, index) => (
-              <div key={book.isbn || `book-${index}`} className="flex gap-4 p-3 rounded-2xl bg-white border border-gray-100 hover:bg-gray-50 transition-colors shadow-sm">
+              <div key={book.isbn || `book-${index}`} className="flex gap-4 p-3 rounded-2xl transition-colors shadow-sm
+                bg-white border border-gray-100 hover:bg-gray-50
+                dark:bg-white/5 dark:border-white/8 dark:hover:bg-white/8">
                 {book.coverUrl ? (
                   <img src={book.coverUrl} alt={book.title} className="w-16 h-24 object-cover rounded-lg shadow-md" />
                 ) : (
-                  <div className="w-16 h-24 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">No Image</div>
+                  <div className="w-16 h-24 rounded-lg flex items-center justify-center text-xs bg-gray-100 text-gray-400 dark:bg-white/10 dark:text-[#666]">No Image</div>
                 )}
 
                 <div className="flex-1 flex flex-col">
-                  <h3 className="text-gray-900 font-medium line-clamp-2 leading-tight">{book.title}</h3>
-                  <p className="text-gray-600 text-sm mt-1">{book.author}</p>
-                  <p className="text-gray-400 text-xs">{book.publisher} · {book.pubDate}</p>
+                  <h3 className="font-medium line-clamp-2 leading-tight text-gray-900 dark:text-[#f0f0f0]">{book.title}</h3>
+                  <p className="text-sm mt-1 text-gray-600 dark:text-[#a0a0a0]">{book.author}</p>
+                  <p className="text-xs text-gray-400 dark:text-[#666]">{book.publisher} · {book.pubDate}</p>
 
                   <div className="mt-auto pt-2 flex gap-2">
                     {showWish && (
@@ -285,10 +291,10 @@ export default function BookSearchModal({ isOpen, onClose, onSuccess, allowedAct
             {!loading && results.length > 0 && (
               <div ref={observerTarget} className="py-2">
                 {loadingMore && (
-                  <div className="text-center text-gray-400 text-sm">더 많은 책 불러오는 중...</div>
+                  <div className="text-center text-sm text-gray-400 dark:text-[#666]">더 많은 책 불러오는 중...</div>
                 )}
                 {!loadingMore && !hasMore && (
-                  <div className="text-center text-gray-400 text-sm">모든 검색 결과를 확인했습니다.</div>
+                  <div className="text-center text-sm text-gray-400 dark:text-[#666]">모든 검색 결과를 확인했습니다.</div>
                 )}
               </div>
             )}
