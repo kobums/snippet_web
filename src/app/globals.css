@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -135,6 +137,128 @@ input[type="number"] {
   --lg-accent-light: rgba(183, 148, 244, 0.15);
   --lg-like: #34c759;
   --lg-pass: #ff3b30;
+}
+
+/* ─────────────────────────────────────
+   다크 모드 오버라이드 (.dark 클래스 기반)
+   ───────────────────────────────────── */
+.dark {
+  /* Primary Colors */
+  --color-primary: #f0f0f0;
+  --color-primary-light: #c8c8c8;
+  --color-primary-dark: #ffffff;
+  --color-primary-subtle: #2a2a2a;
+
+  /* Semantic Colors (그대로 유지) */
+  --color-success: #30d158;
+  --color-warning: #ffd60a;
+  --color-error: #ff453a;
+  --color-info: #0a84ff;
+
+  /* Neutral Palette */
+  --color-neutral-50: #111111;
+  --color-neutral-100: #1c1c1e;
+  --color-neutral-200: #2c2c2e;
+  --color-neutral-300: #3a3a3c;
+  --color-neutral-400: #636366;
+  --color-neutral-500: #8e8e93;
+  --color-neutral-600: #aeaeb2;
+  --color-neutral-700: #c7c7cc;
+  --color-neutral-800: #d1d1d6;
+  --color-neutral-900: #f2f2f7;
+
+  /* Background Colors */
+  --color-bg-primary: #0d0d0d;
+  --color-bg-secondary: #1c1c1e;
+  --color-bg-tertiary: #242424;
+
+  /* Text Colors */
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #a0a0a0;
+  --color-text-tertiary: #666666;
+  --color-text-disabled: #3d3d3d;
+
+  /* Accent (그대로 유지) */
+  --color-accent-purple: #c4a8ff;
+
+  /* Liquid Glass 배경 (어두운 중립 그라데이션) */
+  --lg-bg-1: #111111;
+  --lg-bg-2: #1a1a1a;
+  --lg-bg-3: #222222;
+  --lg-bg-4: #1e1e1e;
+
+  /* 글래스 서피스 */
+  --lg-glass-bg: rgba(30, 30, 30, 0.65);
+  --lg-glass-bg-hover: rgba(45, 45, 45, 0.75);
+  --lg-glass-border: rgba(255, 255, 255, 0.09);
+  --lg-glass-border-inner: rgba(255, 255, 255, 0.04);
+
+  /* 텍스트 */
+  --lg-text-primary: #f0f0f0;
+  --lg-text-secondary: #a0a0a0;
+  --lg-text-tertiary: #666666;
+
+  /* 셰도우 (다크에선 더 강하게) */
+  --lg-shadow-sm:
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+  --lg-shadow-md:
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --lg-shadow-lg:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  --lg-shadow-xl:
+    0 12px 48px rgba(0, 0, 0, 0.6),
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* 액센트 */
+  --lg-accent: #c4a8ff;
+  --lg-accent-light: rgba(196, 168, 255, 0.15);
+}
+
+/* 다크 모드: liquid-card 오버라이드 */
+.dark .liquid-card {
+  background: rgba(28, 28, 30, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .liquid-card::before {
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 20%,
+    transparent 50%
+  );
+}
+
+/* 다크 모드: liquid-nav 오버라이드 */
+.dark .liquid-nav {
+  background: rgba(18, 18, 18, 0.8);
+  border-top-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 -4px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* 다크 모드: liquid-button 오버라이드 */
+.dark .liquid-button {
+  background: linear-gradient(135deg, rgba(200, 200, 200, 0.15), rgba(255, 255, 255, 0.1));
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f0f0f0;
+}
+
+.dark .liquid-button:hover {
+  background: linear-gradient(135deg, rgba(220, 220, 220, 0.2), rgba(255, 255, 255, 0.15));
+}
+
+/* 다크 모드: liquid-spinner */
+.dark .liquid-spinner {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-primary);
 }
 
 html {
@@ -432,4 +556,32 @@ body {
   .min-h-dvh {
     min-height: -webkit-fill-available;
   }
+}
+
+/* ─────────────────────────────────────
+   다크 모드 전역 요소 오버라이드
+   ───────────────────────────────────── */
+
+/* 폼 요소 */
+.dark input,
+.dark textarea,
+.dark select {
+  color-scheme: dark;
+}
+
+/* 공통 흰 배경 카드 표면 → 다크 표면 */
+.dark .dark-surface {
+  background-color: rgba(28, 28, 30, 0.9);
+  border-color: rgba(255, 255, 255, 0.09);
+  color: var(--lg-text-primary);
+}
+
+/* 스켈레톤 shimmer 다크 */
+.dark .animate-pulse {
+  --tw-bg-opacity: 1;
+}
+
+/* 공통 오버레이 backdrop */
+.dark .modal-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
 }
