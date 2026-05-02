@@ -75,7 +75,7 @@ export default function LandingPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
             href="/snippet"
-            className="px-8 py-3 rounded-2xl text-sm font-medium text-white transition-all hover:scale-[1.02]"
+            className="px-8 py-3 rounded-2xl text-sm font-medium text-white dark:text-[#1a1a1a] transition-all hover:scale-[1.02]"
             style={{ background: "var(--color-primary)" }}
           >
             문장 스와이프 시작하기
