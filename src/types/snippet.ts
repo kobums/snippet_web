@@ -5,6 +5,11 @@ export interface SnippetCard {
   bookTitle: string;
 }
 
+export interface SnippetCardsResponse {
+  cards: SnippetCard[];
+  remainingToday: number; // -1 = 비로그인(무제한)
+}
+
 export interface SnippetArchive {
   id: number;
   text: string;

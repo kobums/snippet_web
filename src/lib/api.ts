@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SnippetCard, SnippetArchive } from "@/types/snippet";
+import { SnippetCard, SnippetArchive, SnippetCardsResponse } from "@/types/snippet";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8008/api",
@@ -36,14 +36,14 @@ api.interceptors.response.use(
 );
 
 export async function fetchCards(
-  count: number = 10,
+  count: number = 5,
   excludeIds?: number[]
-): Promise<SnippetCard[]> {
+): Promise<SnippetCardsResponse> {
   const params: Record<string, string> = { count: String(count) };
   if (excludeIds && excludeIds.length > 0) {
     params.excludeIds = excludeIds.join(",");
   }
-  const { data } = await api.get<SnippetCard[]>("/snippets/cards", {
+  const { data } = await api.get<SnippetCardsResponse>("/snippets/cards", {
     params,
   });
   return data;

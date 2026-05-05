@@ -11,22 +11,24 @@ import { SwipeCardSkeleton } from "@/components/ui/skeleton";
 export default function SwipeStack() {
   const [cards, setCards] = useState<SnippetCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [remainingToday, setRemainingToday] = useState<number | null>(null);
   const { seenIds, addLiked, addSeen } = useArchive();
 
-  const loadCards = useCallback(async () => {
+  const loadCards = useCallback(async (currentSeenIds: number[]) => {
     try {
       setLoading(true);
-      const data = await fetchCards(10, seenIds);
-      setCards(data.reverse());
+      const response = await fetchCards(5, currentSeenIds);
+      setRemainingToday(response.remainingToday);
+      setCards((prev) => [...response.cards.reverse(), ...prev]);
     } catch {
       console.error("카드 로딩 실패");
     } finally {
       setLoading(false);
     }
-  }, [seenIds]);
+  }, []);
 
   useEffect(() => {
-    loadCards();
+    loadCards([]);
   }, []);
 
   const handleSwipe = useCallback(
@@ -41,23 +43,45 @@ export default function SwipeStack() {
 
       setCards((prev) => {
         const next = prev.slice(0, -1);
-        if (next.length <= 2) {
-          fetchCards(10, [...seenIds, topCard.id])
-            .then((data) => setCards((cur) => [...data.reverse(), ...cur]))
+        if (next.length <= 2 && remainingToday !== 0) {
+          fetchCards(5, [...seenIds, topCard.id])
+            .then((res) => {
+              setRemainingToday(res.remainingToday);
+              setCards((cur) => [...res.cards.reverse(), ...cur]);
+            })
             .catch(() => {});
         }
         return next;
       });
     },
-    [cards, seenIds, addSeen, addLiked]
+    [cards, seenIds, remainingToday, addSeen, addLiked]
   );
 
-  // 로딩 상태
   if (loading && cards.length === 0) {
     return <SwipeCardSkeleton />;
   }
 
-  // 빈 상태
+  // 일일 한도 소진
+  if (remainingToday === 0 && cards.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full gap-4">
+        <div className="text-6xl float-effect">🌙</div>
+        <p
+          className="text-lg font-semibold"
+          style={{ color: "var(--lg-text-primary)" }}
+        >
+          오늘의 스니펫을 모두 읽었어요
+        </p>
+        <p className="text-sm text-center" style={{ color: "var(--lg-text-secondary)" }}>
+          내일 다시 새로운 문장을 만나보세요
+        </p>
+        <p className="text-xs" style={{ color: "var(--lg-text-tertiary)" }}>
+          하루 5문장 · 매일 자정 초기화
+        </p>
+      </div>
+    );
+  }
+
   if (cards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4">
@@ -77,6 +101,14 @@ export default function SwipeStack() {
 
   return (
     <div className="relative w-full h-[380px] sm:h-[420px] md:h-[460px] flex items-center justify-center">
+      {remainingToday !== null && remainingToday !== -1 && (
+        <p
+          className="absolute top-0 text-xs"
+          style={{ color: "var(--lg-text-tertiary)" }}
+        >
+          오늘 {remainingToday}문장 남음
+        </p>
+      )}
       <AnimatePresence>
         {cards.slice(-3).map((snippet, index, arr) => {
           const isTop = index === arr.length - 1;
