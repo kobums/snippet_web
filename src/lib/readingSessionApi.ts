@@ -12,3 +12,15 @@ export const getSessionsByBook = async (userBookId: number): Promise<ReadingSess
   });
   return response.data;
 };
+
+export interface AddSessionRequest {
+  userBookId: number;
+  durationSeconds: number;
+  startPage: number;
+  endPage: number;
+  sessionDate: string;
+}
+
+export const addSession = async (data: AddSessionRequest): Promise<void> => {
+  await api.post('/readingsessions', data);
+};
