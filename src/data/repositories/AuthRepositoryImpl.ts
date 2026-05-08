@@ -12,6 +12,9 @@ export class AuthRepositoryImpl implements AuthRepository {
       this.saveToken(user.token);
       this.saveCurrentUser(user);
     }
+    if (user.refreshToken) {
+      this.saveRefreshToken(user.refreshToken);
+    }
     return user;
   }
 
@@ -20,6 +23,9 @@ export class AuthRepositoryImpl implements AuthRepository {
     if (user.token) {
       this.saveToken(user.token);
       this.saveCurrentUser(user);
+    }
+    if (user.refreshToken) {
+      this.saveRefreshToken(user.refreshToken);
     }
     return user;
   }
@@ -35,6 +41,7 @@ export class AuthRepositoryImpl implements AuthRepository {
   logout(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
       localStorage.removeItem('currentUser');
     }
   }
@@ -61,6 +68,12 @@ export class AuthRepositoryImpl implements AuthRepository {
   private saveToken(token: string): void {
     if (typeof window !== 'undefined') {
       localStorage.setItem('token', token);
+    }
+  }
+
+  private saveRefreshToken(token: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('refreshToken', token);
     }
   }
 

@@ -2,5 +2,6 @@ export interface User {
   id: number;
   email: string;
   name: string;
-  token?: string; // JWT
+  token?: string;
+  refreshToken?: string;
 }

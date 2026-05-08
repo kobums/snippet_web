@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import SwipeCard from "./SwipeCard";
 import { SnippetCard, SwipeDirection } from "@/types/snippet";
-import { fetchCards } from "@/lib/api";
+import { fetchCards, skipSnippet } from "@/lib/api";
 import { useArchive } from "@/hooks/useArchive";
 import { SwipeCardSkeleton } from "@/components/ui/skeleton";
 
@@ -39,6 +39,8 @@ export default function SwipeStack() {
       addSeen(topCard.id);
       if (direction === "RIGHT") {
         addLiked(topCard.id);
+      } else {
+        skipSnippet(topCard.id).catch(() => {});
       }
 
       setCards((prev) => {
