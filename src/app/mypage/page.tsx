@@ -21,6 +21,7 @@ export default function MyPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('currentUser');
     router.push('/login');
   };

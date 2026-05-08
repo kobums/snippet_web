@@ -37,6 +37,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       })
       .catch(() => {
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
         localStorage.removeItem('currentUser');
         if (!isPublicPath) {
           router.replace('/login');
