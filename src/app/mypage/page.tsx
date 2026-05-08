@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import { User } from '@/core/domain/entities/User';
 import { deleteAccountUseCase } from '@/core/di/authInstances';
 import toast from 'react-hot-toast';
+import SuggestionModal from '@/components/modal/SuggestionModal';
 
 export default function MyPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showSuggestion, setShowSuggestion] = useState(false);
 
   useEffect(() => {
     const userStr = localStorage.getItem('currentUser');
@@ -105,6 +107,18 @@ export default function MyPage() {
           </div>
         </div>
 
+        {/* 기능 제안 버튼 */}
+        <button
+          onClick={() => setShowSuggestion(true)}
+          className="w-full max-w-md py-4 bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+          style={{ color: "var(--lg-text-secondary)" }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          기능 제안 / 버그 신고
+        </button>
+
         {/* 로그아웃 버튼 */}
         <button
           onClick={handleLogout}
@@ -121,6 +135,8 @@ export default function MyPage() {
           계정 삭제
         </button>
       </section>
+
+      <SuggestionModal isOpen={showSuggestion} onClose={() => setShowSuggestion(false)} />
 
       {/* 계정 삭제 확인 다이얼로그 */}
       {showDeleteConfirm && (
