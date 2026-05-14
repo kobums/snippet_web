@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { UserBookDto } from '@/types/library';
+import RatingModal from '@/components/modal/RatingModal';
 import { calcProgress } from '@/lib/util';
 import { useBookStore } from '@/stores/useBookStore';
 import { useUIStore } from '@/stores/useUIStore';
@@ -91,6 +92,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
   const [activeTab, setActiveTab] = useState<FilterTab>('reading');
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [searchQuery, setSearchQuery] = useState('');
+  const [ratingBook, setRatingBook] = useState<UserBookDto | null>(null);
 
   const filteredBooks = (() => {
     let filtered: UserBookDto[];
@@ -127,6 +129,15 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
   };
 
   return (
+    <>
+    {ratingBook && (
+      <RatingModal
+        bookTitle={ratingBook.title}
+        initialRating={ratingBook.rating}
+        onSubmit={(rating) => updateStatus(ratingBook.id, 'completed', undefined, rating ?? undefined)}
+        onClose={() => setRatingBook(null)}
+      />
+    )}
     <div className="liquid-panel p-4 sm:p-5 md:p-6 relative z-10">
       <h3 className="text-gray-900 dark:text-[#f0f0f0] font-medium mb-3 sm:mb-4 text-base sm:text-lg">독서 진행 관리</h3>
 
@@ -180,6 +191,18 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                       )}
                     </div>
                     <p className="text-gray-500 dark:text-[#a0a0a0] text-xs truncate mt-1">{book.author}</p>
+                    {activeTab === 'done' && book.status === 'completed' && (
+                      <div className="flex items-center gap-0.5 mt-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <svg key={star} className={`w-3.5 h-3.5 ${book.rating && star <= book.rating ? 'text-yellow-400' : 'text-gray-200 dark:text-white/15'}`} fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                        ))}
+                        {!book.rating && (
+                          <button onClick={(e) => { e.stopPropagation(); setRatingBook(book); }} className="text-[10px] text-gray-400 dark:text-[#666] hover:text-primary ml-1 transition-colors">평가하기</button>
+                        )}
+                      </div>
+                    )}
                     {activeTab === 'reading' && (
                       <>
                         <div className="mt-4 flex justify-between text-xs text-gray-500 dark:text-[#a0a0a0] mb-1">
@@ -195,7 +218,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                 </div>
                 {activeTab === 'reading' && (
                   <div className="flex gap-2 relative z-10 mt-1">
-                    <button onClick={(e) => updateStatus(book.id, 'completed', e)} className="flex-1 py-1.5 bg-primary/10 hover:bg-primary/15 text-primary dark:bg-white/10 dark:hover:bg-white/15 dark:text-[#f0f0f0] text-xs rounded-lg transition-colors">완독 처리</button>
+                    <button onClick={(e) => { e.stopPropagation(); setRatingBook(book); }} className="flex-1 py-1.5 bg-primary/10 hover:bg-primary/15 text-primary dark:bg-white/10 dark:hover:bg-white/15 dark:text-[#f0f0f0] text-xs rounded-lg transition-colors">완독 처리</button>
                     <button onClick={(e) => updateStatus(book.id, 'dropped', e)} className="flex-1 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/15 text-red-700 dark:text-red-400 text-xs rounded-lg transition-colors">중단</button>
                   </div>
                 )}
@@ -215,5 +238,6 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
         </div>
       )}
     </div>
+    </>
   );
 }

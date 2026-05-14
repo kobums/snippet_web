@@ -18,7 +18,7 @@ interface BookStore {
   loadDashboard: (year?: number, month?: number) => Promise<void>;
   loadProgress: (year?: number, month?: number) => Promise<void>;
   setSelectedMonth: (year: number, month: number) => void;
-  updateStatus: (id: number, status: UserBookDto['status'], e?: React.MouseEvent) => Promise<void>;
+  updateStatus: (id: number, status: UserBookDto['status'], e?: React.MouseEvent, rating?: number | null) => Promise<void>;
   updateProgress: (id: number, page: number, e?: React.MouseEvent) => Promise<void>;
   updateType: (id: number, type: UserBookDto['type'], e?: React.MouseEvent) => Promise<void>;
   updateStartDate: (id: number, date: string) => Promise<void>;
@@ -74,7 +74,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
     get().loadProgress(year, month);
   },
 
-  updateStatus: async (id, status, e?) => {
+  updateStatus: async (id, status, e?, rating?) => {
     e?.stopPropagation();
     const statusMessages: Record<string, string> = {
       completed: '완독 처리되었습니다!',
@@ -85,11 +85,12 @@ export const useBookStore = create<BookStore>((set, get) => ({
     try {
       if (status === 'completed' || status === 'dropped') {
         const todayStr = new Date().toISOString();
-        // 완독 시 진도율 업데이트는 백엔드 LibraryService.java 에서 일괄 처리되므로 호출 생략
-        await patchUserBook(id, { status });
+        const body: Partial<UserBookDto> = { status };
+        if (rating != null) body.rating = rating;
+        await patchUserBook(id, body);
         const applyUpdate = (b: UserBookDto) =>
           b.id === id
-            ? { ...b, status, endDate: todayStr, ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {}) }
+            ? { ...b, status, endDate: todayStr, ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {}), ...(rating != null ? { rating } : {}) }
             : b;
         set(s => ({
           books: s.books.map(applyUpdate),
