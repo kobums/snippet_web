@@ -1,4 +1,4 @@
-import { ReadingSessionDto } from '@/types/readingSession';
+import { ReadingSessionDto, StreakDto } from '@/types/readingSession';
 import api from './api';
 
 export const getAllSessions = async (): Promise<ReadingSessionDto[]> => {
@@ -23,4 +23,9 @@ export interface AddSessionRequest {
 
 export const addSession = async (data: AddSessionRequest): Promise<void> => {
   await api.post('/readingsessions', data);
+};
+
+export const getStreak = async (): Promise<StreakDto> => {
+  const response = await api.get<StreakDto>('/readingsessions/streak');
+  return response.data;
 };

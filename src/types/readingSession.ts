@@ -1,3 +1,9 @@
+export interface StreakDto {
+  currentStreak: number;
+  maxStreak: number;
+  lastReadDate: string | null;
+}
+
 export interface ReadingSessionDto {
   id: number;
   userBookId: number;

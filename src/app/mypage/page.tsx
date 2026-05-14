@@ -6,6 +6,8 @@ import { User } from '@/core/domain/entities/User';
 import { deleteAccountUseCase } from '@/core/di/authInstances';
 import toast from 'react-hot-toast';
 import SuggestionModal from '@/components/modal/SuggestionModal';
+import { getStreak } from '@/lib/readingSessionApi';
+import type { StreakDto } from '@/types/readingSession';
 
 export default function MyPage() {
   const router = useRouter();
@@ -13,12 +15,12 @@ export default function MyPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showSuggestion, setShowSuggestion] = useState(false);
+  const [streak, setStreak] = useState<StreakDto | null>(null);
 
   useEffect(() => {
     const userStr = localStorage.getItem('currentUser');
-    if (userStr) {
-      setUser(JSON.parse(userStr));
-    }
+    if (userStr) setUser(JSON.parse(userStr));
+    getStreak().then(setStreak).catch(() => {});
   }, []);
 
   const handleLogout = () => {
@@ -106,6 +108,34 @@ export default function MyPage() {
             </div>
           </div>
         </div>
+
+        {/* 독서 스트릭 카드 */}
+        {streak && (
+          <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-md rounded-3xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-lg">🔥</span>
+              <span className="text-white/70 text-sm font-medium tracking-wide">독서 스트릭</span>
+            </div>
+            <div className="flex">
+              <div className="flex-1 flex flex-col items-center">
+                <span className={`text-3xl font-semibold ${streak.currentStreak > 0 ? 'text-orange-400' : 'text-white'}`}>
+                  {streak.currentStreak}일
+                </span>
+                <span className="text-white/40 text-xs mt-1">현재 스트릭</span>
+              </div>
+              <div className="w-px bg-white/10 mx-4" />
+              <div className="flex-1 flex flex-col items-center">
+                <span className="text-3xl font-semibold text-white">{streak.maxStreak}일</span>
+                <span className="text-white/40 text-xs mt-1">최장 스트릭</span>
+              </div>
+            </div>
+            {streak.lastReadDate && (
+              <p className="text-white/30 text-xs text-center mt-4">
+                마지막 독서: {streak.lastReadDate.substring(0, 10).replace(/-/g, '.')}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* 기능 제안 버튼 */}
         <button
