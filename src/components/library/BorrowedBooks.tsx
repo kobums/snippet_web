@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
 import { useBookStore } from '@/stores/useBookStore';
@@ -13,9 +13,30 @@ interface BorrowedBooksProps {
   loading: boolean;
 }
 
+function getDDayInfo(returnDate: string | null | undefined): { label: string; color: string; bg: string } | null {
+  if (!returnDate) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(returnDate);
+  due.setHours(0, 0, 0, 0);
+  const diff = Math.round((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diff < 0) return { label: `연체 ${-diff}일`, color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 border-red-200 dark:bg-red-500/10 dark:border-red-500/20' };
+  if (diff === 0) return { label: '오늘 반납', color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 border-orange-200 dark:bg-orange-500/10 dark:border-orange-500/20' };
+  if (diff <= 3) return { label: `D-${diff}`, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 border-orange-200 dark:bg-orange-500/10 dark:border-orange-500/20' };
+  return { label: `D-${diff}`, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 border-green-200 dark:bg-green-500/10 dark:border-green-500/20' };
+}
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
   const { openBookRecord, openSearchModal } = useUIStore();
   const { updateBookLocally, loadDashboard } = useBookStore();
+  const [editingReturnDate, setEditingReturnDate] = useState<number | null>(null);
+  const [dateInputValue, setDateInputValue] = useState('');
 
   const handleReturn = async (e: React.MouseEvent, book: UserBookDto) => {
     e.stopPropagation();
@@ -23,10 +44,37 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
     updateBookLocally(book.id, { type: 'return', status: 'completed' });
   };
 
+  const handleSaveReturnDate = async (e: React.MouseEvent, bookId: number) => {
+    e.stopPropagation();
+    await patchUserBook(bookId, { returnDate: dateInputValue || null });
+    updateBookLocally(bookId, { returnDate: dateInputValue || null });
+    setEditingReturnDate(null);
+  };
+
+  const openReturnDateEdit = (e: React.MouseEvent, book: UserBookDto) => {
+    e.stopPropagation();
+    setEditingReturnDate(book.id);
+    setDateInputValue(book.returnDate ? book.returnDate.split('T')[0] : '');
+  };
+
+  const overdueCount = books.filter(b => {
+    if (!b.returnDate) return false;
+    const due = new Date(b.returnDate);
+    due.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return due < today;
+  }).length;
+
   return (
     <div className="liquid-panel p-5">
       <h3 className="text-gray-900 dark:text-[#f0f0f0] font-medium mb-4 flex items-center gap-2">
         <span className="text-lg">빌린 책</span>
+        {overdueCount > 0 && (
+          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20">
+            연체 {overdueCount}권
+          </span>
+        )}
       </h3>
 
       <PanelToolbar
@@ -40,44 +88,94 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
         ) : books.length === 0 ? (
           <div className="text-xs text-gray-400 dark:text-[#666] py-4 text-center">빌린 책이 없습니다.</div>
         ) : (
-          books.map(book => (
-            <div
-              key={book.id}
-              onClick={() => openBookRecord(book)}
-              className="bg-white/60 border border-gray-200 dark:bg-white/5 dark:border-white/8 rounded-2xl overflow-hidden cursor-pointer hover:bg-white dark:hover:bg-white/10 transition-colors group shadow-sm"
-            >
-              {book.coverUrl && (
-                <div className="w-full flex justify-center py-4 px-6 bg-gray-50/50 dark:bg-white/2">
-                  <img
-                    src={book.coverUrl}
-                    alt={book.title}
-                    className="h-36 object-contain rounded-md shadow-lg group-hover:scale-[1.02] transition-transform"
-                  />
-                </div>
-              )}
-              <div className="px-4 py-3 space-y-1.5">
-                <p className="text-sm text-gray-900 dark:text-[#f0f0f0] font-medium leading-snug group-hover:text-accent transition-colors">
-                  {book.title}
-                </p>
-                <p className="text-[11px] text-gray-500 dark:text-[#a0a0a0]">{book.author}</p>
-                <div className="flex items-center gap-1.5 pt-1">
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${
-                    book.status === 'reading' ? 'bg-info/20 text-info' :
-                    book.status === 'waiting' ? 'bg-warning/20 text-warning' :
-                    'bg-gray-500/20 text-gray-400 dark:text-[#666]'
-                  }`}>
-                    {book.status === 'reading' ? '읽는 중' : book.status === 'waiting' ? '대기 중' : book.status}
-                  </span>
-                  <button
-                    onClick={(e) => handleReturn(e, book)}
-                    className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-md bg-primary/10 text-primary dark:bg-white/10 dark:text-[#f0f0f0] hover:bg-primary/15 dark:hover:bg-white/15 transition-colors"
-                  >
-                    반납 완료
-                  </button>
+          books.map(book => {
+            const dday = getDDayInfo(book.returnDate);
+            return (
+              <div
+                key={book.id}
+                onClick={() => openBookRecord(book)}
+                className="bg-white/60 border border-gray-200 dark:bg-white/5 dark:border-white/8 rounded-2xl overflow-hidden cursor-pointer hover:bg-white dark:hover:bg-white/10 transition-colors group shadow-sm"
+              >
+                {book.coverUrl && (
+                  <div className="w-full flex justify-center py-4 px-6 bg-gray-50/50 dark:bg-white/2">
+                    <img
+                      src={book.coverUrl}
+                      alt={book.title}
+                      className="h-36 object-contain rounded-md shadow-lg group-hover:scale-[1.02] transition-transform"
+                    />
+                  </div>
+                )}
+                <div className="px-4 py-3 space-y-1.5">
+                  <p className="text-sm text-gray-900 dark:text-[#f0f0f0] font-medium leading-snug group-hover:text-accent transition-colors">
+                    {book.title}
+                  </p>
+                  <p className="text-[11px] text-gray-500 dark:text-[#a0a0a0]">{book.author}</p>
+
+                  {/* 반납 기한 */}
+                  <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                    {editingReturnDate === book.id ? (
+                      <div className="flex items-center gap-2 flex-1">
+                        <input
+                          type="date"
+                          value={dateInputValue}
+                          onChange={(e) => setDateInputValue(e.target.value)}
+                          className="text-xs border border-gray-200 dark:border-white/10 rounded-lg px-2 py-1 bg-white dark:bg-white/5 text-gray-900 dark:text-[#f0f0f0] flex-1"
+                          onClick={(e) => e.stopPropagation()}
+                          autoFocus
+                        />
+                        <button
+                          onClick={(e) => handleSaveReturnDate(e, book.id)}
+                          className="text-[10px] font-medium px-2 py-1 rounded-md bg-primary/10 text-primary dark:bg-white/10 dark:text-[#f0f0f0] hover:bg-primary/20 transition-colors"
+                        >
+                          저장
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setEditingReturnDate(null); }}
+                          className="text-[10px] text-gray-400 dark:text-[#666] hover:text-gray-600 transition-colors"
+                        >
+                          취소
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={(e) => openReturnDateEdit(e, book)}
+                        className={`flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md border transition-colors ${
+                          dday
+                            ? `${dday.bg} ${dday.color}`
+                            : 'bg-gray-50 border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10 dark:text-[#666] hover:text-gray-600'
+                        }`}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        {book.returnDate
+                          ? <>{formatDate(book.returnDate)} {dday && <span className="font-semibold">({dday.label})</span>}</>
+                          : '반납 기한 설정'
+                        }
+                      </button>
+                    )}
+
+                    <button
+                      onClick={(e) => handleReturn(e, book)}
+                      className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-md bg-primary/10 text-primary dark:bg-white/10 dark:text-[#f0f0f0] hover:bg-primary/15 dark:hover:bg-white/15 transition-colors shrink-0"
+                    >
+                      반납 완료
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${
+                      book.status === 'reading' ? 'bg-info/20 text-info' :
+                      book.status === 'waiting' ? 'bg-warning/20 text-warning' :
+                      'bg-gray-500/20 text-gray-400 dark:text-[#666]'
+                    }`}>
+                      {book.status === 'reading' ? '읽는 중' : book.status === 'waiting' ? '대기 중' : book.status}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

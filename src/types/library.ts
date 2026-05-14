@@ -42,4 +42,5 @@ export interface UserBookDto {
   startDate: string;
   endDate: string;
   rating?: number | null;
+  returnDate?: string | null;
 }
