@@ -6,6 +6,7 @@ import ReadingStatus from './ReadingStatus';
 import ReadingCalendar from './ReadingCalendar';
 import CompletedBooksList from './CompletedBooksList';
 import MonthNavigator from './MonthNavigator';
+import ReadingGoalCard from './ReadingGoalCard';
 
 interface DashboardStatsProps {
   books: UserBookDto[];
@@ -29,6 +30,7 @@ export default function DashboardStats({ books, completedBooks, loading, selecte
         onPrevMonth={onPrevMonth}
         onNextMonth={onNextMonth}
       />
+      <ReadingGoalCard />
       <ReadingStatus books={books} />
       <ReadingCalendar completedBooks={completedBooks} />
       <CompletedBooksList completedBooks={completedBooks} loading={loading} />
