@@ -39,8 +39,8 @@ export interface UserBookDto {
   readPage: number;
   totalPage: number;
   createDate: string;
-  startDate: string;
-  endDate: string;
+  startDate: string | null;
+  endDate: string | null;
   rating?: number | null;
   returnDate?: string | null;
 }
