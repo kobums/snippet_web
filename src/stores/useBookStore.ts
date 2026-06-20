@@ -90,7 +90,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
         await patchUserBook(id, body);
         const applyUpdate = (b: UserBookDto) =>
           b.id === id
-            ? { ...b, status, endDate: todayStr, ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {}), ...(rating != null ? { rating } : {}) }
+            ? { ...b, status, endDate: b.status === status && b.endDate ? b.endDate : todayStr, ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {}), ...(rating != null ? { rating } : {}) }
             : b;
         set(s => ({
           books: s.books.map(applyUpdate),
