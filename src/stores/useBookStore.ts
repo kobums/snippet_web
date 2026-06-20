@@ -100,8 +100,8 @@ export const useBookStore = create<BookStore>((set, get) => ({
         await patchUserBook(id, { status });
         const updates: Partial<UserBookDto> = { status };
         if (status === 'reading') {
+          // 독서 시작 시 startDate만 설정 (endDate는 완독/중단 시에만 의미가 있으므로 건드리지 않음)
           updates.startDate = new Date().toISOString();
-          updates.endDate = new Date().toISOString();
         }
         set(s => ({
           books: s.books.map(b => b.id === id ? { ...b, ...updates } : b),
