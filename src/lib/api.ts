@@ -74,11 +74,17 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (
-      error.response?.status === 401 &&
-      typeof window !== "undefined" &&
-      !originalRequest._retry
-    ) {
+    if (error.response?.status === 401 && typeof window !== "undefined") {
+      // 갱신 후 재시도한 요청이 또 401 → 세션 만료로 간주하고 강제 로그아웃
+      // (iOS/Android 네이티브와 동일하게 "재시도 후에도 401이면 로그아웃")
+      if (originalRequest._retry) {
+        clearSession();
+        if (!requestUrl.startsWith("/snippets/cards")) {
+          window.location.href = "/login";
+        }
+        return Promise.reject(error);
+      }
+
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (!refreshToken) {
