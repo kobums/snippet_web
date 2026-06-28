@@ -6,6 +6,7 @@ import { getUserBooks, patchUserBook } from '@/lib/userBookApi';
 import { useUIStore } from '@/stores/useUIStore';
 import { handleApiError } from '@/lib/errorHandler';
 import { BookGridSkeleton } from '@/components/ui/skeleton';
+import { DatePicker } from '@/components/ui/DatePicker';
 
 const STATUS_LABELS: Record<string, { text: string; color: string }> = {
   waiting:   { text: '대기중', color: 'bg-warning/15 text-amber-700' },
@@ -36,7 +37,6 @@ export default function BorrowedBooksPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [dateInput, setDateInput] = useState('');
   const { openBookRecord, openSearchModal } = useUIStore();
 
   useEffect(() => { loadBooks(); }, []);
@@ -63,11 +63,10 @@ export default function BorrowedBooksPage() {
     }
   };
 
-  const handleSaveReturnDate = async (e: React.MouseEvent, bookId: number) => {
-    e.stopPropagation();
+  const handleSaveReturnDate = async (bookId: number, date: string | null) => {
     try {
-      await patchUserBook(bookId, { returnDate: dateInput || null });
-      setBooks(prev => prev.map(b => b.id === bookId ? { ...b, returnDate: dateInput || null } : b));
+      await patchUserBook(bookId, { returnDate: date });
+      setBooks(prev => prev.map(b => b.id === bookId ? { ...b, returnDate: date } : b));
       setEditingId(null);
     } catch (err) {
       handleApiError(err, '반납 기한 설정에 실패했습니다.');
@@ -164,28 +163,19 @@ export default function BorrowedBooksPage() {
                 <p className="text-xs text-gray-500 dark:text-[#a0a0a0] truncate mt-0.5">{book.author}</p>
 
                 {/* 반납 기한 */}
-                <div className="mt-2" onClick={(e) => e.stopPropagation()}>
-                  {editingId === book.id ? (
-                    <div className="flex flex-col gap-1.5">
-                      <input
-                        type="date"
-                        value={dateInput}
-                        onChange={(e) => setDateInput(e.target.value)}
-                        className="w-full text-xs border border-gray-200 dark:border-white/10 rounded-lg px-2 py-1 bg-white dark:bg-white/5 text-gray-900 dark:text-[#f0f0f0]"
-                        autoFocus
-                      />
-                      <div className="flex gap-1">
-                        <button onClick={(e) => handleSaveReturnDate(e, book.id)} className="flex-1 text-[10px] font-medium py-1 rounded-md bg-primary/10 text-primary transition-colors">저장</button>
-                        <button onClick={(e) => { e.stopPropagation(); setEditingId(null); }} className="flex-1 text-[10px] py-1 rounded-md bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-[#a0a0a0] transition-colors">취소</button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setEditingId(book.id); setDateInput(book.returnDate ? book.returnDate.split('T')[0] : ''); }}
-                      className={`w-full text-[10px] font-medium px-2 py-1 rounded-md border transition-colors text-left ${dday ? `${dday.cls}` : 'bg-gray-50 border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10 dark:text-[#666]'}`}
-                    >
-                      {book.returnDate ? `${formatDate(book.returnDate)}${dday ? ` (${dday.label})` : ''}` : '반납 기한 설정'}
-                    </button>
+                <div className="mt-2 relative" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setEditingId(book.id); }}
+                    className={`w-full text-[10px] font-medium px-2 py-1 rounded-md border transition-colors text-left ${dday ? `${dday.cls}` : 'bg-gray-50 border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10 dark:text-[#666]'}`}
+                  >
+                    {book.returnDate ? `${formatDate(book.returnDate)}${dday ? ` (${dday.label})` : ''}` : '반납 기한 설정'}
+                  </button>
+                  {editingId === book.id && (
+                    <DatePicker
+                      value={book.returnDate ? book.returnDate.split('T')[0] : null}
+                      onChange={(date) => handleSaveReturnDate(book.id, date)}
+                      onClose={() => setEditingId(null)}
+                    />
                   )}
                 </div>
 

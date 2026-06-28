@@ -5,8 +5,10 @@ import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
 import { useBookStore } from '@/stores/useBookStore';
 import { patchUserBook } from '@/lib/userBookApi';
+import { handleApiError } from '@/lib/errorHandler';
 import PanelToolbar from '@/components/ui/PanelToolbar';
 import { LibraryCardSkeleton } from '@/components/ui/skeleton';
+import { DatePicker } from '@/components/ui/DatePicker';
 
 interface BorrowedBooksProps {
   books: UserBookDto[];
@@ -36,7 +38,6 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
   const { openBookRecord, openSearchModal } = useUIStore();
   const { updateBookLocally, loadDashboard } = useBookStore();
   const [editingReturnDate, setEditingReturnDate] = useState<number | null>(null);
-  const [dateInputValue, setDateInputValue] = useState('');
 
   const handleReturn = async (e: React.MouseEvent, book: UserBookDto) => {
     e.stopPropagation();
@@ -44,17 +45,19 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
     updateBookLocally(book.id, { type: 'return', status: 'completed' });
   };
 
-  const handleSaveReturnDate = async (e: React.MouseEvent, bookId: number) => {
-    e.stopPropagation();
-    await patchUserBook(bookId, { returnDate: dateInputValue || null });
-    updateBookLocally(bookId, { returnDate: dateInputValue || null });
-    setEditingReturnDate(null);
+  const handleSaveReturnDate = async (bookId: number, date: string | null) => {
+    try {
+      await patchUserBook(bookId, { returnDate: date });
+      updateBookLocally(bookId, { returnDate: date });
+      setEditingReturnDate(null);
+    } catch (err) {
+      handleApiError(err, '반납 기한 설정에 실패했습니다.');
+    }
   };
 
   const openReturnDateEdit = (e: React.MouseEvent, book: UserBookDto) => {
     e.stopPropagation();
     setEditingReturnDate(book.id);
-    setDateInputValue(book.returnDate ? book.returnDate.split('T')[0] : '');
   };
 
   const overdueCount = books.filter(b => {
@@ -113,30 +116,7 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
 
                   {/* 반납 기한 */}
                   <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
-                    {editingReturnDate === book.id ? (
-                      <div className="flex items-center gap-2 flex-1">
-                        <input
-                          type="date"
-                          value={dateInputValue}
-                          onChange={(e) => setDateInputValue(e.target.value)}
-                          className="text-xs border border-gray-200 dark:border-white/10 rounded-lg px-2 py-1 bg-white dark:bg-white/5 text-gray-900 dark:text-[#f0f0f0] flex-1"
-                          onClick={(e) => e.stopPropagation()}
-                          autoFocus
-                        />
-                        <button
-                          onClick={(e) => handleSaveReturnDate(e, book.id)}
-                          className="text-[10px] font-medium px-2 py-1 rounded-md bg-primary/10 text-primary dark:bg-white/10 dark:text-[#f0f0f0] hover:bg-primary/20 transition-colors"
-                        >
-                          저장
-                        </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setEditingReturnDate(null); }}
-                          className="text-[10px] text-gray-400 dark:text-[#666] hover:text-gray-600 transition-colors"
-                        >
-                          취소
-                        </button>
-                      </div>
-                    ) : (
+                    <div className="relative">
                       <button
                         onClick={(e) => openReturnDateEdit(e, book)}
                         className={`flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md border transition-colors ${
@@ -153,7 +133,14 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
                           : '반납 기한 설정'
                         }
                       </button>
-                    )}
+                      {editingReturnDate === book.id && (
+                        <DatePicker
+                          value={book.returnDate ? book.returnDate.split('T')[0] : null}
+                          onChange={(date) => handleSaveReturnDate(book.id, date)}
+                          onClose={() => setEditingReturnDate(null)}
+                        />
+                      )}
+                    </div>
 
                     <button
                       onClick={(e) => handleReturn(e, book)}
