@@ -5,6 +5,7 @@ import { UserBookDto } from '@/types/library';
 import { useUIStore } from '@/stores/useUIStore';
 import { useBookStore } from '@/stores/useBookStore';
 import { patchUserBook } from '@/lib/userBookApi';
+import { handleApiError } from '@/lib/errorHandler';
 import PanelToolbar from '@/components/ui/PanelToolbar';
 import { LibraryCardSkeleton } from '@/components/ui/skeleton';
 import { DatePicker } from '@/components/ui/DatePicker';
@@ -45,9 +46,13 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
   };
 
   const handleSaveReturnDate = async (bookId: number, date: string | null) => {
-    await patchUserBook(bookId, { returnDate: date });
-    updateBookLocally(bookId, { returnDate: date });
-    setEditingReturnDate(null);
+    try {
+      await patchUserBook(bookId, { returnDate: date });
+      updateBookLocally(bookId, { returnDate: date });
+      setEditingReturnDate(null);
+    } catch (err) {
+      handleApiError(err, '반납 기한 설정에 실패했습니다.');
+    }
   };
 
   const openReturnDateEdit = (e: React.MouseEvent, book: UserBookDto) => {

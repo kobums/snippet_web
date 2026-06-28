@@ -50,12 +50,13 @@ export function DatePicker({ value, onChange, onClose, anchorAlign = 'left', qui
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  const goPrevMonth = () => {
-    setViewMonth(m => { if (m === 0) { setViewYear(y => y - 1); return 11; } return m - 1; });
+  const shiftMonth = (delta: number) => {
+    const d = new Date(viewYear, viewMonth + delta, 1);
+    setViewYear(d.getFullYear());
+    setViewMonth(d.getMonth());
   };
-  const goNextMonth = () => {
-    setViewMonth(m => { if (m === 11) { setViewYear(y => y + 1); return 0; } return m + 1; });
-  };
+  const goPrevMonth = () => shiftMonth(-1);
+  const goNextMonth = () => shiftMonth(1);
 
   const selectPreset = (days: number) => {
     const d = new Date(today);
@@ -74,7 +75,7 @@ export function DatePicker({ value, onChange, onClose, anchorAlign = 'left', qui
     <div
       ref={ref}
       onClick={(e) => e.stopPropagation()}
-      className={`absolute ${anchorAlign === 'right' ? 'right-0' : 'left-0'} top-full mt-1 z-50 w-64 backdrop-blur-xl rounded-2xl p-3 shadow-xl
+      className={`absolute ${anchorAlign === 'right' ? 'right-0' : 'left-0'} top-full mt-1 z-50 w-[min(16rem,calc(100vw-1.5rem))] backdrop-blur-xl rounded-2xl p-3 shadow-xl
         bg-white/95 border border-gray-200
         dark:bg-[#1c1c1e]/95 dark:border-white/10`}
     >
