@@ -34,6 +34,17 @@ function formatDate(dateStr: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function toLocalISO(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** 반납 연기용 새 날짜: 기존 반납일 +7일 */
+function extendedReturnDate(returnDate: string): string {
+  const target = new Date(returnDate.split('T')[0]);
+  target.setDate(target.getDate() + 7);
+  return toLocalISO(target);
+}
+
 export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
   const { openBookRecord, openSearchModal } = useUIStore();
   const { updateBookLocally, loadDashboard } = useBookStore();
@@ -141,6 +152,20 @@ export default function BorrowedBooks({ books, loading }: BorrowedBooksProps) {
                         />
                       )}
                     </div>
+
+                    {/* 반납 연기: 클릭 한 번으로 +1주 (반납일이 있을 때만) */}
+                    {book.returnDate && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSaveReturnDate(book.id, extendedReturnDate(book.returnDate!));
+                        }}
+                        title="반납 1주일 연기"
+                        className="text-[11px] font-medium px-2 py-0.5 rounded-md border bg-gray-50 border-gray-200 text-gray-500 dark:bg-white/5 dark:border-white/10 dark:text-[#a0a0a0] hover:text-accent hover:border-accent/30 transition-colors shrink-0"
+                      >
+                        +1주
+                      </button>
+                    )}
 
                     <button
                       onClick={(e) => handleReturn(e, book)}

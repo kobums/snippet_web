@@ -32,6 +32,17 @@ function formatDate(dateStr: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function toLocalISO(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** 반납 연기용 새 날짜: 기존 반납일 +7일 */
+function extendedReturnDate(returnDate: string): string {
+  const target = new Date(returnDate.split('T')[0]);
+  target.setDate(target.getDate() + 7);
+  return toLocalISO(target);
+}
+
 export default function BorrowedBooksPage() {
   const [books, setBooks] = useState<UserBookDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -176,6 +187,18 @@ export default function BorrowedBooksPage() {
                       onChange={(date) => handleSaveReturnDate(book.id, date)}
                       onClose={() => setEditingId(null)}
                     />
+                  )}
+                  {/* 반납 연기: 클릭 한 번으로 +1주 (반납일이 있을 때만) */}
+                  {book.returnDate && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSaveReturnDate(book.id, extendedReturnDate(book.returnDate!));
+                      }}
+                      className="mt-1.5 w-full text-[10px] font-medium px-2 py-1 rounded-md border bg-gray-50 border-gray-200 text-gray-500 dark:bg-white/5 dark:border-white/10 dark:text-[#a0a0a0] hover:text-accent hover:border-accent/30 transition-colors"
+                    >
+                      반납 1주일 연기
+                    </button>
                   )}
                 </div>
 
