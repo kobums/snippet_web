@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { ReadingSessionDto } from '@/types/readingSession';
+import { UserBookDto } from '@/types/library';
 import { getAllSessions } from '@/lib/readingSessionApi';
+import { getUserBooks } from '@/lib/userBookApi';
 import { handleApiError } from '@/lib/errorHandler';
+import { useUIStore } from '@/stores/useUIStore';
 import SessionDetailModal from '@/components/modal/SessionDetailModal';
 import SessionTimerModal from '@/components/modal/SessionTimerModal';
 import SessionCalendar from '@/components/dashboard/SessionCalendar';
@@ -72,7 +75,9 @@ function SessionCard({ session, onClick }: { session: ReadingSessionDto; onClick
 
 export default function SessionListPage() {
   const [sessions, setSessions] = useState<ReadingSessionDto[]>([]);
+  const [books, setBooks] = useState<UserBookDto[]>([]);
   const [loading, setLoading] = useState(true);
+  const openBookRecord = useUIStore(s => s.openBookRecord);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -88,8 +93,9 @@ export default function SessionListPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const data = await getAllSessions();
+      const [data, allBooks] = await Promise.all([getAllSessions(), getUserBooks()]);
       setSessions(data);
+      setBooks(allBooks);
     } catch (e) {
       handleApiError(e, '독서 세션을 불러오는데 실패했습니다.');
     } finally {
@@ -239,7 +245,13 @@ export default function SessionListPage() {
         <div className="flex flex-col gap-6">
           {Object.entries(grouped).map(([bookTitle, bookSessions]) => (
             <div key={bookTitle}>
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-[#d0d0d0] mb-3 px-1">{bookTitle}</h3>
+              <h3
+                onClick={() => {
+                  const found = books.find(b => b.bookId === bookSessions[0]?.bookId);
+                  if (found) openBookRecord(found);
+                }}
+                className="text-sm font-semibold text-gray-700 dark:text-[#d0d0d0] mb-3 px-1 cursor-pointer hover:text-accent transition-colors"
+              >{bookTitle}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {bookSessions.map(s => (
                   <SessionCard key={s.id} session={s} onClick={() => setSelectedSession(s)} />

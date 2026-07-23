@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { UserBookDto } from '@/types/library';
 import { formatDate } from '@/lib/util';
+import { useUIStore } from '@/stores/useUIStore';
 
 interface YearlyReadingTabProps {
   readingBooks: UserBookDto[];
@@ -85,8 +86,11 @@ export default function YearlyReadingTab({ readingBooks, completedBooks }: Yearl
 
 function BookRow({ book, status }: { book: UserBookDto; status: string }) {
   const isCompleted = status === 'completed';
+  const openBookRecord = useUIStore(s => s.openBookRecord);
   return (
-    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white dark:hover:bg-white/10/40 rounded-lg px-2 py-1 transition-all cursor-pointer group">
+    <div
+      onClick={() => openBookRecord(book)}
+      className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white dark:hover:bg-white/10/40 rounded-lg px-2 py-1 transition-all cursor-pointer group">
       <span className="shrink-0">{isCompleted ? '✅' : '😊'}</span>
       <span className="text-gray-400 dark:text-[#666] shrink-0 tabular-nums">
         {formatDate(book.startDate)} ~ {isCompleted ? formatDate(book.endDate) : ''}
