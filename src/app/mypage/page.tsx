@@ -6,6 +6,7 @@ import { User } from '@/core/domain/entities/User';
 import { deleteAccountUseCase } from '@/core/di/authInstances';
 import toast from 'react-hot-toast';
 import SuggestionModal from '@/components/modal/SuggestionModal';
+import { getAdminSuggestions } from '@/lib/suggestionApi';
 import { getStreak } from '@/lib/readingSessionApi';
 import type { StreakDto } from '@/types/readingSession';
 
@@ -16,11 +17,14 @@ export default function MyPage() {
   const [deleting, setDeleting] = useState(false);
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [streak, setStreak] = useState<StreakDto | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const userStr = localStorage.getItem('currentUser');
     if (userStr) setUser(JSON.parse(userStr));
     getStreak().then(setStreak).catch(() => {});
+    // 관리자 API 호출 성공 여부로 관리자 메뉴 조건부 노출 (비관리자는 403)
+    getAdminSuggestions('PENDING').then(() => setIsAdmin(true)).catch(() => {});
   }, []);
 
   const handleLogout = () => {
@@ -148,6 +152,20 @@ export default function MyPage() {
           </svg>
           기능 제안 / 버그 신고
         </button>
+
+        {/* 건의사항 관리 (관리자 전용) */}
+        {isAdmin && (
+          <button
+            onClick={() => router.push('/admin/suggestions')}
+            className="w-full max-w-md py-4 bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+            style={{ color: "var(--lg-text-secondary)" }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            건의사항 관리 (관리자)
+          </button>
+        )}
 
         {/* 로그아웃 버튼 */}
         <button
