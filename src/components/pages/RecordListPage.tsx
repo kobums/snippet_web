@@ -68,6 +68,12 @@ export default function RecordListPage({ type, title, description }: RecordListP
   const handleSubmit = async () => {
     if (!formText.trim()) return;
     if (formBook === '') { alert('책을 선택해 주세요.'); return; }
+    const selectedBook = books.find(b => b.bookId === Number(formBook));
+    const totalPage = selectedBook?.totalPage;
+    if (formPage !== '' && (Number(formPage) < 0 || (totalPage ? Number(formPage) > totalPage : false))) {
+      alert(`0~${totalPage}p 사이로 입력해주세요`);
+      return;
+    }
     setSubmitting(true);
     try {
       const payload: RecordAddRequestDto = {

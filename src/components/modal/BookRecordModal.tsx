@@ -207,6 +207,10 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
   const handleUpdateRecord = async (record: RecordDto) => {
     if (!editText.trim()) return;
+    if (editRelatedPage !== '' && (Number(editRelatedPage) < 0 || (book?.totalPage && Number(editRelatedPage) > book.totalPage))) {
+      alert(`0~${book?.totalPage}p 사이로 입력해주세요`);
+      return;
+    }
 
     const updated: RecordDto = { ...record, type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined };
     setRecords(prev => prev.map(r => r.id === record.id ? updated : r));

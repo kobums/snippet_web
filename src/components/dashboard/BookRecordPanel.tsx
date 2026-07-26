@@ -142,6 +142,12 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
       alert('페이지 또는 태그를 입력해 주세요.');
       return;
     }
+    const selectedBook = books.find(b => b.bookId === Number(formBook));
+    const totalPage = selectedBook?.totalPage;
+    if (formPage !== '' && (Number(formPage) < 0 || (totalPage ? Number(formPage) > totalPage : false))) {
+      alert(`0~${totalPage}p 사이로 입력해주세요`);
+      return;
+    }
     setSubmitting(true);
     try {
       const payload: RecordAddRequestDto = {
