@@ -12,9 +12,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       this.saveToken(user.token);
       this.saveCurrentUser(user);
     }
-    if (user.refreshToken) {
-      this.saveRefreshToken(user.refreshToken);
-    }
+    this.replaceRefreshToken(user.refreshToken);
     return user;
   }
 
@@ -24,9 +22,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       this.saveToken(user.token);
       this.saveCurrentUser(user);
     }
-    if (user.refreshToken) {
-      this.saveRefreshToken(user.refreshToken);
-    }
+    this.replaceRefreshToken(user.refreshToken);
     return user;
   }
 
@@ -71,9 +67,17 @@ export class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  private saveRefreshToken(token: string): void {
-    if (typeof window !== 'undefined') {
+  /**
+   * 새 세션의 refresh 토큰으로 교체. 응답에 없으면 이전 계정 것을 지운다.
+   * 남겨두면 401 → refresh가 이전 계정으로 되살아나 화면은 새 계정,
+   * 쓰기는 이전 계정으로 나가는 교차 오염이 생긴다.
+   */
+  private replaceRefreshToken(token?: string | null): void {
+    if (typeof window === 'undefined') return;
+    if (token) {
       localStorage.setItem('refreshToken', token);
+    } else {
+      localStorage.removeItem('refreshToken');
     }
   }
 
