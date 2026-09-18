@@ -3,10 +3,17 @@ import toast from 'react-hot-toast';
 import { UserBookDto } from '@/types/library';
 import { getMonthlyUserBooks, getProgressBooks, patchUserBook } from '@/lib/userBookApi';
 import { handleApiError } from '@/lib/errorHandler';
+import { useUIStore } from '@/stores/useUIStore';
 
 // 임시 ID 생성 유틸리티 (서버 응답 전까지 사용할 임시 ID - 음수 사용)
 let tempIdCounter = -1;
 const generateTempId = () => tempIdCounter--;
+
+// 책 한 권의 변경을 books / progressBooks / (열려 있는) 기록 모달의 selectedBook 에 동시에 반영한다.
+// 모달은 클릭 시점 스냅샷(useUIStore.selectedBook)을 들고 있으므로 여기서 같이 갱신하지 않으면
+// 모달이 옛값과 비교·표시해서 "변경이 안 된 것처럼" 보인다.
+type Patch = Partial<UserBookDto> | ((b: UserBookDto) => Partial<UserBookDto>);
+const resolvePatch = (b: UserBookDto, patch: Patch) => (typeof patch === 'function' ? patch(b) : patch);
 
 interface BookStore {
   books: UserBookDto[];
@@ -24,6 +31,8 @@ interface BookStore {
   updateStartDate: (id: number, date: string) => Promise<void>;
   updateEndDate: (id: number, date: string) => Promise<void>;
   updateBookLocally: (id: number, updates: Partial<UserBookDto>) => void;
+  /** books / progressBooks / 열려 있는 모달의 selectedBook 을 한 번에 갱신 */
+  applyBookPatch: (id: number, patch: Patch) => void;
   refreshBooks: () => Promise<void>;
 
   // 낙관적 업데이트 함수들
@@ -88,13 +97,11 @@ export const useBookStore = create<BookStore>((set, get) => ({
         const body: Partial<UserBookDto> = { status };
         if (rating != null) body.rating = rating;
         await patchUserBook(id, body);
-        const applyUpdate = (b: UserBookDto) =>
-          b.id === id
-            ? { ...b, status, endDate: b.status === status && b.endDate ? b.endDate : todayStr, ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {}), ...(rating != null ? { rating } : {}) }
-            : b;
-        set(s => ({
-          books: s.books.map(applyUpdate),
-          progressBooks: s.progressBooks.map(applyUpdate),
+        get().applyBookPatch(id, b => ({
+          status,
+          endDate: b.status === status && b.endDate ? b.endDate : todayStr,
+          ...(status === 'completed' ? { readPage: b.totalPage || b.readPage } : {}),
+          ...(rating != null ? { rating } : {}),
         }));
       } else {
         await patchUserBook(id, { status });
@@ -103,10 +110,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
           // 독서 시작 시 startDate만 설정 (endDate는 완독/중단 시에만 의미가 있으므로 건드리지 않음)
           updates.startDate = new Date().toISOString();
         }
-        set(s => ({
-          books: s.books.map(b => b.id === id ? { ...b, ...updates } : b),
-          progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, ...updates } : b),
-        }));
+        get().applyBookPatch(id, updates);
       }
       toast.success(statusMessages[status] ?? '업데이트되었습니다.');
     } catch (e) {
@@ -118,23 +122,26 @@ export const useBookStore = create<BookStore>((set, get) => ({
     e?.stopPropagation();
     try {
       await patchUserBook(id, { readPage: page });
-      set(s => ({
-        books: s.books.map(b => b.id === id ? { ...b, readPage: page } : b),
-        progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, readPage: page } : b),
-      }));
+      get().applyBookPatch(id, { readPage: page });
+      toast.success(`${page}p까지 읽은 것으로 저장했습니다.`);
     } catch (e) {
-      handleApiError(e, '진도 업데이트에 실패했습니다.');
+      handleApiError(e, '진도 업데이트에 실패했습니다.', 'alert');
     }
   },
 
   updateType: async (id, type, e?) => {
     e?.stopPropagation();
+    const typeMessages: Record<string, string> = {
+      wish: '위시리스트로 옮겼습니다.',
+      have: '소장 도서로 변경했습니다.',
+      borrow: '대출 중으로 변경했습니다.',
+      return: '반납 처리했습니다.',
+    };
     try {
       await patchUserBook(id, { type });
-      set(s => ({
-        books: s.books.map(b => b.id === id ? { ...b, type } : b),
-        progressBooks: s.progressBooks.map(b => b.id === id ? { ...b, type } : b),
-      }));
+      // 백엔드와 동일하게 wish 전환 시 status는 none 으로 강제
+      get().applyBookPatch(id, type === 'wish' ? { type, status: 'none' } : { type });
+      toast.success(typeMessages[type] ?? '분류를 변경했습니다.');
     } catch (e) {
       handleApiError(e, '분류 변경에 실패했습니다.', 'alert');
     }
@@ -143,7 +150,8 @@ export const useBookStore = create<BookStore>((set, get) => ({
   updateStartDate: async (id, date) => {
     try {
       await patchUserBook(id, { startDate: date });
-      set(s => ({ books: s.books.map(b => b.id === id ? { ...b, startDate: date } : b) }));
+      get().applyBookPatch(id, { startDate: date });
+      toast.success('시작일을 변경했습니다.');
     } catch (e) {
       handleApiError(e, '시작일 변경에 실패했습니다.', 'alert');
     }
@@ -152,14 +160,28 @@ export const useBookStore = create<BookStore>((set, get) => ({
   updateEndDate: async (id, date) => {
     try {
       await patchUserBook(id, { endDate: date });
-      set(s => ({ books: s.books.map(b => b.id === id ? { ...b, endDate: date } : b) }));
+      get().applyBookPatch(id, { endDate: date });
+      toast.success('종료일을 변경했습니다.');
     } catch (e) {
       handleApiError(e, '종료일 변경에 실패했습니다.', 'alert');
     }
   },
 
   updateBookLocally: (id, updates) => {
-    set(s => ({ books: s.books.map(b => b.id === id ? { ...b, ...updates } : b) }));
+    get().applyBookPatch(id, updates);
+  },
+
+  applyBookPatch: (id, patch) => {
+    const apply = (b: UserBookDto) => (b.id === id ? { ...b, ...resolvePatch(b, patch) } : b);
+    set(s => ({
+      books: s.books.map(apply),
+      progressBooks: s.progressBooks.map(apply),
+    }));
+    // 열려 있는 기록 모달의 스냅샷도 같이 갱신
+    const selected = useUIStore.getState().selectedBook;
+    if (selected && selected.id === id) {
+      useUIStore.getState().updateSelectedBook(resolvePatch(selected, patch));
+    }
   },
 
   refreshBooks: async () => {
