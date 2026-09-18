@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -51,6 +51,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
   const [localStartDate, setLocalStartDate] = useState('');
   const [localEndDate, setLocalEndDate] = useState('');
 
+  // 기록/세션 목록은 책이 바뀌거나 탭이 바뀔 때만 다시 불러온다.
   useEffect(() => {
     if (isOpen && book) {
       if (activeTab === 'session') {
@@ -58,13 +59,22 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
       } else {
         loadRecords();
       }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, book?.id, activeTab]);
+
+  // 진도/상태/분류/날짜 입력값은 스토어의 책 데이터가 바뀔 때만 동기화한다.
+  // (예전엔 탭 전환에도 리셋돼서, 방금 저장한 페이지가 옛값으로 되돌아가 보였다.)
+  useEffect(() => {
+    if (isOpen && book) {
       setLocalReadPage(book.readPage);
       setLocalStatus(book.status);
       setLocalType(book.type);
       setLocalStartDate(book.startDate?.slice(0, 10) || '');
       setLocalEndDate(book.endDate?.slice(0, 10) || '');
     }
-  }, [isOpen, book, activeTab]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, book?.id, book?.readPage, book?.status, book?.type, book?.startDate, book?.endDate]);
 
   // 모달이 열릴 때마다 탭 및 작성 폼 초기화 (탭 변경과 무관하게)
   useEffect(() => {
@@ -78,26 +88,34 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     }
   }, [isOpen]);
 
+  // Enter 와 blur 가 연달아 들어와도 저장은 한 번만 나가도록 잠근다.
+  const progressSaving = useRef(false);
+
   const handleProgressUpdate = async () => {
-    if (!book || localReadPage === '' || localReadPage === book.readPage) {
-      setLocalReadPage(book?.readPage ?? '');
+    if (!book || progressSaving.current) return;
+    if (localReadPage === '' || localReadPage === book.readPage) {
+      setLocalReadPage(book.readPage);
       return;
     }
 
-    let newPage = Number(localReadPage);
+    const newPage = Number(localReadPage);
     if (newPage < 0 || (book.totalPage && newPage > book.totalPage)) {
       alert(`페이지는 0에서 ${book.totalPage || '?'} 사이여야 합니다.`);
       setLocalReadPage(book.readPage);
       return;
     }
 
-    setLocalReadPage(newPage);
-    await updateProgress(book.id, newPage);
+    progressSaving.current = true;
+    try {
+      await updateProgress(book.id, newPage);
 
-    if (book.totalPage > 0 && newPage === book.totalPage && localStatus === 'reading') {
-      setLocalStatus('completed');
-      await updateStatus(book.id, 'completed');
-      toast.success('완독을 축하합니다! 🎉');
+      if (book.totalPage > 0 && newPage === book.totalPage && localStatus === 'reading') {
+        setLocalStatus('completed');
+        await updateStatus(book.id, 'completed');
+        toast.success('완독을 축하합니다! 🎉');
+      }
+    } finally {
+      progressSaving.current = false;
     }
   };
 
@@ -353,6 +371,8 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                       dark:bg-white/8 dark:hover:bg-white/12 dark:text-[#f0f0f0] dark:border-white/10"
                     style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', paddingRight: '1.75rem' }}
                   >
+                    {/* wish 분류는 백엔드가 status를 none으로 강제하므로, 빈 select가 되지 않게 표시만 한다 */}
+                    <option value="none" disabled hidden>상태 없음 (위시)</option>
                     <option value="waiting">읽고 싶은</option>
                     <option value="reading">읽는 중</option>
                     <option value="completed">완독</option>
@@ -371,7 +391,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                           value={localReadPage}
                           onChange={(e) => setLocalReadPage(e.target.value === '' ? '' : Number(e.target.value))}
                           onBlur={handleProgressUpdate}
-                          onKeyDown={(e) => e.key === 'Enter' && handleProgressUpdate()}
+                          onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                           className="w-12 px-1 text-xs text-center border-b bg-transparent outline-none transition-colors font-medium
                             border-gray-300 hover:border-accent/50 focus:border-accent text-gray-900
                             dark:border-white/20 dark:text-[#f0f0f0]"
