@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { UserBookDto } from '@/types/library';
 import { getUserBooks, patchUserBook } from '@/lib/userBookApi';
 import { useUIStore } from '@/stores/useUIStore';
+import { useReloadOnBookModalClose } from '@/hooks/useReloadOnBookModalClose';
 import { handleApiError } from '@/lib/errorHandler';
 import { BookGridSkeleton } from '@/components/ui/skeleton';
 import { DatePicker } from '@/components/ui/DatePicker';
@@ -63,6 +64,9 @@ export default function BorrowedBooksPage() {
       setLoading(false);
     }
   };
+
+  // 기록 모달에서 바꾼 상태/진도를 목록에 반영
+  useReloadOnBookModalClose(loadBooks);
 
   const handleReturn = async (e: React.MouseEvent, book: UserBookDto) => {
     e.stopPropagation();

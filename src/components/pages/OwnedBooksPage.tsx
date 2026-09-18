@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { UserBookDto } from '@/types/library';
 import { getUserBooks } from '@/lib/userBookApi';
 import { useUIStore } from '@/stores/useUIStore';
+import { useReloadOnBookModalClose } from '@/hooks/useReloadOnBookModalClose';
 import { handleApiError } from '@/lib/errorHandler';
 import { BookGridSkeleton } from '@/components/ui/skeleton';
 
@@ -36,6 +37,9 @@ export default function OwnedBooksPage() {
       setLoading(false);
     }
   };
+
+  // 기록 모달에서 바꾼 상태/진도를 목록에 반영
+  useReloadOnBookModalClose(loadBooks);
 
   const filteredBooks = books.filter(b => {
     if (!searchQuery) return true;
