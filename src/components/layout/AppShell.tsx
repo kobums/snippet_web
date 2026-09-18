@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Toaster } from 'react-hot-toast';
 import Sidebar from './Sidebar';
 import BookSearchModal from '../modal/BookSearchModal';
 import BookRecordModal from '../modal/BookRecordModal';
@@ -20,7 +19,7 @@ export default function AppShell({ children }: AppShellProps) {
     selectedBook, closeBookRecord,
     isSearchModalOpen, searchModalConfig, openSearchModal, closeSearchModal,
   } = useUIStore();
-  const { theme, setTheme, effectiveDark } = useThemeStore();
+  const { theme, setTheme } = useThemeStore();
 
   // 스토어를 localStorage 저장값으로 초기화
   useEffect(() => {
@@ -31,8 +30,6 @@ export default function AppShell({ children }: AppShellProps) {
       }
     } catch {}
   }, []);
-
-  const isDark = effectiveDark();
 
   const cycleTheme = () => {
     const next = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
@@ -164,37 +161,6 @@ export default function AppShell({ children }: AppShellProps) {
         allowedActions={searchModalConfig.allowedActions}
         defaultStatus={searchModalConfig.defaultStatus}
         onSuccess={searchModalConfig.onSuccess}
-      />
-
-      {/* Toast 알림 */}
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: isDark ? '#1c1c1e' : '#ffffff',
-            color: isDark ? '#f0f0f0' : '#1f2937',
-            border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e5e7eb',
-            borderRadius: '12px',
-            padding: '12px 16px',
-            fontSize: '14px',
-            boxShadow: isDark
-              ? '0 4px 16px rgba(0,0,0,0.4)'
-              : '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
-          },
-          success: {
-            iconTheme: {
-              primary: '#30d158',
-              secondary: isDark ? '#1c1c1e' : '#ffffff',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#ff453a',
-              secondary: isDark ? '#1c1c1e' : '#ffffff',
-            },
-          },
-        }}
       />
     </main>
   );
