@@ -224,10 +224,12 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                 )}
                 {activeTab === 'waiting' && (
                   <div className="flex gap-2 relative z-10 mt-1">
-                    <button onClick={(e) => {
+                    <button onClick={async (e) => {
                       e.stopPropagation();
-                      if (book.type === 'wish') { updateType(book.id, 'have', e); }
-                      updateStatus(book.id, 'reading', e);
+                      // 같은 행에 PATCH 두 개를 동시에 보내면 뒤에 커밋된 쪽이 앞 변경을 덮어쓴다
+                      // (엔티티가 전체 컬럼 UPDATE) → 반드시 순서대로.
+                      if (book.type === 'wish') { await updateType(book.id, 'have', e); }
+                      await updateStatus(book.id, 'reading', e);
                     }} className="flex-1 py-1.5 liquid-button text-xs transition-colors">읽기 시작</button>
                   </div>
                 )}
