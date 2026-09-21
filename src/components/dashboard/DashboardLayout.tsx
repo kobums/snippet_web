@@ -65,10 +65,13 @@ export default function DashboardLayout() {
   ];
 
   return (
-    <div className="w-full h-full p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 lg:gap-8 max-w-[2000px] mx-auto overflow-y-auto hide-scrollbar">
+    // 좁은 화면(lg 미만)에서는 탭 내용이 절대 위치라 부모 높이를 그대로 물려받아야 한다.
+    // 퍼센트 높이(h-full)는 부모가 min-height만 가진 flex 컨테이너라 계산되지 않으므로,
+    // flex-1 + min-h-0 로 섹션 높이를 채운다. (데스크톱은 기존 스크롤 동작 유지)
+    <div className="w-full h-full max-lg:flex-1 max-lg:min-h-0 p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 lg:gap-8 max-w-[2000px] mx-auto overflow-y-auto hide-scrollbar">
 
-      {/* 모바일/태블릿: SwipeableTabs */}
-      <div className="flex-1 lg:hidden">
+      {/* 모바일/태블릿: SwipeableTabs — 래퍼도 flex 컨테이너여야 탭 컴포넌트가 높이를 채운다 */}
+      <div className="flex-1 min-h-0 flex flex-col lg:hidden">
         <SwipeableTabs tabs={mobileTabs} />
       </div>
 

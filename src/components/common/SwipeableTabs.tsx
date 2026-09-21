@@ -45,7 +45,8 @@ export default function SwipeableTabs({ tabs, className = '' }: SwipeableTabsPro
   };
 
   return (
-    <div className={`flex flex-col h-full ${className}`}>
+    // 내용 영역이 absolute라 자체 높이가 0 → 부모 flex 컨테이너를 채워야 내용이 보인다
+    <div className={`flex flex-col h-full flex-1 min-h-0 ${className}`}>
       {/* Tab Headers */}
       <div className="flex items-center justify-start gap-2 mb-4 overflow-x-auto scrollbar-hide px-1">
         {tabs.map((tab, index) => (
@@ -59,7 +60,7 @@ export default function SwipeableTabs({ tabs, className = '' }: SwipeableTabsPro
               flex items-center gap-1.5 px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm font-medium
               ${activeIndex === index
                 ? 'liquid-button shadow-md'
-                : 'bg-white/60 backdrop-blur-sm text-gray-600 dark:text-[#a0a0a0] hover:bg-white/80 border border-white/60'
+                : 'bg-white/60 backdrop-blur-sm text-gray-600 hover:bg-white/80 border border-white/60 dark:bg-white/8 dark:hover:bg-white/12 dark:text-[#a0a0a0] dark:border-white/10'
               }
             `}
           >
@@ -105,7 +106,7 @@ export default function SwipeableTabs({ tabs, className = '' }: SwipeableTabsPro
             }}
             className={`
               h-2 rounded-full transition-all
-              ${activeIndex === index ? 'w-8 bg-accent' : 'w-2 bg-gray-300'}
+              ${activeIndex === index ? 'w-8 bg-accent' : 'w-2 bg-gray-300 dark:bg-white/20'}
             `}
             aria-label={`Go to ${tabs[index].label}`}
           />
