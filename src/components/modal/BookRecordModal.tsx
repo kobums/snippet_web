@@ -515,7 +515,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                   <div className="absolute left-[-1.1rem] top-4 w-4 h-4 rounded-full bg-blue-400 border-4 border-white dark:border-[#1c1c1e] z-10"></div>
                   <div className="rounded-2xl p-4 shadow-sm border bg-white border-gray-200 dark:bg-white/5 dark:border-white/10">
                     <div className="flex gap-2 mb-3">
-                      <select value={newType} onChange={e => setNewType(e.target.value as any)} className="border rounded-lg px-2 py-1 outline-none text-xs bg-gray-50 border-gray-200 text-gray-900 dark:bg-white/8 dark:border-white/10 dark:text-[#f0f0f0]">
+                      <select value={newType} onChange={e => setNewType(e.target.value as any)} className="app-select border rounded-lg px-2 py-1 outline-none text-xs bg-gray-50 border-gray-200 text-gray-900 dark:bg-white/8 dark:border-white/10 dark:text-[#f0f0f0]">
                         <option value="snippet">밑줄</option>
                         <option value="diary">일기</option>
                         <option value="review">리뷰</option>
@@ -566,7 +566,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                   {editingId === record.id ? (
                     <div className="rounded-2xl p-4 shadow-sm border border-accent/20 bg-white dark:bg-white/5 dark:border-accent/30">
                       <div className="flex gap-2 mb-3">
-                        <select value={editType} onChange={e => setEditType(e.target.value as any)} className="border rounded-lg px-2 py-1 outline-none text-xs bg-gray-50 border-gray-200 text-gray-900 dark:bg-white/8 dark:border-white/10 dark:text-[#f0f0f0]">
+                        <select value={editType} onChange={e => setEditType(e.target.value as any)} className="app-select border rounded-lg px-2 py-1 outline-none text-xs bg-gray-50 border-gray-200 text-gray-900 dark:bg-white/8 dark:border-white/10 dark:text-[#f0f0f0]">
                           <option value="snippet">밑줄</option>
                           <option value="diary">일기</option>
                           <option value="review">리뷰</option>

@@ -585,3 +585,22 @@ body {
 .dark .modal-overlay {
   background-color: rgba(0, 0, 0, 0.7);
 }
+
+/* ─────────────────────────────────────
+   공용 셀렉트 — 브라우저 기본 화살표는 테두리에 붙어 보여서
+   appearance를 끄고 화살표를 안쪽(오른쪽 0.625rem)에 직접 그린다.
+   ───────────────────────────────────── */
+.app-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.625rem center;
+  background-size: 14px 14px;
+  padding-right: 2rem;
+}
+
+.dark .app-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}

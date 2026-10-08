@@ -152,7 +152,7 @@ export default function SessionTimerModal({ isOpen, onClose, onSaved }: Props) {
               value={selectedBookId}
               onChange={e => setSelectedBookId(e.target.value ? Number(e.target.value) : '')}
               disabled={isActive || timerState === 'stopped'}
-              className="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-sm text-gray-800 dark:text-[#d0d0d0] focus:outline-none focus:ring-2 focus:ring-accent/20 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="app-select w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-sm text-gray-800 dark:text-[#d0d0d0] focus:outline-none focus:ring-2 focus:ring-accent/20 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <option value="">독서 중인 책 선택...</option>
               {books.map(b => (

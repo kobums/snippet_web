@@ -47,7 +47,7 @@ export default function RecordForm({
 
       {/* 책 선택 */}
       <select value={formBook} onChange={e => setFormBook(e.target.value ? Number(e.target.value) : '')}
-        className="text-xs sm:text-sm bg-white/80 border border-gray-200 dark:bg-white/10 dark:border-white/15 rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-gray-700 dark:text-[#f0f0f0] outline-none focus:border-blue-400 transition-colors cursor-pointer [&>option]:bg-white dark:[&>option]:bg-[#1c1c1e] dark:[&>option]:text-[#f0f0f0]">
+        className="app-select text-xs sm:text-sm bg-white/80 border border-gray-200 dark:bg-white/10 dark:border-white/15 rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-gray-700 dark:text-[#f0f0f0] outline-none focus:border-blue-400 transition-colors cursor-pointer [&>option]:bg-white dark:[&>option]:bg-[#1c1c1e] dark:[&>option]:text-[#f0f0f0]">
         <option value="">책 선택...</option>
         {recordableBooks.map(b => (
           <option key={b.id} value={b.bookId}>{b.title}</option>
