@@ -76,7 +76,7 @@ export default function RecordToolbar({
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === tab.key
                   ? 'liquid-badge text-gray-900 dark:text-[#f0f0f0] shadow-sm'
-                  : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-800 dark:text-[#d0d0d0] hover:bg-white/50 border border-transparent'
+                  : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-800 dark:hover:text-[#d0d0d0] hover:bg-white/50 border border-transparent'
               }`}
             >
               {tab.icon}
@@ -90,16 +90,16 @@ export default function RecordToolbar({
           {/* 정렬 */}
           <div className="relative" ref={sortMenuRef}>
             <button onClick={() => setShowSortMenu(p => !p)}
-              className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white/50 transition-all" title="정렬">
+              className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white/50 transition-all" title="정렬">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/>
               </svg>
             </button>
             {showSortMenu && (
-              <div className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-xl p-1 min-w-[120px] z-50 shadow-xl">
+              <div className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-xl border border-gray-200 dark:bg-[#1c1c1e]/95 dark:border-white/10 rounded-xl p-1 min-w-[120px] z-50 shadow-xl">
                 {([['newest', '최신순'], ['oldest', '오래된순']] as const).map(([key, label]) => (
                   <button key={key} onClick={() => { setSortOption(key); setShowSortMenu(false); }}
-                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors ${sortOption === key ? 'bg-gray-100 text-gray-900 dark:text-[#f0f0f0] font-medium' : 'text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6'}`}
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors ${sortOption === key ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-[#f0f0f0] font-medium' : 'text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6'}`}
                   >{label}</button>
                 ))}
               </div>
@@ -108,13 +108,13 @@ export default function RecordToolbar({
 
           {/* 검색 */}
           <button onClick={() => { setShowSearch(!showSearch); if (showSearch) setSearchQuery(''); }}
-            className={`p-2 rounded-lg transition-all ${showSearch ? 'bg-white/70 text-gray-900 dark:text-[#f0f0f0] shadow-sm' : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white/50'}`} title="검색">
+            className={`p-2 rounded-lg transition-all ${showSearch ? 'bg-white/70 text-gray-900 dark:bg-white/12 dark:text-[#f0f0f0] shadow-sm' : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white/50 dark:hover:bg-white/8'}`} title="검색">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
 
           {/* 확장 */}
           <button onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white/50 transition-all" title={isExpanded ? '축소' : '확장'}>
+            className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white/50 transition-all" title={isExpanded ? '축소' : '확장'}>
             {isExpanded
               ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="21" y2="3"/><line x1="3" y1="21" x2="14" y2="10"/></svg>
               : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
@@ -136,10 +136,10 @@ export default function RecordToolbar({
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               {showNewMenu && (
-                <div className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-xl p-1 min-w-[140px] z-50 shadow-xl">
+                <div className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-xl border border-gray-200 dark:bg-[#1c1c1e]/95 dark:border-white/10 rounded-xl p-1 min-w-[140px] z-50 shadow-xl">
                   {tabConfig.map(opt => (
                     <button key={opt.key} onClick={() => { onOpenForm(opt.key); setShowNewMenu(false); }}
-                      className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6 hover:text-gray-900 dark:text-[#f0f0f0] transition-colors flex items-center gap-2">
+                      className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6 hover:text-gray-900 dark:hover:text-[#f0f0f0] transition-colors flex items-center gap-2">
                       <span className="opacity-70 scale-90">{opt.icon}</span>{opt.label.replace('이달의 ', '')} 작성
                     </button>
                   ))}
@@ -158,7 +158,7 @@ export default function RecordToolbar({
             <input ref={searchRef} type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
               placeholder="기록 내용 검색..." className="flex-1 text-sm bg-transparent outline-none text-gray-700 dark:text-[#d0d0d0] placeholder-gray-400 dark:placeholder-[#666]" />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] transition-colors">
+              <button onClick={() => setSearchQuery('')} className="text-gray-400 dark:text-[#666] hover:text-gray-600 dark:hover:text-[#a0a0a0] transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             )}

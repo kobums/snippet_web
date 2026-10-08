@@ -70,7 +70,7 @@ export default function YearStatistics({ books }: YearStatisticsProps) {
               className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 ${
                 activeTab === tab.key
                   ? 'liquid-badge text-gray-900 dark:text-[#f0f0f0] shadow-sm'
-                  : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-800 dark:text-[#d0d0d0] hover:bg-white/50 border border-transparent'
+                  : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-800 dark:hover:text-[#d0d0d0] hover:bg-white/50 border border-transparent'
               }`}
             >
               <span className="hidden sm:inline-block">{tab.icon}</span>
@@ -90,7 +90,7 @@ export default function YearStatistics({ books }: YearStatisticsProps) {
             <p className="text-xs sm:text-sm text-gray-400 dark:text-[#666] py-3 sm:py-4">올해 읽은 책이 없습니다.</p>
           ) : (
             completedBooks.map(b => (
-              <div key={b.id} className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white/40 rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 transition-all cursor-pointer group">
+              <div key={b.id} className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white/40 rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 transition-all cursor-pointer group">
                 <span className="shrink-0">✅</span>
                 <span className="text-gray-500 dark:text-[#a0a0a0] shrink-0">
                   《<span className="text-gray-800 dark:text-[#d0d0d0] group-hover:text-accent transition-colors">{b.title}</span>》

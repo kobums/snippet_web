@@ -185,7 +185,7 @@ export default function ReadingManager({ books, loading }: ReadingManagerProps) 
                     <div className="flex items-start justify-between gap-2">
                       <h4 className="text-gray-900 dark:text-[#f0f0f0] font-medium text-sm truncate group-hover:text-accent transition-colors">{book.title}</h4>
                       {activeTab === 'done' && (
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${book.status === 'completed' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-gray-50 text-gray-500 dark:text-[#a0a0a0] border border-gray-100 dark:border-white/8'}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${book.status === 'completed' ? 'bg-green-50 text-green-600 border border-green-100 dark:bg-green-500/15 dark:text-green-400 dark:border-green-500/20' : 'bg-gray-50 text-gray-500 border border-gray-100 dark:bg-white/8 dark:text-[#a0a0a0] dark:border-white/10'}`}>
                           {book.status === 'completed' ? '완독' : '중단'}
                         </span>
                       )}

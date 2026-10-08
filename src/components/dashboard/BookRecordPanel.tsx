@@ -244,7 +244,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
           ) : (
             <div className="space-y-2 mt-1">
               {displaySessions.map(s => (
-                <div key={s.id} onClick={() => setSelectedSession(s)} className="bg-white/60 border border-gray-100 dark:border-white/8 rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-white dark:hover:bg-white/10 transition-colors cursor-pointer">
+                <div key={s.id} onClick={() => setSelectedSession(s)} className="bg-white/60 border border-gray-100 dark:bg-white/5 dark:border-white/8 rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-white dark:hover:bg-white/10 transition-colors cursor-pointer">
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-800 dark:text-[#d0d0d0] truncate">{s.bookTitle}</p>
                     <p className="text-[11px] text-gray-400 dark:text-[#666] mt-0.5">
@@ -280,7 +280,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
 
       {!isSessionTab && !showForm && displayRecords.length > 0 && (
         <button onClick={() => openForm()}
-          className="mt-3 sm:mt-4 flex items-center gap-2 text-xs sm:text-sm text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] transition-colors px-3 sm:px-4 py-2 sm:py-2.5 w-full border-t border-gray-50">
+          className="mt-3 sm:mt-4 flex items-center gap-2 text-xs sm:text-sm text-gray-400 dark:text-[#666] hover:text-gray-600 dark:hover:text-[#a0a0a0] transition-colors px-3 sm:px-4 py-2 sm:py-2.5 w-full border-t border-gray-50">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           새 페이지
         </button>

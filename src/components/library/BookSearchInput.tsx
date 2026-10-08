@@ -21,7 +21,7 @@ export default function BookSearchInput({ value, onChange, placeholder = "ì±…, ì
           className="flex-1 text-sm bg-transparent outline-none text-gray-700 dark:text-[#d0d0d0] placeholder-gray-400 dark:placeholder-[#666]" 
         />
         {value && (
-          <button onClick={() => onChange('')} className="text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] transition-colors">
+          <button onClick={() => onChange('')} className="text-gray-400 dark:text-[#666] hover:text-gray-600 dark:hover:text-[#a0a0a0] transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>

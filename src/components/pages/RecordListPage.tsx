@@ -157,10 +157,10 @@ export default function RecordListPage({ type, title, description }: RecordListP
             {sortOption === 'newest' ? '최신순' : '오래된순'}
           </button>
           {showSortMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-xl p-1 min-w-[120px] z-50 shadow-xl">
+            <div className="absolute right-0 top-full mt-1 bg-white/95 backdrop-blur-xl border border-gray-200 dark:bg-[#1c1c1e]/95 dark:border-white/10 rounded-xl p-1 min-w-[120px] z-50 shadow-xl">
               {([['newest', '최신순'], ['oldest', '오래된순']] as const).map(([key, label]) => (
                 <button key={key} onClick={() => { setSortOption(key); setShowSortMenu(false); }}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors ${sortOption === key ? 'bg-gray-100 text-gray-900 dark:text-[#f0f0f0] font-medium' : 'text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6'}`}
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors ${sortOption === key ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-[#f0f0f0] font-medium' : 'text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6'}`}
                 >{label}</button>
               ))}
             </div>

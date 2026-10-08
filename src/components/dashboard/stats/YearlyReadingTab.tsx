@@ -20,7 +20,7 @@ export default function YearlyReadingTab({ readingBooks, completedBooks }: Yearl
       {/* 진행중 섹션 */}
       <div>
         <button onClick={() => setReadingExpanded(p => !p)}
-          className="flex items-center gap-2 mb-2.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-[#a0a0a0] hover:text-gray-700 dark:text-[#d0d0d0] transition-colors">
+          className="flex items-center gap-2 mb-2.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-[#a0a0a0] hover:text-gray-700 dark:hover:text-[#d0d0d0] transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
             className={`transition-transform ${readingExpanded ? 'rotate-90' : ''}`}>
             <polyline points="9 18 15 12 9 6"/>
@@ -46,7 +46,7 @@ export default function YearlyReadingTab({ readingBooks, completedBooks }: Yearl
       {/* 완료 섹션 */}
       <div>
         <button onClick={() => setCompletedExpanded(p => !p)}
-          className="flex items-center gap-2 mb-2.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-[#a0a0a0] hover:text-gray-700 dark:text-[#d0d0d0] transition-colors">
+          className="flex items-center gap-2 mb-2.5 sm:mb-3 text-xs sm:text-sm text-gray-500 dark:text-[#a0a0a0] hover:text-gray-700 dark:hover:text-[#d0d0d0] transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
             className={`transition-transform ${completedExpanded ? 'rotate-90' : ''}`}>
             <polyline points="9 18 15 12 9 6"/>
@@ -90,7 +90,7 @@ function BookRow({ book, status }: { book: UserBookDto; status: string }) {
   return (
     <div
       onClick={() => openBookRecord(book)}
-      className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white dark:hover:bg-white/10/40 rounded-lg px-2 py-1 transition-all cursor-pointer group">
+      className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white dark:hover:bg-white/10/40 rounded-lg px-2 py-1 transition-all cursor-pointer group">
       <span className="shrink-0">{isCompleted ? '✅' : '😊'}</span>
       <span className="text-gray-400 dark:text-[#666] shrink-0 tabular-nums">
         {formatDate(book.startDate)} ~ {isCompleted ? formatDate(book.endDate) : ''}
@@ -105,7 +105,7 @@ function BookRow({ book, status }: { book: UserBookDto; status: string }) {
 
 function AddRow() {
   return (
-    <button className="flex items-center gap-2 text-xs sm:text-sm text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] px-2 py-2 w-full transition-colors border-t border-transparent hover:border-gray-50">
+    <button className="flex items-center gap-2 text-xs sm:text-sm text-gray-400 dark:text-[#666] hover:text-gray-600 dark:hover:text-[#a0a0a0] px-2 py-2 w-full transition-colors border-t border-transparent hover:border-gray-50">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       새 페이지
     </button>

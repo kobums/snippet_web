@@ -94,7 +94,7 @@ export default function PanelToolbar<TTab extends string = string, TSort extends
                 className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 ${
                   activeTab === tab.key
                     ? 'liquid-badge text-gray-900 dark:text-[#f0f0f0] shadow-sm'
-                    : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-800 dark:text-[#d0d0d0] hover:bg-white/50 border border-transparent'
+                    : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-800 dark:hover:text-[#d0d0d0] hover:bg-white/50 border border-transparent'
                 }`}
               >
                 {tab.icon && <span className="hidden sm:inline-block">{tab.icon}</span>}
@@ -112,7 +112,7 @@ export default function PanelToolbar<TTab extends string = string, TSort extends
               <div className="relative" ref={sortMenuRef}>
                 <button
                   onClick={() => setShowSortMenu(p => !p)}
-                  className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white/50 transition-all"
+                  className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white/50 transition-all"
                   title="정렬"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -141,7 +141,7 @@ export default function PanelToolbar<TTab extends string = string, TSort extends
             {searchEnabled && (
               <button
                 onClick={() => { setShowSearch(!showSearch); if (showSearch) onSearchChange?.(''); }}
-                className={`p-2 rounded-lg transition-all ${showSearch ? 'bg-white/70 text-gray-900 dark:text-[#f0f0f0] shadow-sm' : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white/50'}`}
+                className={`p-2 rounded-lg transition-all ${showSearch ? 'bg-white/70 text-gray-900 dark:bg-white/12 dark:text-[#f0f0f0] shadow-sm' : 'text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white/50 dark:hover:bg-white/8'}`}
                 title="검색"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -152,7 +152,7 @@ export default function PanelToolbar<TTab extends string = string, TSort extends
             {expandUrl && (
               <button
                 onClick={() => router.push(expandUrl)}
-                className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:text-[#f0f0f0] hover:bg-white/50 transition-all"
+                className="p-2 rounded-lg text-gray-500 dark:text-[#a0a0a0] hover:text-gray-900 dark:hover:text-[#f0f0f0] hover:bg-white/50 transition-all"
                 title="자세히 보기"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
@@ -197,7 +197,7 @@ export default function PanelToolbar<TTab extends string = string, TSort extends
                         <button
                           key={item.key}
                           onClick={() => { onNewMenuItem?.(item.key); setShowNewMenu(false); }}
-                          className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6 hover:text-gray-900 dark:text-[#f0f0f0] transition-colors flex items-center gap-2"
+                          className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-[#a0a0a0] hover:bg-gray-50 dark:hover:bg-white/6 hover:text-gray-900 dark:hover:text-[#f0f0f0] transition-colors flex items-center gap-2"
                         >
                           {item.icon && <span className="opacity-70 scale-90">{item.icon}</span>}
                           {item.label}
@@ -226,7 +226,7 @@ export default function PanelToolbar<TTab extends string = string, TSort extends
               className="flex-1 text-sm bg-transparent outline-none text-gray-700 dark:text-[#d0d0d0] placeholder-gray-400 dark:placeholder-[#666]"
             />
             {searchQuery && (
-              <button onClick={() => onSearchChange?.('')} className="text-gray-400 dark:text-[#666] hover:text-gray-600 dark:text-[#a0a0a0] transition-colors">
+              <button onClick={() => onSearchChange?.('')} className="text-gray-400 dark:text-[#666] hover:text-gray-600 dark:hover:text-[#a0a0a0] transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             )}
