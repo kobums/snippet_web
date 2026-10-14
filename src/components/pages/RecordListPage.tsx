@@ -9,6 +9,7 @@ import { getUserBooks } from '@/lib/userBookApi';
 import { handleApiError } from '@/lib/errorHandler';
 import { formatDate } from '@/lib/util';
 import { useUIStore } from '@/stores/useUIStore';
+import { useRecordStore } from '@/stores/useRecordStore';
 import RecordForm from '@/components/dashboard/record/RecordForm';
 import { RecordCardSkeleton } from '@/components/ui/skeleton';
 import OcrButton from '@/components/ui/OcrButton';
@@ -47,10 +48,14 @@ export default function RecordListPage({ type, title, description }: RecordListP
   const [submitting, setSubmitting] = useState(false);
 
   const { openBookRecord } = useUIStore();
+  const recordVersion = useRecordStore(s => s.version);
+  const bumpRecords = useRecordStore(s => s.bump);
 
   useEffect(() => {
     loadData();
-  }, []);
+    // recordVersion: 다른 화면(책 상세 모달 등)에서 기록이 바뀌면 다시 조회
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recordVersion]);
 
   const loadData = async () => {
     try {
@@ -83,6 +88,7 @@ export default function RecordListPage({ type, title, description }: RecordListP
         relatedPage: formPage !== '' ? Number(formPage) : undefined,
       };
       await createRecord(Number(formBook), payload);
+      bumpRecords();
       setFormText(''); setFormTag(''); setFormPage(''); setShowForm(false);
       const allRecords = await getRecords();
       setRecords(allRecords.filter(r => r.type === type));
