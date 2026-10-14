@@ -10,6 +10,7 @@ import { RecordDto } from '@/types/record';
 import { ReadingSessionDto } from '@/types/readingSession';
 import { UserBookDto } from '@/types/library';
 import { useBookStore } from '@/stores/useBookStore';
+import { useRecordStore } from '@/stores/useRecordStore';
 import { TimelineRecordSkeleton } from '@/components/ui/skeleton';
 
 // 임시 ID 생성 유틸리티
@@ -24,6 +25,7 @@ interface BookRecordModalProps {
 
 export default function BookRecordModal({ isOpen, onClose, book }: BookRecordModalProps) {
   const { updateStatus, updateProgress, updateStartDate, updateEndDate, updateType } = useBookStore();
+  const bumpRecords = useRecordStore(s => s.bump);
   const [records, setRecords] = useState<RecordDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'snippet' | 'diary' | 'review' | 'session'>('all');
@@ -236,6 +238,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
     try {
       await patchRecord(record.id, { type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined });
+      bumpRecords();
       toast.success('기록이 수정되었습니다');
     } catch (e) {
       setRecords(prev => prev.map(r => r.id === record.id ? record : r));
@@ -250,6 +253,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
     try {
       await deleteRecord(record.id);
+      bumpRecords();
       toast.success('기록이 삭제되었습니다');
     } catch (e) {
       setRecords(prev => [record, ...prev]);
@@ -259,10 +263,6 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
 
   const handleAddRecord = async () => {
     if (!book || !newText.trim()) return;
-    if (newRelatedPage === '' && !newTag.trim()) {
-      alert('페이지 또는 태그를 입력해 주세요.');
-      return;
-    }
     if (newRelatedPage !== '' && (newRelatedPage < 0 || (book.totalPage && newRelatedPage > book.totalPage))) {
       alert(`0~${book.totalPage}p 사이로 입력해주세요`);
       return;
@@ -302,6 +302,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
         prev.map(r => r.id === tempRecord.id ? { ...r, id: realId } : r)
       );
 
+      bumpRecords();
       toast.success('기록이 추가되었습니다');
 
     } catch (e) {

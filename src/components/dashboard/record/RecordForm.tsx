@@ -76,7 +76,7 @@ export default function RecordForm({
         </div>
         <div>
           <input type="number" value={formPage} onChange={e => setFormPage(e.target.value ? Number(e.target.value) : '')}
-            placeholder="페이지"
+            placeholder="페이지" title="비워 두면 책의 마지막 페이지로 저장됩니다"
             className="w-20 sm:w-24 text-xs sm:text-sm bg-white/80 border border-gray-200 dark:bg-white/10 dark:border-white/15 rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-gray-700 dark:text-[#f0f0f0] outline-none focus:border-blue-400 transition-colors placeholder-gray-400 dark:placeholder-[#777]" />
         </div>
       </div>

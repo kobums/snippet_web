@@ -9,6 +9,7 @@ import { createRecord, getMonthlyRecords } from '@/lib/recordApi';
 import { getAllSessions } from '@/lib/readingSessionApi';
 import { handleApiError } from '@/lib/errorHandler';
 import { useBookStore } from '@/stores/useBookStore';
+import { useRecordStore } from '@/stores/useRecordStore';
 import PanelToolbar, { TabItem, SortItem, NewMenuItem } from '@/components/ui/PanelToolbar';
 import RecordForm from './record/RecordForm';
 import RecordList from './record/RecordList';
@@ -101,6 +102,8 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   const [modalBook, setModalBook] = useState<UserBookDto | null>(null);
 
   const { selectedYear, selectedMonth } = useBookStore();
+  const recordVersion = useRecordStore(s => s.version);
+  const bumpRecords = useRecordStore(s => s.bump);
 
   const isSessionTab = activeTab === 'session';
 
@@ -112,7 +115,8 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
       .then(setRecords)
       .catch(e => handleApiError(e, '기록 불러오기 실패'))
       .finally(() => setRecordLoading(false));
-  }, [activeTab, selectedYear, selectedMonth]);
+    // recordVersion: 책 상세 모달 등 다른 화면에서 기록이 바뀌면 다시 조회
+  }, [activeTab, selectedYear, selectedMonth, recordVersion]);
 
   /* 세션 탭: 전체 조회 후 월 필터 */
   useEffect(() => {
@@ -138,10 +142,6 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   const handleSubmit = async () => {
     if (!formText.trim()) return;
     if (formBook === '') { alert('책을 선택해 주세요.'); return; }
-    if (formPage === '' && !formTag.trim()) {
-      alert('페이지 또는 태그를 입력해 주세요.');
-      return;
-    }
     const selectedBook = books.find(b => b.bookId === Number(formBook));
     const totalPage = selectedBook?.totalPage;
     if (formPage !== '' && (Number(formPage) < 0 || (totalPage ? Number(formPage) > totalPage : false))) {
@@ -157,6 +157,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
         relatedPage: formPage !== '' ? Number(formPage) : undefined,
       };
       await createRecord(Number(formBook), payload);
+      bumpRecords();
       setFormText(''); setFormTag(''); setFormPage(''); setShowForm(false);
       const updated = await getMonthlyRecords(tabToApiType[activeTab as RecordTab], selectedYear, selectedMonth);
       setRecords(updated);
