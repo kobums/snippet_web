@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
+import { isOptimizableCover } from '@/lib/imageHosts';
 import { PopularBookDto } from '@/types/popular';
 import { getPopularBooks } from '@/lib/popularBookApi';
 import { addUserBook } from '@/lib/userBookApi';
@@ -320,6 +321,7 @@ function PopularBookRow({
             fill
             className="object-cover"
             sizes="40px"
+            unoptimized={!isOptimizableCover(book.coverUrl)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
