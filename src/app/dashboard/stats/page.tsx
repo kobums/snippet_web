@@ -8,6 +8,7 @@ import MonthlyComparisonSection from '@/components/dashboard/stats/MonthlyCompar
 import ReadingInsightsSection from '@/components/dashboard/stats/ReadingInsightsSection';
 import CategoryAnalysisSection from '@/components/dashboard/stats/CategoryAnalysisSection';
 import YearlyComparisonSection from '@/components/dashboard/stats/YearlyComparisonSection';
+import DailyPagesSection from '@/components/dashboard/stats/DailyPagesSection';
 import YearNavigator from '@/components/dashboard/stats/YearNavigator';
 import { StatsSkeleton } from '@/components/ui/skeleton';
 
@@ -82,15 +83,18 @@ export default function StatsPage() {
               <MonthlyComparisonSection data={monthlyStats} year={selectedYear} />
             )}
 
-            {/* 2. 독서 인사이트 */}
+            {/* 2. 일별 읽은 페이지 */}
+            <DailyPagesSection key={selectedYear} year={selectedYear} />
+
+            {/* 3. 독서 인사이트 */}
             <ReadingInsightsSection data={insights} />
 
-            {/* 3. 카테고리별 분포 */}
+            {/* 4. 카테고리별 분포 */}
             {categoryStats.length > 0 && (
               <CategoryAnalysisSection data={categoryStats} />
             )}
 
-            {/* 4. 연도별 비교 */}
+            {/* 5. 연도별 비교 */}
             {yearlyStats.length > 0 && (
               <YearlyComparisonSection data={yearlyStats} />
             )}
