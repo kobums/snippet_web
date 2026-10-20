@@ -24,3 +24,8 @@ export interface ReadingInsightsDto {
   longestReadingDays: number;
   longestBook: string;
 }
+
+export interface DailyPagesDto {
+  date: string; // "YYYY-MM-DD"
+  pages: number;
+}
