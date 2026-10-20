@@ -12,5 +12,9 @@ npm-debug.log
 .DS_Store
 *.md
 .next
-.env.local
-.env.development
+# 로컬/개발용 env(시크릿 가능)는 빌드 컨텍스트에서 제외.
+# .env.production 만 허용: next build 시 NEXT_PUBLIC_* 값을 번들에 인라인하기 위해 필요하다.
+# NEXT_PUBLIC_* 는 어차피 클라이언트 JS에 공개되는 값이므로, 이 파일에는 공개 값만 둘 것.
+.env*
+!.env.example
+!.env.production
