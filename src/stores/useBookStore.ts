@@ -21,6 +21,13 @@ interface BookStore {
   loading: boolean;
   selectedYear: number;
   selectedMonth: number;
+  /**
+   * 독서 상태(완독/중단/읽는중/대기) 변경 신호.
+   * 올해 완독 권수로 계산되는 화면(독서 목표 카드 등)은 자기 목록을 따로 들고 있어서,
+   * 상태를 바꿔도 새로고침 전까지 옛 숫자를 보여줬다. 상태 변경이 끝나면 이 값이 올라가고
+   * 구독하는 쪽은 useEffect 의존성에 넣어 다시 조회한다.
+   */
+  statusVersion: number;
 
   loadDashboard: (year?: number, month?: number) => Promise<void>;
   loadProgress: (year?: number, month?: number) => Promise<void>;
@@ -47,6 +54,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
   loading: true,
   selectedYear: new Date().getFullYear(),
   selectedMonth: new Date().getMonth() + 1,
+  statusVersion: 0,
 
   loadDashboard: async (year?: number, month?: number) => {
     const now = new Date();
@@ -112,6 +120,8 @@ export const useBookStore = create<BookStore>((set, get) => ({
         }
         get().applyBookPatch(id, updates);
       }
+      // 완독 권수가 바뀔 수 있으므로 목표 카드 등 집계 화면에 알린다
+      set(s => ({ statusVersion: s.statusVersion + 1 }));
       toast.success(statusMessages[status] ?? '업데이트되었습니다.');
     } catch (e) {
       handleApiError(e, '상태 변경에 실패했습니다.', 'alert');
@@ -161,6 +171,8 @@ export const useBookStore = create<BookStore>((set, get) => ({
     try {
       await patchUserBook(id, { endDate: date });
       get().applyBookPatch(id, { endDate: date });
+      // 완독일이 바뀌면 연도별 완독 권수도 달라진다
+      set(s => ({ statusVersion: s.statusVersion + 1 }));
       toast.success('종료일을 변경했습니다.');
     } catch (e) {
       handleApiError(e, '종료일 변경에 실패했습니다.', 'alert');

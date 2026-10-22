@@ -4,15 +4,18 @@ import React, { useEffect, useState } from 'react';
 import { getReadingGoal, setReadingGoal } from '@/lib/readingGoalApi';
 import type { ReadingGoalDto } from '@/types/readingGoal';
 import { handleApiError } from '@/lib/errorHandler';
+import { useBookStore } from '@/stores/useBookStore';
 
 export default function ReadingGoalCard() {
   const [goal, setGoal] = useState<ReadingGoalDto | null>(null);
   const [editing, setEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  // 완독/중단 처리 등 상태 변경 후 달성 권수를 다시 받아온다 (서버가 완독 권수를 계산한다)
+  const statusVersion = useBookStore(s => s.statusVersion);
 
   useEffect(() => {
     getReadingGoal().then(setGoal).catch(() => {});
-  }, []);
+  }, [statusVersion]);
 
   const handleSave = async () => {
     const target = parseInt(inputValue, 10);
