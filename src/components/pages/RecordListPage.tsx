@@ -45,6 +45,7 @@ export default function RecordListPage({ type, title, description }: RecordListP
   const [formText, setFormText] = useState('');
   const [formPage, setFormPage] = useState<number | ''>('');
   const [formTag, setFormTag] = useState('');
+  const [formPublic, setFormPublic] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const { openBookRecord } = useUIStore();
@@ -86,10 +87,11 @@ export default function RecordListPage({ type, title, description }: RecordListP
         text: formText.trim(),
         tag: formTag.trim() || undefined,
         relatedPage: formPage !== '' ? Number(formPage) : undefined,
+        isPublic: type === 'snippet' ? formPublic : false,
       };
       await createRecord(Number(formBook), payload);
       bumpRecords();
-      setFormText(''); setFormTag(''); setFormPage(''); setShowForm(false);
+      setFormText(''); setFormTag(''); setFormPage(''); setFormPublic(false); setShowForm(false);
       const allRecords = await getRecords();
       setRecords(allRecords.filter(r => r.type === type));
       toast.success('기록이 저장되었습니다!');
@@ -183,6 +185,7 @@ export default function RecordListPage({ type, title, description }: RecordListP
             formText={formText} setFormText={setFormText}
             formPage={formPage} setFormPage={setFormPage}
             formTag={formTag} setFormTag={setFormTag}
+            formPublic={formPublic} setFormPublic={setFormPublic}
             submitting={submitting}
             recordableBooks={recordableBooks}
             onSubmit={handleSubmit}
@@ -228,6 +231,9 @@ export default function RecordListPage({ type, title, description }: RecordListP
                 <span className="text-xs font-semibold text-gray-900 dark:text-[#f0f0f0] truncate">
                   {record.tag ? `@${record.tag}` : title}
                 </span>
+                {record.type === 'snippet' && record.isPublic && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-accent/10 text-accent shrink-0">공개</span>
+                )}
                 <span className="text-[10px] text-gray-400 dark:text-[#666] ml-auto tabular-nums shrink-0">{formatDate(record.createDate)}</span>
               </div>
 

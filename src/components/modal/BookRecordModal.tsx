@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { getRecordsByBook, createRecord, patchRecord, deleteRecord } from '@/lib/recordApi';
+import PublicSnippetToggle from '@/components/ui/PublicSnippetToggle';
 import { getSessionsByBook } from '@/lib/readingSessionApi';
 import { RecordDto } from '@/types/record';
 import { ReadingSessionDto } from '@/types/readingSession';
@@ -38,6 +39,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
   const [newText, setNewText] = useState('');
   const [newTag, setNewTag] = useState('');
   const [newRelatedPage, setNewRelatedPage] = useState<number | ''>('');
+  const [newPublic, setNewPublic] = useState(false);
 
   // Edit Record State
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -45,6 +47,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
   const [editText, setEditText] = useState('');
   const [editTag, setEditTag] = useState('');
   const [editRelatedPage, setEditRelatedPage] = useState<number | ''>('');
+  const [editPublic, setEditPublic] = useState(false);
 
   // Progress State
   const [localReadPage, setLocalReadPage] = useState<number | ''>('');
@@ -87,6 +90,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
       setNewText('');
       setNewTag('');
       setNewRelatedPage('');
+      setNewPublic(false);
     }
   }, [isOpen]);
 
@@ -216,6 +220,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     setEditText(record.text);
     setEditTag(record.tag || '');
     setEditRelatedPage(record.relatedPage ?? '');
+    setEditPublic(!!record.isPublic);
   };
 
   const cancelEditing = () => {
@@ -232,12 +237,12 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
       return;
     }
 
-    const updated: RecordDto = { ...record, type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined };
+    const updated: RecordDto = { ...record, type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined, isPublic: editType === 'snippet' && editPublic };
     setRecords(prev => prev.map(r => r.id === record.id ? updated : r));
     cancelEditing();
 
     try {
-      await patchRecord(record.id, { type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined });
+      await patchRecord(record.id, { type: editType, text: editText, tag: editTag || undefined, relatedPage: editRelatedPage !== '' ? Number(editRelatedPage) : undefined, isPublic: editType === 'snippet' ? editPublic : false });
       bumpRecords();
       toast.success('기록이 수정되었습니다');
     } catch (e) {
@@ -277,6 +282,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
       text: newText,
       tag: newTag || undefined,
       relatedPage: newRelatedPage ? Number(newRelatedPage) : undefined,
+      isPublic: newType === 'snippet' && newPublic,
       createDate: new Date().toISOString()
     };
 
@@ -287,6 +293,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
     setNewText('');
     setNewTag('');
     setNewRelatedPage('');
+    setNewPublic(false);
 
     try {
       // 3️⃣ 백그라운드 API 호출
@@ -294,7 +301,8 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
         type: newType,
         text: newText,
         tag: newTag || undefined,
-        relatedPage: newRelatedPage ? Number(newRelatedPage) : undefined
+        relatedPage: newRelatedPage ? Number(newRelatedPage) : undefined,
+        isPublic: newType === 'snippet' ? newPublic : false
       });
 
       // 4️⃣ 성공: 실제 ID로 교체
@@ -544,9 +552,12 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                       onChange={e => setNewText(e.target.value)}
                       className="w-full bg-transparent border-none text-sm resize-none outline-none min-h-[100px] text-gray-900 placeholder-gray-400 dark:text-[#f0f0f0] dark:placeholder-[#666]"
                     />
-                    <div className="flex justify-end gap-2 mt-2">
+                    <div className="flex items-center gap-2 mt-2">
+                       {newType === 'snippet' && <PublicSnippetToggle checked={newPublic} onChange={setNewPublic} />}
+                       <div className="flex gap-2 ml-auto">
                        <button onClick={() => setIsAdding(false)} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:bg-gray-100 dark:text-[#a0a0a0] dark:hover:bg-white/8">취소</button>
                        <button onClick={handleAddRecord} disabled={!newText.trim()} className="px-4 py-2 rounded-xl text-xs bg-primary hover:bg-primary/85 text-white disabled:opacity-50">저장</button>
+                       </div>
                     </div>
                   </div>
                 </div>
@@ -587,9 +598,12 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                         onChange={e => setEditText(e.target.value)}
                         className="w-full bg-transparent border-none text-sm resize-none outline-none min-h-[80px] text-gray-900 placeholder-gray-400 dark:text-[#f0f0f0] dark:placeholder-[#666]"
                       />
-                      <div className="flex justify-end gap-2 mt-2">
+                      <div className="flex items-center gap-2 mt-2">
+                        {editType === 'snippet' && <PublicSnippetToggle checked={editPublic} onChange={setEditPublic} />}
+                        <div className="flex gap-2 ml-auto">
                         <button onClick={cancelEditing} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:bg-gray-100 dark:text-[#a0a0a0] dark:hover:bg-white/8">취소</button>
                         <button onClick={() => handleUpdateRecord(record)} disabled={!editText.trim()} className="px-4 py-2 rounded-xl text-xs bg-primary hover:bg-primary/85 text-white disabled:opacity-50">저장</button>
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -605,6 +619,7 @@ export default function BookRecordModal({ isOpen, onClose, book }: BookRecordMod
                             {record.type}
                           </span>
                           {record.relatedPage && <span className="text-xs text-gray-400 dark:text-[#666]">p.{record.relatedPage}</span>}
+                          {record.type === 'snippet' && record.isPublic && <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent">공개</span>}
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-gray-400 dark:text-[#666]">{new Date(record.createDate).toLocaleDateString()}</span>

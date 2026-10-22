@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from 'react';
 import { UserBookDto } from '@/types/library';
 import { tabConfig, type RecordTab } from './RecordToolbar';
 import OcrButton from '@/components/ui/OcrButton';
+import PublicSnippetToggle from '@/components/ui/PublicSnippetToggle';
 
 interface RecordFormProps {
   formType: RecordTab;
@@ -15,6 +16,8 @@ interface RecordFormProps {
   setFormPage: (v: number | '') => void;
   formTag: string;
   setFormTag: (v: string) => void;
+  formPublic?: boolean;
+  setFormPublic?: (v: boolean) => void;
   submitting: boolean;
   recordableBooks: UserBookDto[];
   onSubmit: () => void;
@@ -24,7 +27,7 @@ interface RecordFormProps {
 export default function RecordForm({
   formType, formBook, setFormBook,
   formText, setFormText, formPage, setFormPage,
-  formTag, setFormTag, submitting,
+  formTag, setFormTag, formPublic, setFormPublic, submitting,
   recordableBooks, onSubmit, onCancel,
 }: RecordFormProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -81,13 +84,18 @@ export default function RecordForm({
         </div>
       </div>
 
-      {/* 저장 버튼 */}
-      <div className="flex gap-2 justify-end mt-1">
+      {/* 공개 선택 & 저장 버튼 */}
+      <div className="flex items-center gap-2 mt-1">
+        {formType === 'underline' && setFormPublic && (
+          <PublicSnippetToggle checked={!!formPublic} onChange={setFormPublic} />
+        )}
+        <div className="flex gap-2 ml-auto">
         <button onClick={onCancel} className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-gray-500 hover:text-gray-700 dark:text-[#a0a0a0] dark:hover:text-[#f0f0f0] transition-colors font-medium">취소</button>
         <button onClick={onSubmit} disabled={submitting || !formText.trim()}
           className="px-4 sm:px-5 py-1.5 bg-primary text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm hover:bg-primary/85 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
           {submitting ? '저장 중...' : '저장하기'}
         </button>
+        </div>
       </div>
     </div>
   );

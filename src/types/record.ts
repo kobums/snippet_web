@@ -7,6 +7,7 @@ export interface RecordDto {
   tag?: string;
   relatedPage?: number;
   createDate: string;
+  isPublic?: boolean; // 스와이프 카드 공개 (snippet 만)
 }
 
 export interface RecordAddRequestDto {
@@ -14,4 +15,5 @@ export interface RecordAddRequestDto {
   text: string;
   tag?: string;
   relatedPage?: number;
+  isPublic?: boolean;
 }

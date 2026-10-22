@@ -87,6 +87,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
   const [formText, setFormText] = useState('');
   const [formPage, setFormPage] = useState<number | ''>('');
   const [formTag, setFormTag] = useState('');
+  const [formPublic, setFormPublic] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   /* 기록 목록 상태 */
@@ -155,10 +156,11 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
         text: formText.trim(),
         tag: formTag.trim() || undefined,
         relatedPage: formPage !== '' ? Number(formPage) : undefined,
+        isPublic: tabToApiType[formType] === 'snippet' ? formPublic : false,
       };
       await createRecord(Number(formBook), payload);
       bumpRecords();
-      setFormText(''); setFormTag(''); setFormPage(''); setShowForm(false);
+      setFormText(''); setFormTag(''); setFormPage(''); setFormPublic(false); setShowForm(false);
       const updated = await getMonthlyRecords(tabToApiType[activeTab as RecordTab], selectedYear, selectedMonth);
       setRecords(updated);
       toast.success('기록이 저장되었습니다!');
@@ -220,6 +222,7 @@ export default function BookRecordPanel({ books }: BookRecordPanelProps) {
           formText={formText} setFormText={setFormText}
           formPage={formPage} setFormPage={setFormPage}
           formTag={formTag} setFormTag={setFormTag}
+          formPublic={formPublic} setFormPublic={setFormPublic}
           submitting={submitting}
           recordableBooks={recordableBooks}
           onSubmit={handleSubmit}
