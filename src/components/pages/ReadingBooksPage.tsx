@@ -40,7 +40,7 @@ export default function ReadingBooksPage() {
   });
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+    <div className="flex-1 px-4 sm:px-6 md:px-8 py-4 sm:py-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-[#f0f0f0]">읽는 중</h2>

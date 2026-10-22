@@ -148,7 +148,8 @@ export default function AppShell({ children }: AppShellProps) {
         </div>
       </header>
 
-      {/* 메인 콘텐츠 */}
+      {/* 메인 콘텐츠 — 내용이 길면 이 영역이 늘어나고 문서 전체가 스크롤된다.
+          페이지 루트에 overflow-y-auto 를 두면 실제로는 스크롤되지 않는 빈 스크롤바가 생기니 두지 말 것 */}
       <section className="flex-1 flex flex-col content-layer relative z-10 h-[calc(100vh-140px)]">
         {children}
       </section>

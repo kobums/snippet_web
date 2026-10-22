@@ -192,7 +192,7 @@ export default function PopularBooks() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-48 lg:px-64 py-4 sm:py-6">
+    <div className="flex-1 px-4 sm:px-6 md:px-48 lg:px-64 py-4 sm:py-6">
 
       {/* Page title */}
       <div className="mb-5">
