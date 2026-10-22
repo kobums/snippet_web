@@ -212,7 +212,7 @@ export default function BorrowedBooksPage() {
                 </div>
                 <button
                   onClick={(e) => handleReturn(e, book)}
-                  className="mt-2 w-full text-[11px] font-medium py-1.5 rounded-lg bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors"
+                  className="mt-2 w-full text-[11px] font-medium py-1.5 rounded-lg bg-orange-100 text-orange-600 hover:bg-orange-200 dark:bg-orange-500/15 dark:text-orange-400 dark:hover:bg-orange-500/25 transition-colors"
                 >
                   반납 완료
                 </button>
