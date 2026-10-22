@@ -10,11 +10,11 @@ import { BookGridSkeleton } from '@/components/ui/skeleton';
 import { DatePicker } from '@/components/ui/DatePicker';
 
 const STATUS_LABELS: Record<string, { text: string; color: string }> = {
-  waiting:   { text: '대기중', color: 'bg-warning/15 text-amber-700' },
+  waiting:   { text: '대기중', color: 'bg-warning/15 text-amber-700 dark:text-amber-400' },
   reading:   { text: '읽는중', color: 'bg-info/15 text-info' },
   completed: { text: '완독',   color: 'bg-secondary/15 text-secondary' },
-  dropped:   { text: '중단',   color: 'bg-gray-100 text-gray-500 dark:text-[#a0a0a0]' },
-  none:      { text: '미정',   color: 'bg-gray-100 text-gray-400 dark:text-[#666]' },
+  dropped:   { text: '중단',   color: 'bg-gray-100 text-gray-500 dark:bg-white/10 dark:text-[#a0a0a0]' },
+  none:      { text: '미정',   color: 'bg-gray-100 text-gray-400 dark:bg-white/10 dark:text-[#666]' },
 };
 
 function getDDayInfo(returnDate: string | null | undefined) {
