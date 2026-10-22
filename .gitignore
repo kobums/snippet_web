@@ -42,3 +42,8 @@ next-env.d.ts
 
 ### CLAUDE ###
 .claude
+
+# 키·인증서 (실수 커밋 방지)
+*.key
+*.p12
+credentials.json
