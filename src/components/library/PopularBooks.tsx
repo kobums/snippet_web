@@ -12,12 +12,12 @@ import toast from 'react-hot-toast';
 // ============================================================================
 // Filter definitions
 // ============================================================================
-type PeriodKey = '1month' | '3months' | '1year';
+// YES24는 주간(종합)·월간 순위만 있다 — 서버는 기간이 2주를 넘으면 월간 순위를 준다.
+type PeriodKey = 'week' | 'month';
 
 const PERIODS: { key: PeriodKey; label: string; days: number }[] = [
-  { key: '1month', label: '1개월', days: 30 },
-  { key: '3months', label: '3개월', days: 90 },
-  { key: '1year', label: '1년', days: 365 },
+  { key: 'week', label: '주간', days: 7 },
+  { key: 'month', label: '월간', days: 30 },
 ];
 
 const KDC_CATEGORIES = [
@@ -104,7 +104,7 @@ export default function PopularBooks() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const [period, setPeriod] = useState<PeriodKey>('1month');
+  const [period, setPeriod] = useState<PeriodKey>('week');
   const [kdc, setKdc] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
