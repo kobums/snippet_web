@@ -84,23 +84,11 @@ function FilterChip({
   return (
     <button
       onClick={onTap}
-      className="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150"
-      style={
+      className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 ${
         selected
-          ? {
-              background: 'linear-gradient(135deg, rgba(66,66,66,0.92), rgba(26,26,26,0.96))',
-              color: '#ffffff',
-              border: '1px solid rgba(255,255,255,0.12)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
-            }
-          : {
-              background: 'rgba(255,255,255,0.45)',
-              backdropFilter: 'blur(12px)',
-              color: 'var(--lg-text-secondary)',
-              border: '1px solid rgba(255,255,255,0.6)',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-            }
-      }
+          ? 'bg-gray-900 text-white border-gray-900 shadow-sm dark:bg-[#f0f0f0] dark:text-gray-900 dark:border-[#f0f0f0]'
+          : 'bg-white/60 text-gray-600 border-gray-200 backdrop-blur-md hover:bg-white dark:bg-white/5 dark:text-[#d0d0d0] dark:border-white/10 dark:hover:bg-white/10'
+      }`}
     >
       {label}
     </button>
@@ -200,7 +188,7 @@ export default function PopularBooks() {
           인기 도서
         </h2>
         <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--lg-text-secondary)' }}>
-          전국 공공도서관 인기 대출 도서
+          YES24 베스트셀러
         </p>
       </div>
 
@@ -351,9 +339,11 @@ function PopularBookRow({
               {book.kdcName.split(' > ').pop()}
             </span>
           )}
-          <span className="text-[10px]" style={{ color: 'var(--lg-text-tertiary)' }}>
-            대출 {formatCount(book.loanCount)}회
-          </span>
+          {book.loanCount > 0 && (
+            <span className="text-[10px]" style={{ color: 'var(--lg-text-tertiary)' }}>
+              대출 {formatCount(book.loanCount)}회
+            </span>
+          )}
         </div>
       </div>
 
