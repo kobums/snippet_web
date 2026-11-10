@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import SwipeStack from "@/components/swipe/SwipeStack";
 
@@ -20,13 +19,20 @@ export default function SnippetPage() {
           <span>Like &rarr;</span>
         </div>
 
-        <Link
-          href="/privacy"
-          className="text-[10px] opacity-50 hover:opacity-100 transition-opacity"
-          style={{ color: "var(--lg-text-tertiary)" }}
-        >
-          개인정보 처리 방침
-        </Link>
+        <div className="flex gap-3 text-[10px]" style={{ color: "var(--lg-text-tertiary)" }}>
+          <a
+            href="https://gowoobro.com/ko/app/14/terms"
+            className="opacity-50 hover:opacity-100 transition-opacity"
+          >
+            이용약관
+          </a>
+          <a
+            href="https://gowoobro.com/ko/app/14/privacy"
+            className="opacity-50 hover:opacity-100 transition-opacity"
+          >
+            개인정보 처리방침
+          </a>
+        </div>
       </footer>
     </AppShell>
   );
