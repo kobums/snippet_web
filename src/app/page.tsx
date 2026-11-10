@@ -94,7 +94,8 @@ export default function LandingPage() {
         <div className="flex gap-4 text-xs text-gray-400 dark:text-[#666]">
           <Link href="/login" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">로그인</Link>
           <Link href="/register" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">회원가입</Link>
-          <Link href="/privacy" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">개인정보 처리 방침</Link>
+          <a href="https://gowoobro.com/ko/app/14/terms" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">이용약관</a>
+          <a href="https://gowoobro.com/ko/app/14/privacy" className="hover:text-gray-600 dark:hover:text-[#a0a0a0] dark:text-[#a0a0a0] transition-colors">개인정보 처리방침</a>
         </div>
       </footer>
     </main>

@@ -267,6 +267,31 @@ export const RegisterForm: React.FC = () => {
                   '회원가입 완료'
                 )}
               </button>
+
+              {/* 약관 동의 안내 */}
+              <p className="text-xs text-center leading-relaxed" style={{ color: 'var(--lg-text-tertiary)' }}>
+                가입하면{' '}
+                <a
+                  href="https://gowoobro.com/ko/app/14/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                  style={{ color: 'var(--lg-text-secondary)' }}
+                >
+                  이용약관
+                </a>
+                {' '}및{' '}
+                <a
+                  href="https://gowoobro.com/ko/app/14/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                  style={{ color: 'var(--lg-text-secondary)' }}
+                >
+                  개인정보 처리방침
+                </a>
+                에 동의하는 것으로 간주됩니다.
+              </p>
             </form>
 
             <div className="flex items-center gap-4 my-6">

@@ -10,6 +10,21 @@ const nextConfig: NextConfig = {
       { protocol: 'http' as const, hostname },
     ]),
   },
+  async redirects() {
+    // 약관·개인정보 처리방침은 gowoobro.com 에서 통합 호스팅 (스토어 등록 URL /privacy 유지)
+    return [
+      {
+        source: "/privacy",
+        destination: "https://gowoobro.com/ko/app/14/privacy",
+        permanent: true,
+      },
+      {
+        source: "/terms",
+        destination: "https://gowoobro.com/ko/app/14/terms",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {
